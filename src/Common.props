@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <xrExternals>$(SolutionDir)..\Externals\</xrExternals>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <xrRoot>$(SolutionDir)..\</xrRoot>
+    <xrBinDir>$(xrRoot)bin\</xrBinDir>
+    <xrBinPlugDir>$(xrRoot)bin_plugs\</xrBinPlugDir>
+    <xrLibDir>$(xrRoot)lib\</xrLibDir>
+    <xrIntDir>$(xrRoot)intermediate\</xrIntDir>
+    <xrSdkDir>$(xrRoot)sdk\</xrSdkDir>
+    <dxSdkDir>$(xrSdkDir)include\dxsdk\</dxSdkDir>
+    <xr3rdPartyDir>$(xrRoot)src\3rd party\</xr3rdPartyDir>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>.;$(SolutionDir);$(xrSdkDir)include;$(xrSdkDir)include\nvapi;$(xrSdkDir)include\dxsdk;$(xrSdkDir)include\OpenAutomate;$(xr3rdPartyDir);$(xr3rdPartyDir)imdexlib;$(xr3rdPartyDir)luabind\include;$(xr3rdPartyDir)tbb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>USE_LUAJIT_ONE</UndefinePreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <MinimalRebuild>true</MinimalRebuild>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(xrLibDir);$(xrLibDir)$(PlatformTarget)\$(Configuration)\;$(xrSdkDir)libraries\;$(xrSdkDir)libraries\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <LargeAddressAware>true</LargeAddressAware>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(xrLibDir);$(xrLibDir)$(PlatformTarget)\$(Configuration)\;$(xrSdkDir)libraries\;$(xrSdkDir)libraries\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="xrRoot">
+      <Value>$(xrRoot)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="xrBinDir">
+      <Value>$(xrBinDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="xrBinPlugDir">
+      <Value>$(xrBinPlugDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="xrLibDir">
+      <Value>$(xrLibDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="xrIntDir">
+      <Value>$(xrIntDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="xrSdkDir">
+      <Value>$(xrSdkDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="dxSdkDir">
+      <Value>$(dxSdkDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="xr3rdPartyDir">
+      <Value>$(xr3rdPartyDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

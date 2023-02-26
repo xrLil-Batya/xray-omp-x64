@@ -1,0 +1,26 @@
+# exclude all dot files except .gitignore
+.*
+!.gitignore
+
+# exclude file extensions
+*.VC.db
+*.VC.opendb
+*.user
+*.log
+*.pdb
+*.exp
+*.exe
+*.obj
+*.tlog
+*.htm
+
+# exclude binaries and temporary files
+bin/
+bin_plugs/
+intermediate/
+intermediate_plugs/
+/lib/
+_build/
+/src/*.tss
+*/.vs/
+

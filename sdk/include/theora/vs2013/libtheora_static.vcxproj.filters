@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\source\decapiwrapper.c" />
+    <ClCompile Include="..\source\decinfo.c" />
+    <ClCompile Include="..\source\decode.c" />
+    <ClCompile Include="..\source\dequant.c" />
+    <ClCompile Include="..\source\encapiwrapper.c" />
+    <ClCompile Include="..\source\encfrag.c" />
+    <ClCompile Include="..\source\encinfo.c" />
+    <ClCompile Include="..\source\encode.c" />
+    <ClCompile Include="..\source\encoder_disabled.c" />
+    <ClCompile Include="..\source\enquant.c" />
+    <ClCompile Include="..\source\fdct.c" />
+    <ClCompile Include="..\source\fragment.c" />
+    <ClCompile Include="..\source\huffdec.c" />
+    <ClCompile Include="..\source\huffenc.c" />
+    <ClCompile Include="..\source\idct.c" />
+    <ClCompile Include="..\source\info.c" />
+    <ClCompile Include="..\source\internal.c" />
+    <ClCompile Include="..\source\mathops.c" />
+    <ClCompile Include="..\source\mcenc.c" />
+    <ClCompile Include="..\source\mmxencfrag.c" />
+    <ClCompile Include="..\source\mmxfdct.c" />
+    <ClCompile Include="..\source\mmxfrag.c" />
+    <ClCompile Include="..\source\mmxidct.c" />
+    <ClCompile Include="..\source\mmxstate.c" />
+    <ClCompile Include="..\source\quant.c" />
+    <ClCompile Include="..\source\rate.c" />
+    <ClCompile Include="..\source\state.c" />
+    <ClCompile Include="..\source\tokenize.c" />
+    <ClCompile Include="..\source\x86enc.c" />
+    <ClCompile Include="..\source\x86state.c" />
+    <ClCompile Include="..\source\analyze.c" />
+    <ClCompile Include="..\source\apiwrapper.c" />
+    <ClCompile Include="..\source\bitpack.c" />
+    <ClCompile Include="..\source\cpu.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\decint.h" />
+    <ClInclude Include="..\source\dequant.h" />
+    <ClInclude Include="..\source\encint.h" />
+    <ClInclude Include="..\source\enquant.h" />
+    <ClInclude Include="..\source\huffdec.h" />
+    <ClInclude Include="..\source\huffenc.h" />
+    <ClInclude Include="..\source\huffman.h" />
+    <ClInclude Include="..\source\internal.h" />
+    <ClInclude Include="..\source\mathops.h" />
+    <ClInclude Include="..\source\mmxfrag.h" />
+    <ClInclude Include="..\source\mmxloop.h" />
+    <ClInclude Include="..\source\modedec.h" />
+    <ClInclude Include="..\source\ocintrin.h" />
+    <ClInclude Include="..\source\quant.h" />
+    <ClInclude Include="..\source\x86enc.h" />
+    <ClInclude Include="..\source\x86int.h" />
+    <ClInclude Include="..\source\apiwrapper.h" />
+    <ClInclude Include="..\source\bitpack.h" />
+    <ClInclude Include="..\source\cpu.h" />
+    <ClInclude Include="..\source\dct.h" />
+  </ItemGroup>
+</Project>
