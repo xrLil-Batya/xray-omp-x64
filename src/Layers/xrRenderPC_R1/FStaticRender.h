@@ -112,7 +112,7 @@ public:
 	void								apply_object			(IRenderable*	O);
 	IC void								apply_lmaterial			()				{};
 public:
-	void							PdaRenderToTarget() {}; // тупо заглушка, чтоб собиралось.
+	void							PdaRenderToTarget();
 	// feature level
 	virtual	GenerationLevel			get_generation			()	{ return IRender_interface::GENERATION_R1; }
 	virtual DWORD					get_dx_level			()	{ return 0x00090000; }

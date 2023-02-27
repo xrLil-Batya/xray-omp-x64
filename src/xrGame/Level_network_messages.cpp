@@ -442,7 +442,9 @@ void CLevel::ClientReceive()
 			}break;
 		case M_STATISTIC_UPDATE:
 			{
+#ifdef DEBUG
 				Msg("--- CL: On Update Request");
+#endif
 					if (!game) break;
 				game_events->insert		(*P);
 				if (g_bDebugEvents)		ProcessGameEvents();

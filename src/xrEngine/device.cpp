@@ -30,6 +30,7 @@
 #include "igame_persistent.h"
 
 #include <imgui\imgui.h>
+#include "backends\imgui_impl_dx9.h"
 #include "backends\imgui_impl_dx11.h"
 #include "backends\imgui_impl_win32.h"
 
@@ -171,7 +172,13 @@ void CRenderDevice::End(void)
 	if (g_appLoaded)
 	{
 		ImGui::Render();
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		if(psDeviceFlags.test(rsR4))
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		else
+		{
+			R_ASSERT(!psDeviceFlags.test(rsR3), "choose another render pls");
+			ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+		}
 	}
 
     m_pRender->End();
@@ -284,7 +291,13 @@ void ImGui_NewFrame()
 	//	SetCursor(NULL);
 
 	// Start the frame
-    ImGui_ImplDX11_NewFrame();
+	if(psDeviceFlags.test(rsR4))
+		ImGui_ImplDX11_NewFrame();
+	else
+	{
+		R_ASSERT(!psDeviceFlags.test(rsR3), "choose another render pls");
+		ImGui_ImplDX9_NewFrame();
+	}
     ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 }

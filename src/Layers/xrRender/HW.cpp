@@ -10,6 +10,10 @@
 #include "HW.h"
 #include "../../xrEngine/XR_IOConsole.h"
 
+#include <imgui.h>
+#include "backends\imgui_impl_dx9.h"
+#include "backends\imgui_impl_win32.h"
+
 #ifndef _EDITOR
 void	fill_vid_mode_list(CHW* _hw);
 void	free_vid_mode_list();
@@ -47,6 +51,7 @@ CHW::~CHW()
 
 void CHW::Reset(HWND hwnd)
 {
+	ImGui_ImplDX9_InvalidateDeviceObjects();
 #ifdef DEBUG
 	_RELEASE(dwDebugSB);
 #endif
@@ -105,6 +110,7 @@ void CHW::Reset(HWND hwnd)
 #ifndef _EDITOR
 	updateWindowProps(hwnd);
 #endif
+	ImGui_ImplDX9_CreateDeviceObjects();
 }
 
 //xr_token*				vid_mode_token = NULL;
@@ -169,6 +175,11 @@ D3DFORMAT CHW::selectDepthStencil(D3DFORMAT fTarget)
 
 void	CHW::DestroyDevice()
 {
+    // Cleanup
+    ImGui_ImplWin32_Shutdown();
+    ImGui_ImplDX9_Shutdown();
+    ImGui::DestroyContext();
+
 	_SHOW_REF("refCount:pBaseZB", pBaseZB);
 	_RELEASE(pBaseZB);
 
@@ -428,10 +439,23 @@ void		CHW::CreateDevice(HWND m_hWnd, bool move_window)
 	u32	memory = pDevice->GetAvailableTextureMem();
 	Msg("*     Texture memory: %d M", memory / (1024 * 1024));
 	Msg("*          DDI-level: %2.1f", float(D3DXGetDriverLevel(pDevice)) / 100.f);
-#ifndef _EDITOR
 	updateWindowProps(m_hWnd);
 	fill_vid_mode_list(this);
-#endif
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsLight();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplWin32_Init(m_hWnd);
+    ImGui_ImplDX9_Init(pDevice);
 }
 
 u32	CHW::selectPresentInterval()

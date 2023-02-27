@@ -35,16 +35,16 @@
 // some body flags
 
 enum {
-  dxBodyFlagFiniteRotation =        1,  // use finite rotations
-  dxBodyFlagFiniteRotationAxis =    2,  // use finite rotations only along axis
-  dxBodyDisabled =                  4,  // body is disabled
-  dxBodyNoGravity =                 8,  // body is not influenced by gravity
-  dxBodyAutoDisable =               16, // enable auto-disable on body
-  dxBodyNoUpdatePos =               17, // enable auto-disable on body
-  dxBodyLinearDamping =             32, // use linear damping
-  dxBodyAngularDamping =            64, // use angular damping
-  dxBodyMaxAngularSpeed =           128,// use maximum angular speed
-  dxBodyGyroscopic =                256,// use gyroscopic term
+  dxBodyFlagFiniteRotation = (1 << 0),  // use finite rotations
+  dxBodyFlagFiniteRotationAxis = (1 << 1),  // use finite rotations only along axis
+  dxBodyDisabled = (1 << 2),  // body is disabled
+  dxBodyNoGravity = (1 << 3),  // body is not influenced by gravity
+  dxBodyAutoDisable = (1 << 4), // enable auto-disable on body
+  dxBodyNoUpdatePos = (1 << 5), // enable auto-disable on body
+  dxBodyLinearDamping = (1 << 6), // use linear damping
+  dxBodyAngularDamping = (1 << 7), // use angular damping
+  dxBodyMaxAngularSpeed = (1 << 8),// use maximum angular speed
+  dxBodyGyroscopic = (1 << 9),// use gyroscopic term
 };
 
 

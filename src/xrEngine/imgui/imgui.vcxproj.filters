@@ -63,6 +63,9 @@
     <ClCompile Include="addons\ImGuizmo\ImGradient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="backends\imgui_impl_dx9.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui.h">
@@ -132,6 +135,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="addons\ImGuizmo\ImZoomSlider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="backends\imgui_impl_dx9.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

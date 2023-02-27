@@ -328,6 +328,7 @@ void CHW::DestroyDevice()
 //////////////////////////////////////////////////////////////////////
 void CHW::Reset (HWND hwnd)
 {
+	ImGui_ImplDX11_InvalidateDeviceObjects();
 	DXGI_SWAP_CHAIN_DESC &cd = m_ChainDesc;
 
 	BOOL	bWindowed = !psDeviceFlags.is(rsFullscreen) || strstr(Core.Params, "-window_mode");
@@ -379,7 +380,7 @@ void CHW::Reset (HWND hwnd)
 	UpdateViews();
 
 	updateWindowProps	(hwnd);
-
+	ImGui_ImplDX11_CreateDeviceObjects();
 }
 
 void CHW::SwitchVP(ViewPort vp)

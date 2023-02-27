@@ -230,6 +230,7 @@
     <ClCompile Include="addons\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="addons\ImGuizmo\ImSequencer.cpp" />
     <ClCompile Include="backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="backends\imgui_impl_dx9.cpp" />
     <ClCompile Include="backends\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="addons\ImGuizmo\ImSequencer.h" />
     <ClInclude Include="addons\ImGuizmo\ImZoomSlider.h" />
     <ClInclude Include="backends\imgui_impl_dx11.h" />
+    <ClInclude Include="backends\imgui_impl_dx9.h" />
     <ClInclude Include="backends\imgui_impl_metal.h" />
     <ClInclude Include="backends\imgui_impl_win32.h" />
     <ClInclude Include="imconfig.h" />

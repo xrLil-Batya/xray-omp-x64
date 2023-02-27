@@ -531,7 +531,14 @@ public:
 ENGINE_API BOOL r2_sun_static = TRUE;
 ENGINE_API BOOL r2_advanced_pp = FALSE; // advanced post process and effects
 
+#define EXCLUDE_R2_AND_R3
+
+#ifdef EXCLUDE_R2_AND_R3
+u32 renderer_value = 0;
+#else
 u32 renderer_value = 3;
+#endif
+
 //void fill_render_mode_list();
 //void free_render_mode_list();
 
@@ -551,9 +558,22 @@ public:
         tokens = vid_quality_token;
 
         inherited::Execute(args);
+		
+#ifdef EXCLUDE_R2_AND_R3
+        // 0 - r1
+        // 1 - r4
+        psDeviceFlags.set(rsR2, false);
+        psDeviceFlags.set(rsR3, false);
+        psDeviceFlags.set(rsR4, renderer_value > 0);
+
+        r2_sun_static = (renderer_value == 0);
+
+        r2_advanced_pp = (renderer_value > 0);
+#else
         // 0 - r1
         // 1..3 - r2
         // 4 - r3
+		// 5 - r4
         psDeviceFlags.set(rsR2, ((renderer_value > 0) && renderer_value < 4));
         psDeviceFlags.set(rsR3, (renderer_value == 4));
         psDeviceFlags.set(rsR4, (renderer_value >= 5));
@@ -561,6 +581,7 @@ public:
         r2_sun_static = (renderer_value < 2);
 
         r2_advanced_pp = (renderer_value >= 3);
+#endif
     }
 
     virtual void Save(IWriter* F)

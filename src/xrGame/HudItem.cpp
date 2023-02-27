@@ -328,7 +328,9 @@ u32 CHudItem::PlayHUDMotionIfExists(std::initializer_list<const char*> Ms, const
 		dbg_anim_name += M;
 		dbg_anim_name += ", ";
 	}
+#ifdef DEBUG
 	Msg("~~[%s] Motions [%s] not found for [%s]", __FUNCTION__, dbg_anim_name.c_str(), HudSection().c_str());
+#endif
 
 	return 0;
 }
