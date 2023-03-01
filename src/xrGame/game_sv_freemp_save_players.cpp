@@ -32,6 +32,16 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 			if (item->GetCondition() < 1)
 				file->w_float(itemID, "condition", item->GetCondition());
 			
+			file->w_u32(itemID, "upgrades_count", item->upgardes().size());
+			u32 iterator = 0;
+			for (const auto upgrade : item->upgardes())
+			{
+				string64 upgrade_line{};
+				strconcat(sizeof(upgrade_line), upgrade_line, "installed_upgrade", std::to_string(iterator).c_str());
+				file->w_string(itemID, upgrade_line, upgrade.c_str());
+				iterator++;
+			}
+			
 			if (item->cast_weapon_ammo())
 			{
 				CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(item);
@@ -106,6 +116,21 @@ bool game_sv_freemp::LoadPlayer(game_PlayerState* ps, CInifile* file)
 				{
 					float cond = file->r_float(itemID, "condition");
 					item->m_fCondition = cond;
+				}
+
+				if(file->line_exist(itemID, "upgrades_count"))
+				{
+					const auto pSE_InventoryItem = smart_cast<CSE_ALifeInventoryItem*>(E);
+					if(pSE_InventoryItem)
+					{
+						u32 size = file->r_u32(itemID, "upgrades_count");
+						for(u32 iterator = 0; iterator < size; iterator++)
+						{
+							string64 upgrade_line{};
+							strconcat(sizeof(upgrade_line), upgrade_line, "installed_upgrade", std::to_string(iterator).c_str());
+							pSE_InventoryItem->m_upgrades.push_back(file->r_string(itemID, upgrade_line));
+						}
+					}
 				}
 
 				if (wpn)
