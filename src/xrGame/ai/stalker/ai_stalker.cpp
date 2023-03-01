@@ -792,9 +792,6 @@ void CAI_Stalker::UpdateCL()
 			}
 		}
 	}
-	//if(!IsGameTypeSingle() && OnClient())
-		//return;
-
 	START_PROFILE("stalker/client_update/inherited")
 	inherited::UpdateCL				();
 	STOP_PROFILE
@@ -847,12 +844,12 @@ CPHDestroyable*		CAI_Stalker::		ph_destroyable	()
 
 void CAI_Stalker::shedule_Update		( u32 DT )
 {
-	if (!IsGameTypeSingle() && OnClient())
+	/*if (!IsGameTypeSingle() && OnClient())
 	{
 		// Âûçûâàåì àïäåéò áèíäåðà íà êëèåíòàõ
 		inherited::shedule_Update(DT);
 		return;
-	}
+	}*/
 	START_PROFILE("stalker")
 	START_PROFILE("stalker/schedule_update")
 	VERIFY2				(getEnabled()||PPhysicsShell(), *cName());
@@ -930,35 +927,38 @@ void CAI_Stalker::shedule_Update		( u32 DT )
 
 		// Look and action streams
 		float							temp = conditions().health();
-		if (temp > 0) {
-			START_PROFILE("stalker/schedule_update/feel_touch")
-			Fvector C; float R;
-			Center(C);
-			R = Radius();
-			feel_touch_update		(C,R);
-			STOP_PROFILE
-
-			START_PROFILE("stalker/schedule_update/net_update")
-			net_update				uNext;
-			uNext.dwTimeStamp		= Level().timeServer();
-			uNext.o_model			= movement().m_body.current.yaw;
-			uNext.o_torso			= movement().m_head.current;
-			uNext.p_pos				= vNewPosition;
-			uNext.fHealth			= GetfHealth();
-			NET.push_back			(uNext);
-			STOP_PROFILE
-		}
-		else 
+		if(OnServer())
 		{
-			START_PROFILE("stalker/schedule_update/net_update")
-			net_update			uNext;
-			uNext.dwTimeStamp	= Level().timeServer();
-			uNext.o_model		= movement().m_body.current.yaw;
-			uNext.o_torso		= movement().m_head.current;
-			uNext.p_pos			= vNewPosition;
-			uNext.fHealth		= GetfHealth();
-			NET.push_back		(uNext);
-			STOP_PROFILE
+			if (temp > 0) {
+				START_PROFILE("stalker/schedule_update/feel_touch")
+				Fvector C; float R;
+				Center(C);
+				R = Radius();
+				feel_touch_update		(C,R);
+				STOP_PROFILE
+
+				START_PROFILE("stalker/schedule_update/net_update")
+				net_update				uNext;
+				uNext.dwTimeStamp		= Level().timeServer();
+				uNext.o_model			= movement().m_body.current.yaw;
+				uNext.o_torso			= movement().m_head.current;
+				uNext.p_pos				= vNewPosition;
+				uNext.fHealth			= GetfHealth();
+				NET.push_back			(uNext);
+				STOP_PROFILE
+			}
+			else 
+			{
+				START_PROFILE("stalker/schedule_update/net_update")
+				net_update			uNext;
+				uNext.dwTimeStamp	= Level().timeServer();
+				uNext.o_model		= movement().m_body.current.yaw;
+				uNext.o_torso		= movement().m_head.current;
+				uNext.p_pos			= vNewPosition;
+				uNext.fHealth		= GetfHealth();
+				NET.push_back		(uNext);
+				STOP_PROFILE
+			}
 		}
 	}
 	VERIFY				(_valid(Position()));
@@ -1067,7 +1067,7 @@ void CAI_Stalker::Think			()
 
 void CAI_Stalker::SelectAnimation(const Fvector &view, const Fvector &move, float speed)
 {
-	if (!Device.Paused())
+	if (!Device.Paused() && OnServer())
 		animation().update();
 }
 
