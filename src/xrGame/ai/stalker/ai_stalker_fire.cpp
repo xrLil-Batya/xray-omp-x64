@@ -109,12 +109,6 @@ void CAI_Stalker::g_fireParams(const CHudItem* pHudItem, Fvector& P, Fvector& D)
 		D				= Fvector().set(0.f,0.f,1.f);
 		return;
 	}
-	if (!IsGameTypeSingle() && OnClient())
-	{
-		P = eye_matrix.c;
-		D = eye_matrix.k;
-		return;
-	}
 
 	CWeapon				*weapon = smart_cast<CWeapon*>(inventory().ActiveItem());
 	if (!weapon) {
@@ -205,8 +199,6 @@ void CAI_Stalker::g_fireParams(const CHudItem* pHudItem, Fvector& P, Fvector& D)
 
 void CAI_Stalker::g_WeaponBones	(int &L, int &R1, int &R2)
 {
-	if(!IsGameTypeSingle() && OnClient())
-		return;
 	int				r_hand, r_finger2, l_finger1;
 	CObjectHandler::weapon_bones(r_hand, r_finger2, l_finger1);
 	R1				= r_hand;
