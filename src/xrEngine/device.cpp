@@ -175,10 +175,7 @@ void CRenderDevice::End(void)
 		if(psDeviceFlags.test(rsR4))
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 		else
-		{
-			R_ASSERT(!psDeviceFlags.test(rsR3), "choose another render pls");
 			ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-		}
 	}
 
     m_pRender->End();
@@ -291,13 +288,11 @@ void ImGui_NewFrame()
 	//	SetCursor(NULL);
 
 	// Start the frame
-	if(psDeviceFlags.test(rsR4))
+    extern ENGINE_API int g_current_renderer;
+	if(g_current_renderer == 4)
 		ImGui_ImplDX11_NewFrame();
 	else
-	{
-		R_ASSERT(!psDeviceFlags.test(rsR3), "choose another render pls");
 		ImGui_ImplDX9_NewFrame();
-	}
     ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 }
