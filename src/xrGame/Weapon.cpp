@@ -1900,10 +1900,10 @@ void CWeapon::OnZoomOut()
 
 CUIWindow* CWeapon::ZoomTexture()
 {
-	if (UseScopeTexture() && (!psActorFlags.test(AF_3DSCOPE_ENABLE) || !bIsSecondVPZoomPresent()))
+	if (UseScopeTexture() && (!psActorFlags.test(AF_3DSCOPE_ENABLE) || !bIsSecondVPZoomPresent()) && IsScopeAttached())
 		return m_UIScope;
 	else
-		return NULL;
+		return nullptr;
 }
 
 void CWeapon::SwitchState(u32 S)
