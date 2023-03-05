@@ -160,6 +160,9 @@ public:
 	virtual CSE_ALifeHumanAbstract		*cast_human_abstract		() {return 0;};
 	virtual CSE_ALifeAnomalousZone		*cast_anomalous_zone		() {return 0;};
 	virtual CSE_ALifeTrader				*cast_trader				() {return 0;};
+	virtual CSE_ALifeCreatureActor	*cast_actor() { return 0; };
+	virtual CSE_ActorMP	*cast_actor_mp() { return 0; };
+	virtual CSE_ALifeItemArtefact *cast_item_artefact() { return 0; };
 
 	virtual CSE_ALifeCreatureAbstract	*cast_creature_abstract		() {return 0;};
 	virtual CSE_ALifeSmartZone			*cast_smart_zone			() {return 0;};

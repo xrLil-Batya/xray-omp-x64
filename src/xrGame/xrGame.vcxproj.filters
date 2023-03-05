@@ -7395,6 +7395,15 @@
     <ClInclude Include="embedded_editor\embedded_editor_weather.h">
       <Filter>ImGUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\xrServerEntities\smart_cast_impl0.h">
+      <Filter>Core\Common\SmartCast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xrServerEntities\smart_cast_impl1.h">
+      <Filter>Core\Common\SmartCast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xrServerEntities\smart_cast_impl2.h">
+      <Filter>Core\Common\SmartCast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11080,6 +11089,12 @@
     </ClCompile>
     <ClCompile Include="game_cl_freemp_messages.cpp">
       <Filter>OMP Adaptation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xrServerEntities\smart_cast.cpp">
+      <Filter>Core\Common\SmartCast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xrServerEntities\smart_cast_stats.cpp">
+      <Filter>Core\Common\SmartCast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
