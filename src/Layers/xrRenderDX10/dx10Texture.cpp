@@ -474,6 +474,7 @@ _DDS_2D:
 			LoadInfo.Height	= IMG.Height;
 
 			LoadInfo.FirstMipLevel = img_loaded_lod;
+			LoadInfo.MipLevels = IMG.MipLevels;
 
 			/*if (img_loaded_lod) // Mortan: если буду чинить x32 не забыть вернуть
 			{
