@@ -577,7 +577,7 @@ bool ignore_path(const char* _path)
         return true;
 }
 
-bool CLocatorAPI::Recurse(const char* path)
+bool CLocatorAPI::Recurse(const char* path, const bool log_if_found)
 {
     string_path scanPath;
     xr_strcpy(scanPath, sizeof(scanPath), path);
@@ -594,6 +594,9 @@ bool CLocatorAPI::Recurse(const char* path)
     rec_files.reserve(256);
     size_t oldSize = rec_files.size();
     intptr_t done = handle;
+	if (log_if_found)
+		Msg("--Found FS dir: [%s]", path);
+
     while (done != -1)
     {
         string1024 fullPath;
@@ -614,6 +617,8 @@ bool CLocatorAPI::Recurse(const char* path)
     }
     _findclose(handle);
     size_t newSize = rec_files.size();
+	if (log_if_found)
+		Msg("  files: [%u]", rec_files.size());
     if (newSize > oldSize)
     {
         std::sort(rec_files.begin() + oldSize, rec_files.end(), pred_str_ff);
@@ -806,7 +811,7 @@ void CLocatorAPI::_initialize(u32 flags, LPCSTR target_folder, LPCSTR fs_name)
             std::pair<PathMap::iterator, bool> I;
             FS_Path* P = xr_new<FS_Path>((p_it != pathes.end()) ? p_it->second->m_Path : root, lp_add, lp_def, lp_capt, fl);
             bNoRecurse = !(fl&FS_Path::flRecurse);
-            Recurse(P->m_Path);
+            Recurse(P->m_Path, true);
             I = pathes.insert(std::make_pair(xr_strdup(id), P));
 #ifndef DEBUG
             m_Flags.set(flCacheFiles, FALSE);
