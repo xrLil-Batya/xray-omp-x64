@@ -2577,9 +2577,9 @@ public:
 	}
 };
 
-class CCC_AdmUnlimatedAmmo : public IConsole_Command {
+class CCC_AdmUnlimitedAmmo : public IConsole_Command {
 public:
-	CCC_AdmUnlimatedAmmo(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
+	CCC_AdmUnlimitedAmmo(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
 
 	virtual void Execute(LPCSTR args)
 	{
@@ -2602,7 +2602,7 @@ public:
 			if (sscanf_s(buff, "%u", &tmp_client_id) != 1)
 			{
 				Msg("! ERROR: bad command parameters.");
-				Msg("Set god mode for player. Format: \"adm_unlimated_ammo <player session id>\"");
+				Msg("Set unlimited ammo for player. Format: \"adm_unlimited_ammo <player session id>\"");
 				return;
 			}
 
@@ -2614,7 +2614,7 @@ public:
 			{
 				if (!CL->ps->testFlag(GAME_PLAYER_MP_NO_UNLIMATED_AMMO))
 				{
-					//Msg("set Unlimated Ammo");
+					//Msg("set Unlimited Ammo");
 					CL->ps->setFlag(GAME_PLAYER_MP_NO_UNLIMATED_AMMO);
 				}
 				else
@@ -2626,7 +2626,7 @@ public:
 			}
 			else
 			{
-				Msg("! Can't set god mode for player with client id %u", client_id.value());
+				Msg("! Can't set unlimited ammo for player with client id %u", client_id.value());
 			}
 		}
 		else
@@ -2634,7 +2634,7 @@ public:
 			NET_Packet P;
 			P.w_begin(M_REMOTE_CONTROL_CMD);
 			string128 str;
-			xr_sprintf(str, "adm_unlimated_ammo %u", Game().local_svdpnid.value());
+			xr_sprintf(str, "adm_unlimited_ammo %u", Game().local_svdpnid.value());
 			P.w_stringZ(str);
 			Level().Send(P, net_flags(TRUE, TRUE));
 		}
@@ -2653,7 +2653,7 @@ void register_mp_console_commands()
 	CMD1(CCC_SetGodModForPlayer,	"sv_set_god_mode"		);
 	CMD1(CCC_AdmNoClip,				"adm_no_clip"			);
 	CMD1(CCC_AdmGodMode,			"adm_god_mode"			);
-	CMD1(CCC_AdmUnlimatedAmmo, "adm_unlimated_ammo");
+	CMD1(CCC_AdmUnlimitedAmmo, "adm_unlimited_ammo");
 	CMD1(CCC_AdmRegisterAccount,	"adm_register_account");
 	CMD1(CCC_AdmBanAccount,			"adm_ban_account");
 	CMD1(CCC_AdmUnBanAccount,		"adm_unban_account");
