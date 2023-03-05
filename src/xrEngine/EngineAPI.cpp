@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "EngineAPI.h"
 #include "../xrcdb/xrXRC.h"
+#include "XR_IOConsole.h"
 
 #define EXCLUDE_R2_AND_R3
 extern xr_token* vid_quality_token;
@@ -63,6 +64,8 @@ void CEngineAPI::InitializeNotDedicated()
 
     if (psDeviceFlags.test(rsR4))
     {
+        psDeviceFlags.set(rsR3, false);
+        psDeviceFlags.set(rsR2, false);
         // try to initialize R4
         Log("Loading DLL:", r4_name);
         hRender = LoadLibrary(r4_name);
@@ -71,11 +74,14 @@ void CEngineAPI::InitializeNotDedicated()
             // try to load R1
             Msg("! ...Failed - incompatible hardware/pre-Vista OS.");
 #ifndef EXCLUDE_R2_AND_R3
-            psDeviceFlags.set(rsR2, TRUE);
+            psDeviceFlags.set(rsR3, true);
 #endif
         }
 		else
-			g_current_renderer = 4;
+		{
+			psDeviceFlags.set(rsR4, true);
+			g_current_renderer = 3;
+		}
     }
 
 #ifndef EXCLUDE_R2_AND_R3
@@ -123,6 +129,8 @@ void CEngineAPI::Initialize(void)
 
     if (!hRender)
     {
+		Console->Execute("renderer renderer_r1");
+		
         // try to load R1
         psDeviceFlags.set(rsR4, FALSE);
         psDeviceFlags.set(rsR3, FALSE);
@@ -266,86 +274,22 @@ void CEngineAPI::CreateRendererList()
     }
 
     hRender = 0;
+    vid_quality_token = xr_alloc<xr_token>(3);
+    vid_quality_token[0].id = 0;
+    vid_quality_token[0].name = xr_strdup("renderer_r1");
+    vid_quality_token[1].id = 1;
+    vid_quality_token[1].name = xr_strdup("renderer_r4");
+    vid_quality_token[2].id = -1;
+    vid_quality_token[2].name = nullptr;
 
-    xr_vector<LPCSTR> _tmp;
-    u32 i = 0;
-    bool bBreakLoop = false;
-    for (; i < 6; ++i)
+//#ifdef DEBUG
+    Msg("Available render modes[%d]:", 2);
+//#endif // DEBUG
+    for (u8 i = 0; i < 2; ++i)
     {
-        switch (i)
-        {
-#ifndef EXCLUDE_R2_AND_R3
-        case 1:
-            if (!bSupports_r2)
-                bBreakLoop = true;
-            break;
-        case 3: //"renderer_r2.5"
-            if (!bSupports_r2_5)
-                bBreakLoop = true;
-            break;
-        case 4: //"renderer_r_dx10"
-            if (!bSupports_r3)
-                bBreakLoop = true;
-            break;
-#endif
-        case 5: //"renderer_r_dx11"
-            if (!bSupports_r4)
-                bBreakLoop = true;
-            break;
-        default:
-            ;
-        }
-
-        if (bBreakLoop) break;
-
-        _tmp.push_back(nullptr);
-        const char* val = nullptr;
-        switch (i)
-        {
-        case 0:
-            val = "renderer_r1";
-            break;
-#ifndef EXCLUDE_R2_AND_R3
-        case 1:
-            val = "renderer_r2a";
-            break;
-        case 2:
-            val = "renderer_r2";
-            break;
-        case 3:
-            val = "renderer_r2.5";
-            break;
-        case 4:
-            val = "renderer_r3";
-            break; // -)
-#endif
-        case 5:
-            val = "renderer_r4";
-            break; // -)
-        }
-        if (!val)
-		{
-			_tmp.pop_back();
-			continue;
-		}
-        _tmp.back() = xr_strdup(val);
-    }
-    size_t _cnt = _tmp.size() + 1;
-    vid_quality_token = xr_alloc<xr_token>(_cnt);
-
-    vid_quality_token[_cnt - 1].id = -1;
-    vid_quality_token[_cnt - 1].name = nullptr;
-
-#ifdef DEBUG
-    Msg("Available render modes[%d]:", _tmp.size());
-#endif // DEBUG
-    for (size_t i = 0; i < _tmp.size(); ++i)
-    {
-        vid_quality_token[i].id = i;
-        vid_quality_token[i].name = _tmp[i];
-#ifdef DEBUG
-        Msg("[%s]", _tmp[i]);
-#endif // DEBUG
+//#ifdef DEBUG
+        Msg("[%s]", vid_quality_token[i].name);
+//#endif // DEBUG
     }
 
     /*

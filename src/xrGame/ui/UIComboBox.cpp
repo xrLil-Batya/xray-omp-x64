@@ -87,12 +87,12 @@ void CUIComboBox::OnListItemSelect()
 	m_text.SetText			(m_list_box.GetSelectedText());    
 	CUIListBoxItem* itm		= m_list_box.GetSelectedItem();
 	
-	int bk_itoken_id		= m_itoken_id;
+	m_opt_backup_value = m_itoken_id;
 	
 	m_itoken_id				= (int)(__int64)itm->GetData();
 	ShowList				(false);
 
-	if(bk_itoken_id!=m_itoken_id)
+	if(m_opt_backup_value != m_itoken_id)
 		GetMessageTarget()->SendMessage(this, LIST_ITEM_SELECT, NULL);
 }
 

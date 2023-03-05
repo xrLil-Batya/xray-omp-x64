@@ -172,7 +172,8 @@ void CRenderDevice::End(void)
 	if (g_appLoaded)
 	{
 		ImGui::Render();
-		if(psDeviceFlags.test(rsR4))
+        extern ENGINE_API int g_current_renderer;
+		if(g_current_renderer == 3)
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 		else
 			ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
@@ -289,7 +290,7 @@ void ImGui_NewFrame()
 
 	// Start the frame
     extern ENGINE_API int g_current_renderer;
-	if(g_current_renderer == 4)
+	if(g_current_renderer == 3)
 		ImGui_ImplDX11_NewFrame();
 	else
 		ImGui_ImplDX9_NewFrame();
