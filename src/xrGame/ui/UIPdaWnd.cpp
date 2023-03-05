@@ -267,10 +267,6 @@ void CUIPdaWnd::SetActiveSubdialog(const shared_str& section)
 		m_pActiveDialog = pUILogsWnd;
 	}
 
-	R_ASSERT						(m_pActiveDialog);
-	UIMainPdaFrame->AttachChild		(m_pActiveDialog);
-	m_pActiveDialog->Show			(true);
-
 	if (m_pActiveDialog)
 	{
 		if (!UIMainPdaFrame->IsChild(m_pActiveDialog))
