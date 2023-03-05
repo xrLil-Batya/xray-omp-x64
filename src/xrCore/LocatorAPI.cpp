@@ -715,6 +715,7 @@ void CLocatorAPI::_initialize(u32 flags, LPCSTR target_folder, LPCSTR fs_name)
     if (m_Flags.is(flReady))return;
     CTimer t;
     t.Start();
+	Msg("Engine Discord: https://discord.gg/bE3KW3jksh");
     Log("Initializing File System...");
 
 	size_t M1 = Memory.mem_usage();
