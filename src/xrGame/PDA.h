@@ -78,7 +78,6 @@ protected:
 
 	float m_fZoomfactor;
 	bool bButtonL;
-	bool bButtonR;
 	LPCSTR m_joystick_bone;
 	u16 joystick;
 	float m_screen_on_delay, m_screen_off_delay;
@@ -98,16 +97,7 @@ public:
 	virtual void OnActiveItem();
 	virtual void OnHiddenItem();
 
-	enum eDeferredEnableState
-	{
-		eDefault,
-		eDisable,
-		eEnable,
-		eEnableZoomed
-	};
-
 	bool m_bZoomed;
-	eDeferredEnableState m_eDeferredEnable;
 	float m_psy_factor;
 	float m_thumb_rot[2];
 };

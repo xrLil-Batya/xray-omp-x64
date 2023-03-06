@@ -63,6 +63,7 @@
 #include "string_table.h"
 #include "embedded_editor/embedded_editor_main.h"
 #include "inventory_upgrade_manager.h"
+#include "PDA.h"
 
 ENGINE_API bool g_dedicated_server;
 extern CUISequencer* g_tutorial;
@@ -630,19 +631,22 @@ extern void draw_wnds_rects();
 void CLevel::OnRender()
 {
 	// PDA
-	if (game && CurrentGameUI() && &CurrentGameUI()->GetPdaMenu() != nullptr)
+	if (game && CurrentGameUI())
 	{
-		CUIPdaWnd* pda = &CurrentGameUI()->GetPdaMenu();
-		if (pda->IsShown())
+		const auto pda = &CurrentGameUI()->GetPdaMenu();
+		const auto pda_actor = Actor() ? Actor()->GetPDA() : nullptr;
+		if (pda && pda->IsShown())
 		{
 			pda->Draw();
 			CUICursor* cursor = &UI().GetUICursor();
 
 			if (cursor)
 			{
-				static bool need_reset;
-				bool is_top = CurrentGameUI()->TopInputReceiver() == pda;
+				static bool need_reset{};
+				if (pda_actor && pda_actor->m_bZoomed && CurrentGameUI()->TopInputReceiver() != pda)
+					CurrentGameUI()->SetMainInputReceiver(pda, false);
 
+				const bool is_top = CurrentGameUI()->TopInputReceiver() == pda;
 				if (pda->IsEnabled() && is_top && !Console->bVisible)
 				{
 					if (need_reset)
@@ -670,8 +674,7 @@ void CLevel::OnRender()
 				else
 					need_reset = true;
 
-				if (is_top)
-					cursor->OnRender();
+				cursor->OnRender();
 			}
 			Render->PdaRenderToTarget();
 		}
