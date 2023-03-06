@@ -341,12 +341,12 @@ void dJointSetAMotorAxis( dJointID j, int anum, int rel, dReal x, dReal y, dReal
 void dJointSetAMotorAngle( dJointID j, int anum, dReal angle )
 {
     dxJointAMotor* joint = ( dxJointAMotor* )j;
-    dAASSERT( joint && anum >= 0 && anum < 3 );
+    dAASSERT( joint && anum >= 0 && anum < 2 );
     checktype( joint, AMotor );
     if ( joint->mode == dAMotorUser )
     {
         if ( anum < 0 ) anum = 0;
-        if ( anum > 3 ) anum = 3;
+        if ( anum > 2 ) anum = 2;
         joint->angle[anum] = angle;
     }
 }
@@ -439,10 +439,10 @@ int dJointGetAMotorAxisRel( dJointID j, int anum )
 dReal dJointGetAMotorAngle( dJointID j, int anum )
 {
     dxJointAMotor* joint = ( dxJointAMotor* )j;
-    dAASSERT( joint && anum >= 0 && anum < 3 );
+    dAASSERT( joint && anum >= 0 && anum < 2 );
     checktype( joint, AMotor );
     if ( anum < 0 ) anum = 0;
-    if ( anum > 3 ) anum = 3;
+    if ( anum > 2 ) anum = 2;
     return joint->angle[anum];
 }
 

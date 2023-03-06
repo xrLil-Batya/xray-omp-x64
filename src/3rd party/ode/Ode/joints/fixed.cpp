@@ -226,7 +226,7 @@ void dJointSetFixedQuaternionPos(dJointID J, dQuaternion quaternion, dReal * pos
             joint->qrel[0] = quaternion[0];//joint->node[0].body->q[0];
             int i;
             for (i = 1; i < 4; i++) joint->qrel[i] = -quaternion[i];//-joint->node[0].body->q[i];
-            for (i = 0; i < 4; i++) joint->offset[i] = pos[i];//joint->node[0].body->pos[i];
+            for (i = 0; i < 3; i++) joint->offset[i] = pos[i];//joint->node[0].body->pos[i];
         }
     }
 }

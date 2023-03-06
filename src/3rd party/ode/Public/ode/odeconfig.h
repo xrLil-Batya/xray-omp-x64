@@ -68,23 +68,27 @@
 
 /* Define the dInfinity macro */
 #ifdef INFINITY
-  #define dInfinity INFINITY
-#elif defined(HUGE_VAL)
-  #ifdef dSINGLE
-    #ifdef HUGE_VALF
-      #define dInfinity HUGE_VALF
-    #else
-      #define dInfinity ((float)HUGE_VAL)
-    #endif
-  #else
-    #define dInfinity HUGE_VAL
-  #endif
+#ifdef dSINGLE
+#define dInfinity ((float)INFINITY)
 #else
-  #ifdef dSINGLE
-    #define dInfinity ((float)(1.0/0.0))
-  #else
-    #define dInfinity (1.0/0.0)
-  #endif
+#define dInfinity ((double)INFINITY)
+#endif
+#elif defined(HUGE_VAL)
+#ifdef dSINGLE
+#ifdef HUGE_VALF
+#define dInfinity HUGE_VALF
+#else
+#define dInfinity ((float)HUGE_VAL)
+#endif
+#else
+#define dInfinity HUGE_VAL
+#endif
+#else
+#ifdef dSINGLE
+#define dInfinity ((float)(1.0/0.0))
+#else
+#define dInfinity (1.0/0.0)
+#endif
 #endif
 
 
