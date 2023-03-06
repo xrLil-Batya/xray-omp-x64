@@ -366,32 +366,6 @@ copy /Y "$(xrSdkDir)binaries\x64\BugTrap-x64.dll" "$(OutputPath)BugTrap-x64.dll"
     <ClInclude Include="defines.h" />
     <ClInclude Include="device.h" />
     <ClInclude Include="doug_lea_memory_allocator.h" />
-    <ClInclude Include="editor_environment_ambients_ambient.hpp" />
-    <ClInclude Include="editor_environment_ambients_effect_id.hpp" />
-    <ClInclude Include="editor_environment_ambients_manager.hpp" />
-    <ClInclude Include="editor_environment_ambients_sound_id.hpp" />
-    <ClInclude Include="editor_environment_detail.hpp" />
-    <ClInclude Include="editor_environment_effects_effect.hpp" />
-    <ClInclude Include="editor_environment_effects_manager.hpp" />
-    <ClInclude Include="editor_environment_levels_manager.hpp" />
-    <ClInclude Include="editor_environment_manager.hpp" />
-    <ClInclude Include="editor_environment_sound_channels_channel.hpp" />
-    <ClInclude Include="editor_environment_sound_channels_manager.hpp" />
-    <ClInclude Include="editor_environment_sound_channels_source.hpp" />
-    <ClInclude Include="editor_environment_suns_blend.hpp" />
-    <ClInclude Include="editor_environment_suns_flare.hpp" />
-    <ClInclude Include="editor_environment_suns_flares.hpp" />
-    <ClInclude Include="editor_environment_suns_gradient.hpp" />
-    <ClInclude Include="editor_environment_suns_manager.hpp" />
-    <ClInclude Include="editor_environment_suns_sun.hpp" />
-    <ClInclude Include="editor_environment_thunderbolts_collection.hpp" />
-    <ClInclude Include="editor_environment_thunderbolts_gradient.hpp" />
-    <ClInclude Include="editor_environment_thunderbolts_manager.hpp" />
-    <ClInclude Include="editor_environment_thunderbolts_thunderbolt.hpp" />
-    <ClInclude Include="editor_environment_thunderbolts_thunderbolt_id.hpp" />
-    <ClInclude Include="editor_environment_weathers_manager.hpp" />
-    <ClInclude Include="editor_environment_weathers_time.hpp" />
-    <ClInclude Include="editor_environment_weathers_weather.hpp" />
     <ClInclude Include="edit_actions.h" />
     <ClInclude Include="Effector.h" />
     <ClInclude Include="EffectorPP.h" />
@@ -511,38 +485,6 @@ copy /Y "$(xrSdkDir)binaries\x64\BugTrap-x64.dll" "$(OutputPath)BugTrap-x64.dll"
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release_Dedicated|x64'">4127; 4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Mixed|x64'">4127; 4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
-    <ClCompile Include="editor_environment_ambients_ambient.cpp" />
-    <ClCompile Include="editor_environment_ambients_effect_id.cpp" />
-    <ClCompile Include="editor_environment_ambients_manager.cpp" />
-    <ClCompile Include="editor_environment_ambients_sound_id.cpp" />
-    <ClCompile Include="editor_environment_detail.cpp" />
-    <ClCompile Include="editor_environment_effects_effect.cpp" />
-    <ClCompile Include="editor_environment_effects_manager.cpp" />
-    <ClCompile Include="editor_environment_levels_manager.cpp" />
-    <ClCompile Include="editor_environment_manager.cpp" />
-    <ClCompile Include="editor_environment_manager_properties.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Dedicated|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Mixed|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="editor_environment_sound_channels_channel.cpp" />
-    <ClCompile Include="editor_environment_sound_channels_manager.cpp" />
-    <ClCompile Include="editor_environment_sound_channels_source.cpp" />
-    <ClCompile Include="editor_environment_suns_blend.cpp" />
-    <ClCompile Include="editor_environment_suns_flare.cpp" />
-    <ClCompile Include="editor_environment_suns_flares.cpp" />
-    <ClCompile Include="editor_environment_suns_gradient.cpp" />
-    <ClCompile Include="editor_environment_suns_manager.cpp" />
-    <ClCompile Include="editor_environment_suns_sun.cpp" />
-    <ClCompile Include="editor_environment_thunderbolts_collection.cpp" />
-    <ClCompile Include="editor_environment_thunderbolts_gradient.cpp" />
-    <ClCompile Include="editor_environment_thunderbolts_manager.cpp" />
-    <ClCompile Include="editor_environment_thunderbolts_thunderbolt.cpp" />
-    <ClCompile Include="editor_environment_thunderbolts_thunderbolt_id.cpp" />
-    <ClCompile Include="editor_environment_weathers_manager.cpp" />
-    <ClCompile Include="editor_environment_weathers_time.cpp" />
-    <ClCompile Include="editor_environment_weathers_weather.cpp" />
     <ClCompile Include="edit_actions.cpp" />
     <ClCompile Include="Effector.cpp" />
     <ClCompile Include="EffectorPP.cpp" />
