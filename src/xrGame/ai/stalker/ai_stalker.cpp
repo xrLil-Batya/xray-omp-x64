@@ -758,14 +758,14 @@ void CAI_Stalker::UpdateCL()
 	}
 
 	if (g_Alive()) {
-		if (g_mt_config.test(mtObjectHandler) && CObjectHandler::planner().initialized()) {
-			fastdelegate::FastDelegate<void()>								f = fastdelegate::MakeDelegate(this, &CAI_Stalker::update_object_handler);
+		if (g_mt_config.test(mtObjectHandler)/* && CObjectHandler::planner().initialized()*/) {
+			auto f = fastdelegate::MakeDelegate(this, &CAI_Stalker::update_object_handler);
 #ifdef DEBUG
 			xr_vector<fastdelegate::FastDelegate0<> >::const_iterator	I;
 			I	= std::find(Device.seqParallel.begin(),Device.seqParallel.end(),f);
 			VERIFY							(I == Device.seqParallel.end());
 #endif
-			Device.seqParallel.push_back	(fastdelegate::MakeDelegate(this,&CAI_Stalker::update_object_handler));
+			Device.seqParallel.push_back	(f);
 		}
 		else {
 			START_PROFILE("stalker/client_update/object_handler")
@@ -883,7 +883,7 @@ void CAI_Stalker::shedule_Update		( u32 DT )
 #if 0//def DEBUG
 		memory().visual().check_visibles();
 #endif
-		if ( false && g_mt_config.test(mtAiVision) )
+		if ( g_mt_config.test(mtAiVision) )
 			Device.seqParallel.push_back(fastdelegate::MakeDelegate(this,&CCustomMonster::Exec_Visibility));
 		else {
 			START_PROFILE("stalker/schedule_update/vision")
