@@ -54,7 +54,7 @@ void	game_cl_GameState::net_import_GameTime(NET_Packet& P)
 	float			TimeFactor;
 	P.r_float		(TimeFactor);
 
-	if(OnClient() && !IsImGuiWeatherEditorActive)
+	if(IsImGuiWeatherEditorActive)
 	{
 		game_GameState::SetGameTimeFactor	(GameTime,TimeFactor);
 	}
@@ -73,15 +73,15 @@ void	game_cl_GameState::net_import_GameTime(NET_Packet& P)
 	P.r_stringZ(WFX_name_import);
 
 	u64 OldTime = game_GameState::GetEnvironmentGameTime();
-	if(OnClient() && !IsImGuiWeatherEditorActive)
+	if(IsImGuiWeatherEditorActive)
 	{
 		game_GameState::SetEnvironmentGameTimeFactor	(GameEnvironmentTime,EnvironmentTimeFactor);
 	}
 
-	if (OldTime > GameEnvironmentTime)
+	if (OldTime > GameEnvironmentTime && !IsImGuiWeatherEditorActive)
 		GamePersistent().Environment().Invalidate();
 
-	if (OnClient() && g_pGamePersistent &&!IsImGuiWeatherEditorActive)
+	if (g_pGamePersistent && !IsImGuiWeatherEditorActive)
 	{
 		GamePersistent().Environment().wfx_time = wfx_time;
 		if (wfx_time > 0)

@@ -434,15 +434,13 @@ void CEnvDescriptorMixer::lerp(CEnvironment*, CEnvDescriptor& A, CEnvDescriptor&
 
     clouds_color.lerp(A.clouds_color, B.clouds_color, f);
 
-	if(!IsImGuiWeatherEditorActive)
-		sky_rotation = (fi*A.sky_rotation + f*B.sky_rotation);
+	sky_rotation = (fi*A.sky_rotation + f*B.sky_rotation);
 
     //. far_plane = (fi*A.far_plane + f*B.far_plane + Mdf.far_plane)*psVisDistance*modif_power;
-	if(!IsImGuiWeatherEditorActive)
-		if (Mdf.use_flags.test(eViewDist))
-			far_plane = (fi*A.far_plane + f*B.far_plane + Mdf.far_plane)*psVisDistance*modif_power;
-		else
-			far_plane = (fi*A.far_plane + f*B.far_plane)*psVisDistance;
+	if (Mdf.use_flags.test(eViewDist))
+		far_plane = (fi*A.far_plane + f*B.far_plane + Mdf.far_plane)*psVisDistance*modif_power;
+	else
+		far_plane = (fi*A.far_plane + f*B.far_plane)*psVisDistance;
 
     //. fog_color.lerp (A.fog_color,B.fog_color,f).add(Mdf.fog_color).mul(modif_power);
     fog_color.lerp(A.fog_color, B.fog_color, f);
@@ -450,31 +448,27 @@ void CEnvDescriptorMixer::lerp(CEnvironment*, CEnvDescriptor& A, CEnvDescriptor&
         fog_color.add(Mdf.fog_color).mul(modif_power);
 
     //. fog_density = (fi*A.fog_density + f*B.fog_density + Mdf.fog_density)*modif_power;
-	if(!IsImGuiWeatherEditorActive)
-		fog_density = (fi*A.fog_density + f*B.fog_density);
-    if (!IsImGuiWeatherEditorActive && Mdf.use_flags.test(eFogDensity))
+	fog_density = (fi*A.fog_density + f*B.fog_density);
+    if (Mdf.use_flags.test(eFogDensity))
     {
         fog_density += Mdf.fog_density;
         fog_density *= modif_power;
     }
 
-	if(!IsImGuiWeatherEditorActive)
-	{
-		fog_distance = (fi*A.fog_distance + f*B.fog_distance);
-		fog_near = (1.0f - fog_density)*0.85f * fog_distance;
-		fog_far = 0.99f * fog_distance;
+	fog_distance = (fi*A.fog_distance + f*B.fog_distance);
+	fog_near = (1.0f - fog_density)*0.85f * fog_distance;
+	fog_far = 0.99f * fog_distance;
 
-		rain_density = fi*A.rain_density + f*B.rain_density;
-		rain_color.lerp(A.rain_color, B.rain_color, f);
-		bolt_period = fi*A.bolt_period + f*B.bolt_period;
-		bolt_duration = fi*A.bolt_duration + f*B.bolt_duration;
-		// wind
-		wind_velocity = fi*A.wind_velocity + f*B.wind_velocity;
-		wind_direction = fi*A.wind_direction + f*B.wind_direction;
+	rain_density = fi*A.rain_density + f*B.rain_density;
+	rain_color.lerp(A.rain_color, B.rain_color, f);
+	bolt_period = fi*A.bolt_period + f*B.bolt_period;
+	bolt_duration = fi*A.bolt_duration + f*B.bolt_duration;
+	// wind
+	wind_velocity = fi*A.wind_velocity + f*B.wind_velocity;
+	wind_direction = fi*A.wind_direction + f*B.wind_direction;
 
 		m_fSunShaftsIntensity = fi*A.m_fSunShaftsIntensity + f*B.m_fSunShaftsIntensity;
 		m_fWaterIntensity = fi*A.m_fWaterIntensity + f*B.m_fWaterIntensity;
-	}
     // colors
     //. sky_color.lerp (A.sky_color,B.sky_color,f).add(Mdf.sky_color).mul(modif_power);
     sky_color.lerp(A.sky_color, B.sky_color, f);
