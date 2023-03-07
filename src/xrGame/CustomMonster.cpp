@@ -317,17 +317,6 @@ void CCustomMonster::net_Import(NET_Packet& P)
 
 void CCustomMonster::shedule_Update	( u32 DT )
 {
-	if (!IsGameTypeSingle() && OnClient())
-	{
-		// Aucuaaai aiaaeo aeiaa?a ia eeeaioao
-		inherited::shedule_Update(DT);
-
-		float dt = float(DT) / 1000.f;
-		if (dt > 3) return;
-
-		m_dwCurrentTime = Device.dwTimeGlobal;
-		return;
-	}
 	VERIFY				(!g_Alive() || processing_enabled());
 	// Queue shrink
 	VERIFY				(_valid(Position()));
