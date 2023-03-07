@@ -377,16 +377,15 @@ void CUIActorMenu::DetachAddon(LPCSTR addon_name, PIItem itm)
 	if (OnClient())
 	{
 		NET_Packet								P;
-		if(itm==NULL)
+		if(!itm)
 			CGameObject::u_EventGen				(P, GE_ADDON_DETACH, CurrentIItem()->object().ID());
 		else
 			CGameObject::u_EventGen				(P, GE_ADDON_DETACH, itm->object().ID());
 
 		P.w_stringZ								(addon_name);
 		CGameObject::u_EventSend				(P);
-		return;
 	}
-	if(itm==NULL)
+	if(!itm)
 		CurrentIItem()->Detach					(addon_name, true);
 	else
 		itm->Detach								(addon_name, true);

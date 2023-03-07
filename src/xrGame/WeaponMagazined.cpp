@@ -1101,10 +1101,7 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 	CSilencer*			pSilencer				= smart_cast<CSilencer*>(pIItem);
 	CGrenadeLauncher*	pGrenadeLauncher		= smart_cast<CGrenadeLauncher*>(pIItem);
 	
-	if(pScope &&
-	   m_eScopeStatus == ALife::eAddonAttachable &&
-	   (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonScope) == 0 /*&&
-	   (m_scopes[cur_scope]->m_sScopeName == pIItem->object().cNameSect())*/)
+	if(pScope && m_eScopeStatus == ALife::eAddonAttachable && !IsScopeAttached())
 	{
 		SCOPES_VECTOR_IT it = m_scopes.begin();
 		for(; it!=m_scopes.end(); it++)
@@ -1123,18 +1120,12 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonScope;
 		result = true;
 	}
-	else if(pSilencer &&
-	   m_eSilencerStatus == ALife::eAddonAttachable &&
-	   (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonSilencer) == 0 &&
-	   (m_sSilencerName == pIItem->object().cNameSect()))
+	else if(pSilencer && m_eSilencerStatus == ALife::eAddonAttachable && !IsSilencerAttached())
 	{
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonSilencer;
 		result = true;
 	}
-	else if(pGrenadeLauncher &&
-	   m_eGrenadeLauncherStatus == ALife::eAddonAttachable &&
-	   (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) == 0 &&
-	   (m_sGrenadeLauncherName == pIItem->object().cNameSect()))
+	else if(pGrenadeLauncher && m_eGrenadeLauncherStatus == ALife::eAddonAttachable && !IsGrenadeLauncherAttached())
 	{
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
 		result = true;
@@ -1189,10 +1180,9 @@ bool CWeaponMagazined::DetachScope(const char* item_section_name, bool b_spawn_i
 
 bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item)
 {
-	if(		m_eScopeStatus == ALife::eAddonAttachable &&
-			DetachScope(item_section_name, b_spawn_item))
+	if(m_eScopeStatus == ALife::eAddonAttachable && DetachScope(item_section_name, b_spawn_item))
 	{
-		if ((m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonScope) == 0)
+		if (!IsScopeAttached())
 		{
 			Msg("ERROR: scope addon already detached.");
 			return true;
@@ -1204,10 +1194,9 @@ bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item)
 
 		return CInventoryItemObject::Detach(item_section_name, b_spawn_item);
 	}
-	else if(m_eSilencerStatus == ALife::eAddonAttachable &&
-			(m_sSilencerName == item_section_name))
+	else if(m_eSilencerStatus == ALife::eAddonAttachable && !xr_strcmp(*m_sSilencerName, item_section_name))
 	{
-		if ((m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonSilencer) == 0)
+		if (!IsSilencerAttached())
 		{
 			Msg("ERROR: silencer addon already detached.");
 			return true;
@@ -1218,10 +1207,9 @@ bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item)
 		InitAddons();
 		return CInventoryItemObject::Detach(item_section_name, b_spawn_item);
 	}
-	else if(m_eGrenadeLauncherStatus == ALife::eAddonAttachable &&
-			(m_sGrenadeLauncherName == item_section_name))
+	else if(m_eGrenadeLauncherStatus == ALife::eAddonAttachable && !xr_strcmp(*m_sGrenadeLauncherName, item_section_name))
 	{
-		if ((m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) == 0)
+		if (!IsGrenadeLauncherAttached())
 		{
 			Msg("ERROR: grenade launcher addon already detached.");
 			return true;
