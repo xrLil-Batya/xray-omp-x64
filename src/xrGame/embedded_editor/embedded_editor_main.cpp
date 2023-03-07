@@ -5,6 +5,7 @@
 #include "embedded_editor_helper.h"
 #include "embedded_editor_weather.h"
 #include "embedded_editor_ui.h"
+#include "game_cl_mp.h"
 #include <addons/imguinodegrapheditor/imguinodegrapheditor.h>
 #include <dinput.h>
 #include <imgui.h>
@@ -92,7 +93,13 @@ bool Editor_KeyPress(int key)
 {
 	if (key == DIK_F10)
 	{
-		stage = static_cast<EditorStage>((static_cast<int>(stage) + 1) % static_cast<int>(EditorStage::Count));
+        if (!Game().local_player)
+            return false;
+
+		if(Game().local_player->testFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS))
+			stage = static_cast<EditorStage>((static_cast<int>(stage) + 1) % static_cast<int>(EditorStage::Count));
+		else
+			Msg("ImGUI: Available only for admins.");
 	}
 	else if (key == DIK_RALT || key == DIK_LALT)
         isAlt = true;
