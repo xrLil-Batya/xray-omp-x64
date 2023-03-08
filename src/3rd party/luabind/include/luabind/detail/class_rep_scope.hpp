@@ -1117,6 +1117,9 @@ namespace luabind { namespace detail
 		// TODO: lua_call may invoke longjump! make sure we don't have any memory leaks!
 		// we don't have any stack objects here
 		lua_call(L, args, 0);
+		lua_pushstring(L, "super");
+		lua_pushnil(L);
+		lua_settable(L, LUA_GLOBALSINDEX);
 
 #ifndef LUABIND_NO_ERROR_CHECKING
 

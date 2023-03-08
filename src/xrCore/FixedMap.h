@@ -342,7 +342,7 @@ public:
     size_t allocated_memory() const { return limit * sizeof(value_type); }
 
     [[nodiscard]] bool empty() const { return pool == 0; }
-    void clear() { pool = 0; }
+    void clear() { destroy(); }
 
     value_type* begin() { return nodes; }
     value_type* end() { return nodes + pool; }

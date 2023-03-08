@@ -298,9 +298,11 @@ void destroySound()
 
 void destroySettings()
 {
-    CInifile** s = (CInifile**)(&pSettings);
-    xr_delete(*s);
-    xr_delete(pGameIni);
+	auto s = const_cast<CInifile**>(&pSettings);
+	xr_delete(*s);
+	auto sa = const_cast<CInifile**>(&pSettingsAuth);
+	xr_delete(*sa);
+	xr_delete(pGameIni);
 }
 
 void destroyConsole()

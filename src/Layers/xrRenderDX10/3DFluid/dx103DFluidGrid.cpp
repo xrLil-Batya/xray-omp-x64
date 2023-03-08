@@ -39,7 +39,10 @@ dx103DFluidGrid::dx103DFluidGrid()
 
 dx103DFluidGrid::~dx103DFluidGrid()
 {
-	//	TODO: implement init/deinit functionality and guards
+    _RELEASE(m_pRenderQuadBuffer);
+    _RELEASE(m_pSlicesBuffer);
+    _RELEASE(m_pBoundarySlicesBuffer);
+    _RELEASE(m_pBoundaryLinesBuffer);
 }
 
 void dx103DFluidGrid::Initialize( int gridWidth, int gridHeight, int gridDepth)
