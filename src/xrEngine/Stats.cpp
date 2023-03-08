@@ -341,7 +341,7 @@ void CStats::Show()
     if (psDeviceFlags.test(rsFPS))
     {
         const auto fps = u32(fFPS);
-        fpsFont->Out(Device.dwWidth - 40, 5, "%3d", fps);
+        fpsFont->Out(float(Device.dwWidth - 40), 5.f, "%3d", fps);
         fpsFont->OnRender();
     }
 

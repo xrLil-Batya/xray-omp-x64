@@ -231,8 +231,8 @@ bool Editor_MouseMove(int dx, int dy)
     ImGuiIO& io = ImGui::GetIO();
     POINT p;
     GetCursorPos(&p);
-    io.MousePos.x = p.x;
-    io.MousePos.y = p.y;
+    io.MousePos.x = static_cast<float>(p.x);
+    io.MousePos.y = static_cast<float>(p.y);
     return true;
 }
 

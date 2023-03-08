@@ -290,9 +290,6 @@ void CEnvDescriptor::load(CEnvironment& environment, CInifile& config)
 		float sun_alt = m_sun_pos_config->r_float(sun_identifier, "sun_altitude");
 		float sun_long = m_sun_pos_config->r_float(sun_identifier, "sun_longitude");
         sun_dir.setHP(deg2rad(sun_alt), deg2rad(sun_long));
-
-        delete[] sun_identifier;
-        delete[] file_name;
 	}
 	else
 	{

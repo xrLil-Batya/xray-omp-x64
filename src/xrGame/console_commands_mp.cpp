@@ -612,8 +612,8 @@ protected:
 		param_name[0]	= 0;
 
 		sscanf_s(args_string, "%16s %32s",
-			action_name, sizeof(action_name),
-			param_name, sizeof(param_name));
+			action_name, static_cast<u32>(sizeof(action_name)),
+			param_name, static_cast<u32>(sizeof(param_name)));
 		m_action_param = param_name;
 
 		if (!xr_strcmp(action_name, "roundstart"))
@@ -966,7 +966,7 @@ public:
 
 		char hex_digest[64];
 		s32 ban_time = 0;
-		if (sscanf_s(args_, "%s %i", &hex_digest, sizeof(hex_digest), &ban_time) != 2)
+		if (sscanf_s(args_, "%s %i", &hex_digest, static_cast<u32>(sizeof(hex_digest)), &ban_time) != 2)
 		{
 			Msg("! ERROR: bad command parameters.");
 			Msg("Ban player. Format: \"sv_banplayer_by_digest <hex digest> <ban_time_in_sec>\". To get player hex digest you can enter: sv_listplayers_banned");
@@ -1004,7 +1004,7 @@ public:
 			tmp_sv_game->UnBanPlayer(last_printed_player_banned);
 		} else
 		{
-			size_t player_index = 0;
+			u32 player_index = 0;
 			if (sscanf_s(args_, "%u", &player_index) != 1)
 			{
 				Msg("! ERROR: bad command parameters.");
@@ -1013,7 +1013,7 @@ public:
 				);
 				return;
 			}
-			tmp_sv_game->UnBanPlayer(player_index);
+			tmp_sv_game->UnBanPlayer(static_cast<size_t>(player_index));
 		}
 	}
 	virtual void	Info		(TInfo& I)
@@ -1223,7 +1223,7 @@ public:
 			exclude_raid_from_args(args, tmp_dest, sizeof(tmp_dest));
 			if (xr_strlen(tmp_dest))
 			{
-				sscanf_s(tmp_dest, "%s", filter_string, sizeof(filter_string));
+				sscanf_s(tmp_dest, "%s", filter_string, static_cast<u32>(sizeof(filter_string)));
 				tmp_functor.filter_string = filter_string;
 			}
 		}
@@ -1306,7 +1306,7 @@ public:
 		exclude_raid_from_args(args, tmp_dest, sizeof(tmp_dest));
 		if (xr_strlen(tmp_dest))
 		{
-			sscanf_s(tmp_dest, "%s", filter_dest, sizeof(filter_dest));
+			sscanf_s(tmp_dest, "%s", filter_dest, static_cast<u32>(sizeof(filter_dest)));
 		}
 		tmp_sv_game->PrintBanList(filter_dest);
 		Level().Server->Print_Banned_Addreses();
@@ -1335,9 +1335,9 @@ public:
 		GameType[0]		=0;
 		
 		sscanf_s		(args,"%255s %255s %255s",
-			LevelName, sizeof(LevelName),
-			LevelVersion, sizeof(LevelVersion),
-			GameType, sizeof(GameType)
+			LevelName, static_cast<u32>(sizeof(LevelName)),
+			LevelVersion, static_cast<u32>(sizeof(LevelVersion)),
+			GameType, static_cast<u32>(sizeof(GameType))
 		);
 
 		EGameIDs GameTypeID = ParseStringToGameType(GameType);
@@ -1435,8 +1435,8 @@ public:
 		LevelName[0]	=	0;
 		LevelVersion[0] =	0;
 		sscanf_s		(args,"%255s %255s",
-			LevelName, sizeof(LevelName),
-			LevelVersion, sizeof(LevelVersion)
+			LevelName, static_cast<u32>(sizeof(LevelName)),
+			LevelVersion, static_cast<u32>(sizeof(LevelVersion))
 		);
 
 		string1024		argsNew;
@@ -1988,7 +1988,7 @@ public:
 		string1024 buff;
 		exclude_raid_from_args(arguments, buff, sizeof(buff));
 
-		if (sscanf_s(buff, "%u %s", &tmp_client_id, &section, sizeof(section)) != 2)
+		if (sscanf_s(buff, "%u %s", &tmp_client_id, &section, static_cast<u32>(sizeof(section))) != 2)
 		{
 			Msg("! ERROR: bad command parameters.");
 			Msg("Spawn item to player. Format: \"sv_spawn_to_player_inv <player session id> <item section>\"");
@@ -2026,7 +2026,7 @@ public:
 		string1024 buff;
 		exclude_raid_from_args(arguments, buff, sizeof(buff));
 
-		if (sscanf_s(buff, "%hu %s", &tmp_id, &section, sizeof(section)) != 2)
+		if (sscanf_s(buff, "%hu %s", &tmp_id, &section, static_cast<u32>(sizeof(section))) != 2)
 		{
 			Msg("! ERROR: bad command parameters.");
 			Msg("Spawn item by ID. Format: \"sv_spawn_to_obj_with_id <player id> <item section>\"");
@@ -2062,7 +2062,7 @@ public:
 		string1024 buff;
 		exclude_raid_from_args(arguments, buff, sizeof(buff));
 
-		if (sscanf_s(buff, "%s %f %f %f", &section, sizeof(section), &vec.x, &vec.y, &vec.z) != 4)
+		if (sscanf_s(buff, "%s %f %f %f", &section, static_cast<u32>(sizeof(section)), &vec.x, &vec.y, &vec.z) != 4)
 		{
 			Msg("! ERROR: bad command parameters.");
 			Msg("Spawn object. Format: \"sv_spawn_on_position <item section> <position>\"");
@@ -2291,7 +2291,7 @@ public:
 		string128 name;
 		s32 money;
 
-		if (sscanf_s(args, "%d %s", &money, &name, sizeof(name)) != 2)
+		if (sscanf_s(args, "%d %s", &money, &name, static_cast<u32>(sizeof(name))) != 2)
 		{
 			Msg("! Transfer money to player. Format: \"transfer_money <money> <player name>\"");
 			return;

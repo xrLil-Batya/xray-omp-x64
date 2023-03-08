@@ -254,7 +254,8 @@ protected:
 public:
     IC IReader()
     {
-        Pos = 0;
+        Pos = Size = iterpos = 0;
+        data = nullptr;
     }
 
     virtual ~IReader() {}

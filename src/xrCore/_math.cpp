@@ -152,9 +152,9 @@ XRCORE_API u64 QPC()
 
 XRCORE_API u64 QPC_Freq()
 {
-    u64 qpc_freq;
-    QueryPerformanceFrequency((PLARGE_INTEGER)&qpc_freq);
-    return qpc_freq;
+    u64 qpcfreq;
+    QueryPerformanceFrequency((PLARGE_INTEGER)&qpcfreq);
+    return qpcfreq;
 }
 
 
@@ -186,14 +186,14 @@ void Detect()
     clk_per_second = end - start;
 
     // Detect RDTSC Overhead
-    u64 clk_overhead = 0;
+    u64 clkoverhead = 0;
     for (u32 i = 0; i < 256; i++)
     {
         start = GetCLK();
-        clk_overhead += GetCLK() - start;
+        clkoverhead += GetCLK() - start;
     }
-    clk_overhead /= 256;
-    clk_per_second -= clk_overhead;
+    clkoverhead /= 256;
+    clk_per_second -= clkoverhead;
 
     // Detect QPC
     LARGE_INTEGER Freq;

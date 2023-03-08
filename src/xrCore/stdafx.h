@@ -7,6 +7,9 @@
 #pragma once
 //#define VLD_FORCE_ENABLE
 #pragma warning (disable:4661)
+#pragma warning(disable:4267)
+#pragma warning(disable:4244)
+#pragma warning(disable:4366)
 
 #include "xrCore.h"
 #include "xrCore_platform.h"

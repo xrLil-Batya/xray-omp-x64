@@ -73,12 +73,12 @@ public:
         B.count = size;
     }
 
-    NET_Buffer B;
+    NET_Buffer B{};
     u32 r_pos;
     u32 timeReceive;
     bool w_allow;
 public:
-    NET_Packet() :inistream(NULL), w_allow(true) {}
+    NET_Packet() :inistream(nullptr), w_allow(true) { r_pos = timeReceive = 0; }
     // writing - main
     IC void write_start() { B.count = 0; INI_W(move_begin()); }
     IC void w_begin(u16 type) { B.count = 0; w_u16(type); }

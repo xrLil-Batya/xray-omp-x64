@@ -152,6 +152,7 @@ void	CRenderTarget::u_stencil_optimize	(eStencilOptimizeMode eSOM)
 		break;
 	default:
 		VERIFY(!"CRenderTarget::u_stencil_optimize. switch no default!");
+		break;
 	}	
 
 	RCache.set_Geometry			(g_combine		);
@@ -562,8 +563,8 @@ CRenderTarget::CRenderTarget		()
 	//	TODO: DX10: Create resources only when DX10 rain is enabled.
 	//	Or make DX10 rain switch dynamic?
 	{
-		CBlender_rain	TempBlender;
-		s_rain.create( &TempBlender, "null");
+		CBlender_rain	TempRainBlender;
+		s_rain.create( &TempRainBlender, "null");
 
 		if( RImplementation.o.dx10_msaa )
 		{

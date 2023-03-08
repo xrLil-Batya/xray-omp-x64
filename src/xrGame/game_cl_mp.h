@@ -290,15 +290,15 @@ public:
 				{
 					file_transfer::filereceiver_node*	m_frnode;
 					shared_str							m_file_name;
-					clientdata_event_t					m_response_type;
+					clientdata_event_t					m_response_type{};
 					bool								m_active;
 					u32									m_downloaded_size;
 					u32									m_max_size;
 					game_cl_mp*							m_owner;
 					CMemoryWriter						m_writer;
-					fr_callback_binder() : m_frnode(NULL), m_active(false) {};
-					void __stdcall		receiving_file_callback(file_transfer::receiving_status_t status, u32 bytes_received, u32 data_size);
-					void __stdcall		receiving_serverinfo_callback(file_transfer::receiving_status_t status, u32 bytes_received, u32 data_size);
+					fr_callback_binder() : m_frnode(nullptr), m_active(false) { m_downloaded_size = m_max_size = 0; m_owner = nullptr; };
+					void receiving_file_callback(file_transfer::receiving_status_t status, u32 bytes_received, u32 data_size);
+					void receiving_serverinfo_callback(file_transfer::receiving_status_t status, u32 bytes_received, u32 data_size);
 				};
 				struct detected_cheater_t
 				{

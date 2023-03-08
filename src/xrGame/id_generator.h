@@ -23,8 +23,8 @@ class CID_Generator {
 private:
 	struct SID_Block {
 		CHUNK_ID	m_tCount;
-		TIME_ID		m_tTimeID;
-		TYPE_ID		m_tpIDs[tBlockSize];
+		TIME_ID		m_tTimeID{};
+		TYPE_ID		m_tpIDs[tBlockSize]{};
 
 		IC				SID_Block	() : m_tCount(0) {}
 		

@@ -88,7 +88,7 @@ public:
 		u32							empty;
     	vis_data 					vis;
         Slot** 						slots[dm_cache1_count*dm_cache1_count];
-		CacheSlot1()				{empty=1; vis.clear();}
+		CacheSlot1() { for (u8 i = 0; i < 16; i++) slots[i] = nullptr; empty = 1; vis.clear(); }
     };
 
 	typedef	xr_vector<xr_vector <SlotItemVec* > >	vis_list;

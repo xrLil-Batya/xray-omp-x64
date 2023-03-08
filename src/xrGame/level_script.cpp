@@ -726,7 +726,7 @@ void StopHudMotion()
 
 float MotionLength(LPCSTR section, LPCSTR name, float speed)
 {
-	return g_player_hud->motion_length_script(section, name, speed);
+	return static_cast<float>(g_player_hud->motion_length_script(section, name, speed));
 }
 
 bool AllowHudMotion()

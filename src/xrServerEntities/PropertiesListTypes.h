@@ -143,7 +143,7 @@ public:
 public:
 	u32					prop_color;
 	u32					val_color;
-    Irect				draw_rect;
+    Irect				draw_rect{};
 public:
     enum{
     	flDisabled		= (1<<0),
@@ -155,7 +155,7 @@ public:
     };
     Flags32				m_Flags;
 public:
-						PropItem		(EPropType _type):type(_type),prop_color(0),val_color(0),item(0),key(0),OnClickEvent(0),OnDrawTextEvent(0),OnItemFocused(0){m_Flags.zero();}
+    PropItem(EPropType _type) :type(_type), prop_color(0), val_color(0), item(0), key(0), OnClickEvent(0), OnDrawTextEvent(0), OnItemFocused(0) { m_Owner = nullptr; m_Flags.zero(); }
 	virtual 			~PropItem		()
     {
     	for (PropValueIt it=values.begin(); values.end() != it; ++it)
@@ -447,9 +447,9 @@ template <class T>
 class NumericValue: public CustomValue<T>
 {
 public:
-    T					lim_mn;
-    T					lim_mx;
-    T					inc;
+    T					lim_mn{};
+    T					lim_mx{};
+    T					inc{};
     int 				dec;
 public:
 						NumericValue	(T* val):CustomValue<T>(val)
@@ -648,7 +648,7 @@ public:
     {
         u32 draw_val 	= GetValue();
         for(u32 i=0; i<cnt; i++) if (items[i].ID==draw_val) return items[i].str;
-        return 0;
+        return "";
     }
 };
 //------------------------------------------------------------------------------

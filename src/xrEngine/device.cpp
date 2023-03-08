@@ -473,7 +473,7 @@ void CRenderDevice::on_idle()
     if (Device.Paused() || bMainMenuActive())
         updateDelta = 16; // 16 ms, ~60 FPS max while paused
     else
-        updateDelta = fps_to_rate;
+        updateDelta = static_cast<u32>(fps_to_rate);
         
     if (fps_to_rate != 0)
     {

@@ -766,7 +766,8 @@ const Fvector& player_hud::attach_rot(u8 part) const
 	else if (m_attached_items[!part])
 		return m_attached_items[!part]->hands_attach_rot();
 
-	return Fvector({ 0.f, 0.f, 0.f });
+	static Fvector nil_rot = { 0.f,0.f,0.f };
+	return nil_rot;
 }
 
 const Fvector& player_hud::attach_pos(u8 part) const
@@ -776,7 +777,8 @@ const Fvector& player_hud::attach_pos(u8 part) const
 	else if (m_attached_items[!part])
 		return m_attached_items[!part]->hands_attach_pos();
 
-	return Fvector({0.f,0.f,0.f});
+	static Fvector nil_pos = { 0.f,0.f,0.f };
+	return nil_pos;
 }
 
 void player_hud::update(const Fmatrix& cam_trans)
