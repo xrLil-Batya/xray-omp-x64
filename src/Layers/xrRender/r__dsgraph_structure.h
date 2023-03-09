@@ -143,10 +143,10 @@ public:
 		//mapMatrix[1].destroy	();
 		for (int i=0; i<SHADER_PASSES_MAX; ++i)
 		{
-			mapNormalPasses[0][i].clear();
-			mapNormalPasses[1][i].clear();
-			mapMatrixPasses[0][i].clear();
-			mapMatrixPasses[1][i].clear();
+			mapNormalPasses[0][i].destroy();
+			mapNormalPasses[1][i].destroy();
+			mapMatrixPasses[0][i].destroy();
+			mapMatrixPasses[1][i].destroy();
 		}
 		mapSorted.clear();
 		mapHUD.clear();
