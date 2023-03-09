@@ -2,9 +2,10 @@
 
 X-Ray OMP Engine x64
 ==========================
+* Движок основан на [STCOP Engine x64](https://github.com/mortany/stcop-engine) и [X-Ray OMP](https://github.com/xray-omp/omp-engine)
+* Использованы наработки: [Advanced X-Ray](https://github.com/DanceManiac/Advanced-X-Ray-Public), [OpenXRay](https://github.com/OpenXRay/xray-16), [xrOxygen](https://github.com/xrLil-Batya/xray-oxygen), [OGSR Engine](https://github.com/OGSR/OGSR-Engine).
 
-## Изменения :
-*  Движок совмещён с правками из X-Ray OMP 1.2
+## Изменения
 *  Перенесена графическая часть из Anomaly 1.5.2 и Screen Space Shaders
 *  Добавлена поддержка погоды из Anomaly
 *  Добавлены ImGUI редакторы погоды и UI
@@ -23,7 +24,7 @@ X-Ray OMP Engine x64
 *  Настройка материала ингейм https://youtu.be/UD3cSvDMpug
 *  Рабочий настройщик положения оружия от третьего лица
 
-## Множество улучшений для оружейной составляющей, а именно:
+## Множество улучшений для оружейной составляющей, а именно
 * Поддержка оружейных конфигов и ogf моделей рук из Anomaly и H.A.Z.E | Reloaded
 * Поддержка худовых анимаций использования предметов
 * Правильная реализация полной-неполной перезарядки
