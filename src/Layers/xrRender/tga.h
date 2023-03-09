@@ -58,7 +58,7 @@ namespace XRay
 			RGBA8 = 2,
 		};
 
-		class XRCORE_API Image
+		class Image
 		{
 		private:
 #pragma pack(push, 1)

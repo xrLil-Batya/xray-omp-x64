@@ -1119,11 +1119,11 @@ long ov_bitrate(OggVorbis_File *vf,int i){
      * so this is slightly transformed to make it work.
      */
     br = bits/ov_time_total(vf,-1);
-    return(rint(br));
+    return (long)rint(br);
   }else{
     if(vf->seekable){
       /* return the actual bitrate */
-      return(rint((vf->offsets[i+1]-vf->dataoffsets[i])*8/ov_time_total(vf,i)));
+      return (long)rint((double)(vf->offsets[i+1]-vf->dataoffsets[i])*8.0/ov_time_total(vf,i));
     }else{
       /* return nominal if set */
       if(vf->vi[i].bitrate_nominal>0){
@@ -1151,7 +1151,7 @@ long ov_bitrate_instant(OggVorbis_File *vf){
   long ret;
   if(vf->ready_state<OPENED)return(OV_EINVAL);
   if(vf->samptrack==0)return(OV_FALSE);
-  ret=vf->bittrack/vf->samptrack*vf->vi[link].rate+.5;
+  ret=(long)((double)vf->bittrack/vf->samptrack*vf->vi[link].rate+.5);
   vf->bittrack=0.f;
   vf->samptrack=0.f;
   return(ret);
@@ -1716,7 +1716,7 @@ int ov_time_seek(OggVorbis_File *vf,double seconds){
 
   /* enough information to convert time offset to pcm offset */
   {
-    ogg_int64_t target=pcm_total+(seconds-time_total)*vf->vi[link].rate;
+    ogg_int64_t target=pcm_total+(ogg_int64_t)(seconds-time_total)*vf->vi[link].rate;
     return(ov_pcm_seek(vf,target));
   }
 }
@@ -1746,7 +1746,7 @@ int ov_time_seek_page(OggVorbis_File *vf,double seconds){
 
   /* enough information to convert time offset to pcm offset */
   {
-    ogg_int64_t target=pcm_total+(seconds-time_total)*vf->vi[link].rate;
+    ogg_int64_t target=pcm_total+(ogg_int64_t)(seconds-time_total)*vf->vi[link].rate;
     return(ov_pcm_seek_page(vf,target));
   }
 }
@@ -2307,9 +2307,9 @@ static int _ov_d_seek_lap(OggVorbis_File *vf,double pos,
                                    from this link gets dumped, this
                                    window array continues to exist */
 
-  lappcm=alloca(sizeof(*lappcm)*ch1);
+  lappcm=malloc(sizeof(*lappcm)*ch1);
   for(i=0;i<ch1;i++)
-    lappcm[i]=alloca(sizeof(**lappcm)*n1);
+    lappcm[i]=malloc(sizeof(**lappcm)*n1);
   _ov_getlap(vf,vi,&vf->vd,lappcm,n1);
 
   /* have lapping data; seek and prime the buffer */

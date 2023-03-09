@@ -583,7 +583,7 @@ void save_mini_dump			(_EXCEPTION_POINTERS *pExceptionInfo)
 
 void format_message	(LPSTR buffer, const u32 &buffer_size)
 {
-    char* message;
+	char* message{};
     DWORD error_code = GetLastError(); 
 
 	if (!error_code)

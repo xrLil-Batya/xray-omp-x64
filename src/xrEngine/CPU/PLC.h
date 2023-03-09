@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #ifndef _EDITOR
+#undef RENDER
 #define RENDER 1
 
 #include "../xrEngine/Render.h"

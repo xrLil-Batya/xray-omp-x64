@@ -139,18 +139,6 @@ select_file_name (char * fname)
  * routines malloc() and free().
  */
 
-GLOBAL(void *)
-jpeg_get_small (j_common_ptr cinfo, size_t sizeofobject)
-{
-  return (void *) malloc(sizeofobject);
-}
-
-GLOBAL(void)
-jpeg_free_small (j_common_ptr cinfo, void * object, size_t sizeofobject)
-{
-  free(object);
-}
-
 
 /*
  * "Large" objects are treated the same as "small" ones.
@@ -158,19 +146,6 @@ jpeg_free_small (j_common_ptr cinfo, void * object, size_t sizeofobject)
  * this file won't actually work in 80x86 small/medium model; at least,
  * you probably won't be able to process useful-size images in only 64KB.
  */
-
-GLOBAL(void FAR *)
-jpeg_get_large (j_common_ptr cinfo, size_t sizeofobject)
-{
-  return (void FAR *) malloc(sizeofobject);
-}
-
-GLOBAL(void)
-jpeg_free_large (j_common_ptr cinfo, void FAR * object, size_t sizeofobject)
-{
-  free(object);
-}
-
 
 /*
  * This routine computes the total memory space available for allocation.
@@ -183,13 +158,6 @@ jpeg_free_large (j_common_ptr cinfo, void FAR * object, size_t sizeofobject)
 #ifndef DEFAULT_MAX_MEM		/* so can override from makefile */
 #define DEFAULT_MAX_MEM		1000000L /* default: one megabyte */
 #endif
-
-GLOBAL(long)
-jpeg_mem_available (j_common_ptr cinfo, long min_bytes_needed,
-		    long max_bytes_needed, long already_allocated)
-{
-  return cinfo->mem->max_memory_to_use - already_allocated;
-}
 
 
 /*
@@ -243,34 +211,8 @@ close_backing_store (j_common_ptr cinfo, backing_store_ptr info)
  * Initial opening of a backing-store object.
  */
 
-GLOBAL(void)
-jpeg_open_backing_store (j_common_ptr cinfo, backing_store_ptr info,
-			 long total_bytes_needed)
-{
-  select_file_name(info->temp_name);
-  if ((info->temp_file = fopen(info->temp_name, RW_BINARY)) == NULL)
-    ERREXITS(cinfo, JERR_TFILE_CREATE, info->temp_name);
-  info->read_backing_store = read_backing_store;
-  info->write_backing_store = write_backing_store;
-  info->close_backing_store = close_backing_store;
-  TRACEMSS(cinfo, 1, JTRC_TFILE_OPEN, info->temp_name);
-}
-
 
 /*
  * These routines take care of any system-dependent initialization and
  * cleanup required.
  */
-
-GLOBAL(long)
-jpeg_mem_init (j_common_ptr cinfo)
-{
-  next_file_num = 0;		/* initialize temp file name generator */
-  return DEFAULT_MAX_MEM;	/* default for max_memory_to_use */
-}
-
-GLOBAL(void)
-jpeg_mem_term (j_common_ptr cinfo)
-{
-  /* no work */
-}
