@@ -113,6 +113,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <WarningLevel>Level2</WarningLevel>
       <DisableSpecificWarnings>5043</DisableSpecificWarnings>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Dedicated|x64'">

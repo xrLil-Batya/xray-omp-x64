@@ -226,6 +226,7 @@
       <DisableSpecificWarnings>4244;4305;4311;4100;4127;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MinimalRebuild>false</MinimalRebuild>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>

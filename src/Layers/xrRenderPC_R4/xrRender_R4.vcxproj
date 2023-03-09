@@ -164,6 +164,7 @@
       <DisableSpecificWarnings>4005;4099</DisableSpecificWarnings>
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <AdditionalDependencies>dxguid.lib;d3dx11.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;nvapi.lib;xrEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>

@@ -142,6 +142,7 @@
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <ImportLibrary>$(xrIntDir)$(Platform)\$(Configuration)\$(TargetName).lib</ImportLibrary>
