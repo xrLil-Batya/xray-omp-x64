@@ -3,14 +3,13 @@
 
 #pragma warning(disable:4995)
 #pragma warning(disable:4267)
-#include "../3rd party/ode/Public/ode/objects.h"
-#include "../3rd party/ode/Ode/joints/joint.h"
+#include "../3rd party/ode/ode/src/objects.h"
+#include "../3rd party/ode/ode/src/joint.h"
 #pragma warning(default:4995)
 #pragma warning(default:4267)
 
+#include "../3rd party/ode/include/ode/objects.h"
 #include "PhysicsCommon.h"
-
-
 
 class CPHIslandFlags
 {

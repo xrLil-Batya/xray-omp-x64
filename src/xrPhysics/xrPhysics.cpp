@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "xrPhysics.h"
 
-#include "../3rd party/ode/Public/ode/memory.h"
+#include "../3rd party/ode/include/ode/memory.h"
 
 //#pragma comment(lib,"xrEngine.lib")
 

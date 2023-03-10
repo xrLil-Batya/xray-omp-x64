@@ -13,10 +13,9 @@
 ///////////////////////////////////////////////////////////////
 #pragma warning(disable:4995)
 #pragma warning(disable:4267)
-#include "../3rd party/ode/ode/collision_kernel.h"
-#include "../3rd party/ode/ode/joints/joint.h"
-#include "../3rd party/ode/Ode/joints/contact.h"
-#include "../3rd party/ode/ode/objects.h"
+#include "../3rd party/ode/ode/src/collision_kernel.h"
+#include "../3rd party/ode/ode/src/joint.h"
+#include "../3rd party/ode/ode/src/objects.h"
 #pragma warning(default:4267)
 #pragma warning(default:4995)
 
@@ -96,19 +95,12 @@ IC void add_contact_body_effector(dBodyID body,const dContact& c,SGameMtl* mater
 	}
 }
 
-
-
-
-
-
-
-
 IC static int CollideIntoGroup(dGeomID o1, dGeomID o2,dJointGroupID jointGroup,CPHIsland* world,const int &MAX_CONTACTS)
 {
 	const int RS= 800+10;
 	const int N = RS;
 	
-	static dContact contacts[RS];
+	static dContact contacts[RS]{};
 	int	collided_contacts=0;
 	// get the contacts up to a maximum of N contacts
 	int n;
@@ -256,7 +248,6 @@ IC static int CollideIntoGroup(dGeomID o1, dGeomID o2,dJointGroupID jointGroup,C
 
 			}
 		}
-
 
 		if	(pushing_neg)
 			surface.mu = std::numeric_limits<dReal>::max();
@@ -439,12 +430,12 @@ void BodyCutForce(dBodyID body,float l_limit,float w_limit)
 	dMatrix3 tmp,invI,I;
 
 	// compute inertia tensor in global frame
-	dMULTIPLY2_333 (tmp,m.I,body->posr.R);
-	dMULTIPLY0_333 (I,body->posr.R,tmp);
+	dMULTIPLY2_333 (tmp,m.I,body->R);
+	dMULTIPLY0_333 (I,body->R,tmp);
 
 	// compute inverse inertia tensor in global frame
-	dMULTIPLY2_333 (tmp,body->invI,body->posr.R);
-	dMULTIPLY0_333 (invI,body->posr.R,tmp);
+	dMULTIPLY2_333 (tmp,body->invI,body->R);
+	dMULTIPLY0_333 (invI,body->R,tmp);
 
 	//angular accel
 	dVector3 wa;

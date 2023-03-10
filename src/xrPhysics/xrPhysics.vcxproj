@@ -147,7 +147,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\3rd party\ode\Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;dSINGLE;_USRDLL;XRPHYSICS_EXPORTS;MSVC;_SECURE_SCL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>
       </StringPooling>
@@ -181,7 +181,7 @@
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <ImportLibrary>$(xrLibDir)$(Platform)\$(Configuration)\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ode.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName).pdb</ProgramDatabaseFile>
     </Link>
   </ItemDefinitionGroup>
@@ -440,8 +440,8 @@
     <ClInclude Include="xrPhysics.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\3rd party\ode\Ode\ode.vcxproj">
-      <Project>{eb58439b-1f16-4e81-b0b3-1e1e95ad4901}</Project>
+    <ProjectReference Include="..\3rd party\ode\contrib\msvc7\ode_default\default.vcxproj">
+      <Project>{1bf75feb-87dd-486c-880b-227987d191c2}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Layers\xrAPI\xrAPI.vcxproj">
       <Project>{1daec516-e52c-4a3c-a4da-ae3553e6e0f8}</Project>
