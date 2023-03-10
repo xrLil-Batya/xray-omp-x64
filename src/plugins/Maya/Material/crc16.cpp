@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 /* CRC16.C  -  by Rob Duff, Vancouver, BC, Canada.  Not copyrighted. */
 /*

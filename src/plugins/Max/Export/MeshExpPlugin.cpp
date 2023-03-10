@@ -1,7 +1,6 @@
 // file: MeshExpPlugin.cpp
 
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "MeshExpUtility.h"
 

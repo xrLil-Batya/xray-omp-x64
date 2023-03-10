@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("FONT.RES");
 USERES("KILLDATE.RES");
 USERES("TrayDays.res");

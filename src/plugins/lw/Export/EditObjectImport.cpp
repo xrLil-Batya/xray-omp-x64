@@ -3,7 +3,6 @@
 //----------------------------------------------------
 
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "..\..\Shared\EditObject.h"
 //#include "lwo2.h"

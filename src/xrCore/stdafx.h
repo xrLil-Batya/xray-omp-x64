@@ -19,5 +19,4 @@
 //.#include "../../Include/xrAPI/xrAPI.h"
 #endif
 
-#pragma hdrstop
 

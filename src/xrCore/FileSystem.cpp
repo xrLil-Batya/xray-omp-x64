@@ -3,7 +3,6 @@
 //----------------------------------------------------
 
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "cderr.h"
 #include "commdlg.h"

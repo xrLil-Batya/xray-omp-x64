@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("elpackB6.res");
 USEPACKAGE("rtl.bpi");
 USEPACKAGE("vclx.bpi");

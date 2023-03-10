@@ -3,7 +3,6 @@
 #include <vcl.h>
 #include <typeinfo.h>
 #include <ShellApi.h>
-#pragma hdrstop
 
 #include "frmMain.h"
 //---------------------------------------------------------------------------

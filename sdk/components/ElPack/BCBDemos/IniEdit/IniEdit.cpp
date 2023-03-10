@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("IniEdit.res");
 USEUNIT("IniOpts.pas");
 USEUNIT("IniStrings.pas");

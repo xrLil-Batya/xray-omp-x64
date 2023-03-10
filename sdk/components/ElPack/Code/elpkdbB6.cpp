@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("elpkdbB6.res");
 USEUNIT("Source\ElDBBoxes.pas");
 USEUNIT("Source\ElDBBtnEdit.pas");

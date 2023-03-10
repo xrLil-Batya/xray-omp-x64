@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "maTranslator.h"
 #include "..\..\..\editors\Ecore\editor\EditObject.h"

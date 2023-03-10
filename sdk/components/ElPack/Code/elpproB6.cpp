@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("elpproB6.res");
 USEPACKAGE("vclx.bpi");
 USEPACKAGE("VCL.bpi");

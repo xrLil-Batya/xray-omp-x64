@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("ElAppBarDemo.res");
 USEFORMNS("frmMain.pas", Frmmain, frmBar);
 USEFORMNS("frmOpts.pas", Frmopts, OptionsForm);

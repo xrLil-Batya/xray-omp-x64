@@ -3,7 +3,6 @@
 //----------------------------------------------------
 
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "NetDeviceLog.h"
 #include "MeshExpUtility.h"

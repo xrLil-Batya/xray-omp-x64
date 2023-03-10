@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("ElKeeper.res");
 USERES("LOGOSTRS.RES");
 USEFORMNS("ABOUT.PAS", About, AboutBox);

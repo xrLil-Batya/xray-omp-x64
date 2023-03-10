@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "../../xrEngine/igame_persistent.h"
 #include "../../xrEngine/igame_level.h"

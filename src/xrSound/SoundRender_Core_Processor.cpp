@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "cl_intersect.h"
 #include "SoundRender_Core.h"

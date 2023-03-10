@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("DskBrows.res");
 USEFORM("frmMain.cpp", MainForm);
 USEFORM("frmSearch.cpp", SearchForm);

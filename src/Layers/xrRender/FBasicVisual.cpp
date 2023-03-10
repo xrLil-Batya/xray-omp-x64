@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#pragma hdrstop
 
 #ifndef _EDITOR
 #	include "../../xrEngine/render.h"

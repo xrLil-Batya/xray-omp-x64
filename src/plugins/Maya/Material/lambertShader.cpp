@@ -27,7 +27,6 @@
 // "SurfaceShader" attribute.
 //
 #include "stdafx.h"
-#pragma hdrstop
 
 #include <maya/MFnStringData.h>
 #include <maya/MFnNumericAttribute.h>

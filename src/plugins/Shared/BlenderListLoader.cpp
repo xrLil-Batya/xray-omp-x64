@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "BlenderListLoader.h"
 #include "Shader_XRLC.h"

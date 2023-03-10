@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "Exporter.h"
 #include "MeshExpUtility.h"

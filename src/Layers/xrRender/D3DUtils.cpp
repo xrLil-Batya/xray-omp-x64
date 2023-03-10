@@ -1,7 +1,6 @@
 // file: D3DUtils.cpp
 
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "../../xrEngine/gamefont.h"
 #include "d3dutils.h"

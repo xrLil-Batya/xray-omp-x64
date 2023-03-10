@@ -1,7 +1,6 @@
 // file: MeshExpUtility.cpp
 
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "MeshExpUtility.h"
 #include "..\..\..\xrCore\FileSystem.h"

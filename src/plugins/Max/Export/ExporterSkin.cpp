@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "exporter.h"
 #include "..\..\..\editors\ECore\Editor\EditObject.h"

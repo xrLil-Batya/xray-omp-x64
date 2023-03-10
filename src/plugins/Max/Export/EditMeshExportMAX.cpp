@@ -2,7 +2,6 @@
 // file: EditMesh.cpp
 //----------------------------------------------------
 #include "stdafx.h"
-#pragma hdrstop
 
 //#include "..\..\Shared\EditMesh.h"
 //#include "..\..\Shared\EditObject.h"

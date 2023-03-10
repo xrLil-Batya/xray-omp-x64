@@ -1,8 +1,6 @@
-#include	"stdafx.h"
-#pragma		hdrstop
-
-#include	"xrRender_console.h"
-#include	"dxRenderDeviceRender.h"
+#include "stdafx.h"
+#include "xrRender_console.h"
+#include "dxRenderDeviceRender.h"
 
 // Screen Space Shaders Stuff
 Fvector4 ps_ssfx_wpn_dof_1 = { .50f, .50f, .50f, .50f };

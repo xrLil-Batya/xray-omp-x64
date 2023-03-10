@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "GameMaterial.h"
 #include "BlenderListLoader.h"

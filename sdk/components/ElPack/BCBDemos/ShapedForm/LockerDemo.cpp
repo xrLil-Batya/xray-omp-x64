@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("LockerDemo.res");
 USEFORMNS("LockerForm.pas", Lockerform, frmLocker);
 //---------------------------------------------------------------------------

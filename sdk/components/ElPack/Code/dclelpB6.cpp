@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("dclelpB6.res");
 USEUNIT("Design\ElTBDsgn.pas");
 USEUNIT("Design\ElEBDsgn.pas");

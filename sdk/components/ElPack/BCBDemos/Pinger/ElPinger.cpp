@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
-#pragma hdrstop
 USERES("ElPinger.res");
 USEFORMNS("MAIN.PAS", Main, MainForm);
 USEFORMNS("About.pas", About, AboutBox);

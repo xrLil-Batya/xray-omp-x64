@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 #include "physicsshell.h"
 #include "PHDynamicData.h"
 #include "Physics.h"

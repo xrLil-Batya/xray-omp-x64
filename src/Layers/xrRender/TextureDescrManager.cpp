@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 #include "TextureDescrManager.h"
 #include "ETextureParams.h"
 #include <tbb/parallel_for_each.h>

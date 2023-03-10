@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 //AVO: lua re-org
 //#include "lua/library_linkage.h"

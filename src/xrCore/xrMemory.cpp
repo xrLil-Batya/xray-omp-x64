@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "xrsharedmem.h"
 #include "xrMemory_pure.h"

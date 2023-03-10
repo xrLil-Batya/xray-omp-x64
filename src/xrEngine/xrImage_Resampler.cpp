@@ -5,7 +5,6 @@
  */
 
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "xrImage_Resampler.h"
 

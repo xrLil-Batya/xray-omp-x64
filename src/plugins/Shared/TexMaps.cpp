@@ -2,7 +2,6 @@
 //  Texmaps
 //-----------------------------------------------------------------------------
 #include "stdafx.h"
-#pragma hdrstop
 
 #include	"texmaps.h"
 #include	"XRayMtlRes.h"
