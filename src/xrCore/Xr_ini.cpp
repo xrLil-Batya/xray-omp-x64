@@ -513,9 +513,11 @@ BOOL CInifile::section_exist(const shared_str& S)const { return section_exist(*S
 //--------------------------------------------------------------------------------------
 CInifile::Sect& CInifile::r_section(LPCSTR S)const
 {
+    R_ASSERT2(S && xr_strlen(S), "Empty section (null\\'') passed into CInifile::r_section(). See info above ^, check your configs and 'call stack'."); //--#SM+#--
+
     char section[256];
     xr_strcpy(section, sizeof(section), S);
-    strlwr(section);
+    xr_strlwr(section);
     RootCIt I = std::lower_bound(DATA.begin(), DATA.end(), section, sect_pred);
     if (!(I != DATA.end() && xr_strcmp(*(*I)->Name, section) == 0))
     {
