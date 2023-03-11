@@ -878,13 +878,8 @@ void game_sv_mp::ChargeAmmo(CSE_ALifeItemWeapon* weapon,
 void game_sv_mp::ChargeGrenades(CSE_ALifeItemWeapon* weapon, LPCSTR grenade_string, game_PlayerState::PLAYER_ITEMS_LIST & playerItems)
 {
 	int grenades_count		= _GetItemCount(grenade_string);
-	R_ASSERT2(grenades_count <= 4,
-		make_string("weapon [%s] has greater than 4 types of grenade [%s]",
-			weapon->s_name.c_str(),
-			grenade_string
-		).c_str()
-	);
-	weapon->a_elapsed_grenades.unpack_from_byte(0);
+	weapon->a_elapsed_grenades.grenades_count = 0;
+	weapon->a_elapsed_grenades.grenades_type = 0;
 	string512	temp_ammo_class;
 	for (int i = 0; i < grenades_count; ++i)
 	{
@@ -920,9 +915,7 @@ void	game_sv_mp::SetAmmoForWeapon(CSE_ALifeItemWeapon* weapon,
 	
 	if (!ammo_classes.size())
 	{
-#ifdef DEBUG
 		Msg("! WARNING: not found ammo_class for [%s]", weapon->s_name.c_str());
-#endif
 		weapon->a_elapsed	= 0;
 	} else
 	{
@@ -933,16 +926,11 @@ void	game_sv_mp::SetAmmoForWeapon(CSE_ALifeItemWeapon* weapon,
 		(weapon->m_grenade_launcher_status == ALife::eAddonPermanent))
 	{
 		shared_str grenade_classes = pSettings->r_string(weapon->s_name, "grenade_class");
-		R_ASSERT2(grenade_classes.size() < 512, make_string(
-			"grenade_class parameter of [%s] is too large", 
-			weapon->s_name.c_str()).c_str()
-		);
 		if (!grenade_classes.size())
 		{
-#ifdef DEBUG
-		Msg("! WARNING: not found grenade_class for [%s]", weapon->s_name.c_str());
-#endif
-			weapon->a_elapsed_grenades.unpack_from_byte(0);
+			Msg("! WARNING: not found grenade_class for [%s]", weapon->s_name.c_str());
+			weapon->a_elapsed_grenades.grenades_count = 0;
+			weapon->a_elapsed_grenades.grenades_type = 0;
 			return;
 		} else
 		{
