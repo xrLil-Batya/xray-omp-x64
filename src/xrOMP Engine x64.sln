@@ -75,6 +75,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libspeexdsp", "..\sdk\inclu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ode", "3rd party\ode\contrib\msvc7\ode_default\default.vcxproj", "{1BF75FEB-87DD-486C-880B-227987D191C2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OPCODE", "3rd party\OPCODE\OPCODE.vcxproj", "{AE0574E2-BE4C-49B0-98A6-739176D69277}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -565,6 +567,22 @@ Global
 		{1BF75FEB-87DD-486C-880B-227987D191C2}.Release|x64.Build.0 = Release|x64
 		{1BF75FEB-87DD-486C-880B-227987D191C2}.Release|x86.ActiveCfg = Release|x64
 		{1BF75FEB-87DD-486C-880B-227987D191C2}.Release|x86.Build.0 = Release|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Debug|x64.ActiveCfg = Debug|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Debug|x64.Build.0 = Debug|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Debug|x86.ActiveCfg = Debug|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Debug|x86.Build.0 = Debug|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Mixed|x64.ActiveCfg = Debug|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Mixed|x64.Build.0 = Debug|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Mixed|x86.ActiveCfg = Debug|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Mixed|x86.Build.0 = Debug|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Release_Dedicated|x64.ActiveCfg = Release|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Release_Dedicated|x64.Build.0 = Release|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Release_Dedicated|x86.ActiveCfg = Release|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Release_Dedicated|x86.Build.0 = Release|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Release|x64.ActiveCfg = Release|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Release|x64.Build.0 = Release|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Release|x86.ActiveCfg = Release|x64
+		{AE0574E2-BE4C-49B0-98A6-739176D69277}.Release|x86.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -589,6 +607,7 @@ Global
 		{219EC965-228A-1824-174D-96449D05F88A} = {2BFC806B-CE92-4EA4-8FE8-5F2EA54BA348}
 		{03207781-0D1C-4DB3-A71D-45C608F28DBD} = {2BFC806B-CE92-4EA4-8FE8-5F2EA54BA348}
 		{1BF75FEB-87DD-486C-880B-227987D191C2} = {2BFC806B-CE92-4EA4-8FE8-5F2EA54BA348}
+		{AE0574E2-BE4C-49B0-98A6-739176D69277} = {2BFC806B-CE92-4EA4-8FE8-5F2EA54BA348}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E58178F4-848F-41C5-84E2-79CE2464FEF4}

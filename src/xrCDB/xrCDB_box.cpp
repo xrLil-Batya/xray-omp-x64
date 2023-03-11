@@ -205,14 +205,14 @@ public:
 		if (!_box((Fvector&)node->mAABB.mCenter,(Fvector&)node->mAABB.mExtents))	return;
 		
 		// 1st chield
-		if (node->HasLeaf())	_prim	(node->GetPrimitive());
+		if (node->HasPosLeaf())	_prim	((DWORD)node->GetPosPrimitive());
 		else					_stab	(node->GetPos());
 		
 		// Early exit for "only first"
 		if (bFirst && dest->r_count())												return;
 		
 		// 2nd chield
-		if (node->HasLeaf2())	_prim	(node->GetPrimitive2());
+		if (node->HasNegLeaf())	_prim	((DWORD)node->GetNegPrimitive());
 		else					_stab	(node->GetNeg());
 	}
 };

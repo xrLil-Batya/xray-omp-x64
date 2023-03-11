@@ -20,11 +20,8 @@
 #endif
 
 // forward declarations
+namespace Opcode { class Model; }
 class CFrustum;
-namespace Opcode {
-	class OPCODE_Model;
-	class AABBNoLeafNode;
-};
 
 #pragma pack(push,8)
 namespace CDB
@@ -63,7 +60,7 @@ namespace CDB
 		};
 	private:
 		xrCriticalSection		cs;
-		Opcode::OPCODE_Model*	tree;
+		Opcode::Model*	tree;
 		u32						status;		// 0=ready, 1=init, 2=building
 
 		// tris
@@ -95,7 +92,7 @@ namespace CDB
 		static	void			build_thread	(void*);
 		void					build_internal	(Fvector* V, int Vcnt, TRI* T, int Tcnt, build_callback* bc=NULL, void* bcp=NULL);
 		void					build			(Fvector* V, int Vcnt, TRI* T, int Tcnt, build_callback* bc=NULL, void* bcp=NULL);
-		u32						memory			();
+		size_t						memory			();
 	};
 
 	// Collider result

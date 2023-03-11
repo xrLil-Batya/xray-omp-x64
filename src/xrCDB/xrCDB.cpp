@@ -12,7 +12,9 @@ doug_lea_allocator	g_collision_allocator( s_fake_array, s_arena_size, "collision
 #endif // #ifdef USE_ARENA_ALLOCATOR
 
 namespace Opcode {
-#	include "OPC_TreeBuilders.h"
+#include "opcode.h"
+#include "OPC_TreeBuilders.h"
+#include "opc_model.h"
 } // namespace Opcode
 
 using namespace CDB;
@@ -135,17 +137,18 @@ void	MODEL::build_internal	(Fvector* V, int Vcnt, TRI* T, int Tcnt, build_callba
 	}
 	
 	// Build a non quantized no-leaf tree
-	OPCODECREATE	OPCC;
-	OPCC.NbTris		= tris_count;
-	OPCC.NbVerts	= verts_count;
-	OPCC.Tris		= (unsigned*)temp_tris;
-	OPCC.Verts		= (Point*)verts;
-	OPCC.Rules		= SPLIT_COMPLETE | SPLIT_SPLATTERPOINTS | SPLIT_GEOMCENTER;
-	OPCC.NoLeaf		= true;
-	OPCC.Quantized	= false;
-	// if (Memory.debug_mode) OPCC.KeepOriginal = true;
+	OPCODECREATE OPCC = OPCODECREATE();
+	OPCC.mIMesh = new MeshInterface();
 
-	tree			= CNEW(OPCODE_Model) ();
+	OPCC.mIMesh->SetNbTriangles(tris_count);
+	OPCC.mIMesh->SetNbVertices(verts_count);
+	OPCC.mIMesh->SetPointers((IndexedTriangle*)temp_tris, (Point*)verts);
+
+	OPCC.mSettings.mRules = SplittingRules::SPLIT_SPLATTER_POINTS | SplittingRules::SPLIT_GEOM_CENTER;
+	OPCC.mQuantized = false;
+	OPCC.mNoLeaf = true;
+
+	tree = CNEW(Model)();
 	if (!tree->Build(OPCC)) {
 		CFREE		(verts);
 		CFREE		(tris);
@@ -158,9 +161,9 @@ void	MODEL::build_internal	(Fvector* V, int Vcnt, TRI* T, int Tcnt, build_callba
 	return;
 }
 
-u32 MODEL::memory	()
+size_t MODEL::memory	()
 {
-	if (S_BUILD==status)	{ Msg	("! xrCDB: model still isn't ready"); return 0; }
+	if (S_BUILD==status)	{ Msg	("! xrCDB: model still isn't ready"); return 0u; }
 	u32 V					= verts_count*sizeof(Fvector);
 	u32 T					= tris_count *sizeof(TRI);
 	return tree->GetUsedBytes()+V+T+sizeof(*this)+sizeof(*tree);
