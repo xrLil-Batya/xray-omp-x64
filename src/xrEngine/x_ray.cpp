@@ -43,11 +43,6 @@ const TCHAR* c_szSplashClass = _T("SplashWindow");
 XRCORE_API LPCSTR build_date;
 XRCORE_API u32 build_id;
 
-#ifdef MASTER_GOLD
-# define NO_MULTI_INSTANCES
-#endif // #ifdef MASTER_GOLD
-
-
 static LPSTR month_id[12] =
 {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -857,28 +852,6 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
     
     // foo();
     HANDLE hCheckPresenceMutex{};
-	if(!g_dedicated_server)
-	{
-		// Check for another instance
-	#ifdef NO_MULTI_INSTANCES
-	#define STALKER_PRESENCE_MUTEX "Local\\STALKER-COP"
-		hCheckPresenceMutex = OpenMutex(READ_CONTROL, FALSE, STALKER_PRESENCE_MUTEX);
-		if (hCheckPresenceMutex == NULL)
-		{
-			// New mutex
-			hCheckPresenceMutex = CreateMutex(NULL, FALSE, STALKER_PRESENCE_MUTEX);
-			if (hCheckPresenceMutex == NULL)
-				// Shit happens
-				return 2;
-		}
-		else
-		{
-			// Already running
-			CloseHandle(hCheckPresenceMutex);
-			return 1;
-		}
-	#endif
-	}
     RegisterWindowClass(hInstance);
     //logoWindow = CreateSplashWindow(hInstance);
     logoWindow = ShowSplash(hInstance, nCmdShow);
@@ -999,13 +972,6 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
                           temp_wf, &si, &pi);
 
         }
-		if(!g_dedicated_server)
-		{
-#ifdef NO_MULTI_INSTANCES
-			// Delete application presence mutex
-			CloseHandle(hCheckPresenceMutex);
-		}
-#endif
     }
     // here damn_keys_filter class instanse will be destroyed
 
