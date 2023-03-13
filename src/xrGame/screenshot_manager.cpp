@@ -12,21 +12,6 @@
 #include <ddraw.h>
 #include "ximage.h"
 #include "xmemfile.h"
-
-void*	cxalloc(size_t size)
-{
-	return xr_malloc(size);
-}
-
-void	cxfree(void* ptr)
-{
-	xr_free(ptr);
-}
-
-void*	cxrealloc(void* ptr, size_t size)
-{
-	return xr_realloc(ptr, size);
-}
 /*
 void jpeg_encode_callback(long progress)
 {

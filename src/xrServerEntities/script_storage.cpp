@@ -72,18 +72,7 @@ const char* get_lua_traceback(lua_State* L)
 	return tb;
 }
 
-static void *lua_alloc		(void *ud, void *ptr, size_t osize, size_t nsize) {
-  (void)ud;
-  (void)osize;
-  if (!nsize) 
-  {
-    xr_free	(ptr);
-    return	NULL;
-  }
-  else
-	  return xr_realloc(ptr, nsize);
-}
-
+extern void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize);
 #include "../xrCore/memory_allocator_options.h"
 
 #ifdef USE_ARENA_ALLOCATOR

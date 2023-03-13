@@ -37,7 +37,7 @@
 #include "stack_alloc.h"
 
 /* Weighting factors for tilt measure */
-static const opus_int32 tiltWeights[ VAD_N_BANDS ] = { 30000, 6000, -12000, -12000 };
+static const opus_int32 tiltWeights_41[ VAD_N_BANDS ] = { 30000, 6000, -12000, -12000 };
 
 /***************************************/
 /* Get the speech activity level in Q8 */
@@ -210,7 +210,7 @@ opus_int silk_VAD_GetSA_Q8_sse4_1(                  /* O    Return value, 0 if s
                 /* Scale down SNR value for small subband speech energies */
                 SNR_Q7 = silk_SMULWB( silk_LSHIFT( silk_SQRT_APPROX( speech_nrg ), 6 ), SNR_Q7 );
             }
-            input_tilt = silk_SMLAWB( input_tilt, tiltWeights[ b ], SNR_Q7 );
+            input_tilt = silk_SMLAWB( input_tilt, tiltWeights_41[ b ], SNR_Q7 );
         } else {
             NrgToNoiseRatio_Q8[ b ] = 256;
         }

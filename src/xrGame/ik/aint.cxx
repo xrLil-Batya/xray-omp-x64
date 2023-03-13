@@ -100,7 +100,7 @@ float AngleInt::Distance(float v) const
     if (IsFullRange(eps))
 	return -M_PI;
 
-    if (iszero(v) || istwopi(v))
+    if (iszero(v, AINT_EPSILON) || istwopi(v))
     {
 	if (High() > Low())
 	{

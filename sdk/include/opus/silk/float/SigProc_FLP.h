@@ -140,6 +140,7 @@ double silk_energy_FLP(
 /*                                MACROS                            */
 /********************************************************************/
 
+#undef PI
 #define PI              (3.1415926536f)
 
 #define silk_min_float( a, b )                  (((a) < (b)) ? (a) :  (b))

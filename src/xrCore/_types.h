@@ -1,75 +1,74 @@
 #pragma once
-
 #include <atomic>
-
+#include <limits>
+#include <cstdint>
 
 // Type defs
-typedef signed char s8;
-typedef unsigned char u8;
+using s8 = signed char;
+using u8 = unsigned char;
 
-typedef signed short s16;
-typedef unsigned short u16;
+using s16 = signed short;
+using u16 = unsigned short;
 
-typedef signed int s32;
-typedef unsigned int u32;
+using s32 = signed int;
+using u32 = unsigned int;
 
-typedef signed __int64 s64;
-typedef unsigned __int64 u64;
+using s64 = signed __int64;
+using u64 = unsigned __int64;
 
-typedef float f32;
-typedef double f64;
+using f32 = float;
+using f64 = double;
+using f128 = double;
 
-typedef char* pstr;
-typedef const char* pcstr;
-
-// windoze stuff
-#ifndef _WINDOWS_
-typedef int BOOL;
-typedef pstr LPSTR;
-typedef pcstr LPCSTR;
-#define TRUE true
-#define FALSE false
-#endif
+using pstr = char*;
+using pcstr = const char*;
 
 // Type limits
-#define type_max(T) (std::numeric_limits<T>::max())
-#define type_min(T) (-std::numeric_limits<T>::max())
-#define type_zero(T) (std::numeric_limits<T>::min())
-#define type_epsilon(T) (std::numeric_limits<T>::epsilon())
+#undef max
+#undef min
+template <typename T>
+constexpr auto type_max = std::numeric_limits<T>::max();
 
-#define int_max type_max(int)
-#define int_min type_min(int)
-#define int_zero type_zero(int)
+template <typename T>
+constexpr auto type_min = -std::numeric_limits<T>::max();
 
-#define flt_max type_max(float)
-#define flt_min type_min(float)
-//#define FLT_MAX 3.402823466e+38F /* max value */
-//#define FLT_MIN 1.175494351e-38F /* min positive value */
+template <typename T>
+constexpr auto type_zero = std::numeric_limits<T>::min();
+
+template <typename T>
+constexpr auto type_epsilon = std::numeric_limits<T>::epsilon();
+
+constexpr int int_max = type_max<int>;
+constexpr int int_min = type_min<int>;
+constexpr int int_zero = type_zero<int>;
+
+constexpr float flt_max = type_max<float>;
+constexpr float flt_min = type_min<float>;
+constexpr float flt_zero = type_zero<float>;
+constexpr float flt_eps = type_epsilon<float>;
+
 #undef FLT_MAX
 #undef FLT_MIN
 #define FLT_MAX flt_max
 #define FLT_MIN flt_min
 
-#define flt_zero type_zero(float)
-#define flt_eps type_epsilon(float)
+constexpr double dbl_max = type_max<double>;
+constexpr double dbl_min = type_min<double>;
+constexpr double dbl_zero = type_zero<double>;
+constexpr double dbl_eps = type_epsilon<double>;
 
-#define dbl_max type_max(double)
-#define dbl_min type_min(double)
-#define dbl_zero type_zero(double)
-#define dbl_eps type_epsilon(double)
+using string16 = char[16];
+using string32 = char[32];
+using string64 = char[64];
+using string128 = char[128];
+using string256 = char[256];
+using string512 = char[512];
+using string1024 = char[1024];
+using string2048 = char[2048];
+using string4096 = char[4096];
 
-typedef char string16[16];
-typedef char string32[32];
-typedef char string64[64];
-typedef char string128[128];
-typedef char string256[256];
-typedef char string512[512];
-typedef char string1024[1024];
-typedef char string2048[2048];
-typedef char string4096[4096];
-
-typedef char string_path[2 * _MAX_PATH];
-
+constexpr const u16 _max_path = 260;
+using string_path = char[2 * _max_path];
 
 using xr_atomic_u8 = std::atomic<u8>;
 using xr_atomic_u16 = std::atomic<u16>;

@@ -120,43 +120,9 @@ static void SendPacket(SOCKET sock, unsigned int toaddr, unsigned short toport, 
 	sendto(sock, (char *)data, len, 0, (struct sockaddr *)&saddr, sizeof(saddr));
 }
 
-static unsigned int GetLocalIP()
-{
-	int num_local_ips;
-	struct hostent *phost;
-	struct in_addr *addr;
-	unsigned int localip = 0;
-	phost = getlocalhost();
-	if (phost == NULL)
-		return 0;
-	for (num_local_ips = 0 ; ; num_local_ips++)
-	{
-		if (phost->h_addr_list[num_local_ips] == 0)
-			break;
-		addr = (struct in_addr *)phost->h_addr_list[num_local_ips];
-		if (addr->s_addr == htonl(0x7F000001))
-			continue;
-		localip = addr->s_addr;
+extern unsigned int GetLocalIP();
 
-		if(IsPrivateIP(addr))
-			return localip;
-	}
-	return localip; //else a specific private address wasn't found - return what we've got
-}
-
-static unsigned short GetLocalPort(SOCKET sock)
-{
-	int ret;
-	struct sockaddr_in saddr;
-	int saddrlen = sizeof(saddr);
-
-	ret = getsockname(sock,(struct sockaddr *)&saddr, &saddrlen);
-
-	if (gsiSocketIsError(ret))
-		return 0;
-	return saddr.sin_port;
-}
-
+extern unsigned short GetLocalPort(SOCKET sock);
 static void SendReportPacket(NATNegotiator neg)
 {
 	NatNegPacket p;
@@ -344,22 +310,7 @@ NegotiateError NNBeginNegotiation(int cookie, int clientindex, NegotiateProgress
 	return NNBeginNegotiationWithSocket(INVALID_SOCKET, cookie, clientindex, progresscallback, completedcallback, userdata);
 }
 
-static unsigned int NameToIp(const char *name)
-{
-	unsigned int ret;
-	struct hostent *hent;
-
-	ret = inet_addr(name);
-	
-	if (ret == INADDR_NONE)
-	{
-		hent = gethostbyname(name);
-		if (!hent)
-			return 0;
-		ret = *(unsigned int *)hent->h_addr_list[0];
-	}
-	return ret;
-}
+extern unsigned int NameToIp(const char* name);
 
 static unsigned int ResolveServer(const char * overrideHostname, const char * defaultHostname)
 {

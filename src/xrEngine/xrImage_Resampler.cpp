@@ -17,9 +17,6 @@ struct Image
     int span; /* byte offset between two scanlines */
 };
 
-#define WHITE_PIXEL (255)
-#define BLACK_PIXEL (0)
-
 /*
  * generic image access and i/o support routines
  */
@@ -82,7 +79,7 @@ Pixel put_pixel(Image* image, int x, int y, Pixel data)
  */
 
 //
-#define filter_support (1.0)
+static constexpr float filter_support = 1.0f;
 float filter(float t)
 {
     /* f(t) = 2|t|^3 - 3|t|^2 + 1, -1 <= t <= 1 */
@@ -92,7 +89,7 @@ float filter(float t)
 }
 
 //
-#define box_support (0.5)
+static constexpr float box_support = 0.5f;
 float box_filter(float t)
 {
     if ((t > -0.5) && (t <= 0.5)) return(1.0);
@@ -100,7 +97,7 @@ float box_filter(float t)
 }
 
 //
-#define triangle_support (1.0)
+static constexpr float triangle_support = 1.0f;
 float triangle_filter(float t)
 {
     if (t < 0.0f) t = -t;
@@ -109,7 +106,7 @@ float triangle_filter(float t)
 }
 
 //
-#define bell_support (1.5)
+static constexpr float bell_support = 1.5f;
 float bell_filter(float t) /* box (*) box (*) box */
 {
     if (t < 0) t = -t;
@@ -123,7 +120,7 @@ float bell_filter(float t) /* box (*) box (*) box */
 }
 
 //
-#define B_spline_support (2.0)
+static constexpr float B_spline_support = 2.0f;
 float B_spline_filter(float t) /* box (*) box (*) box (*) box */
 {
     float tt;
@@ -143,7 +140,7 @@ float B_spline_filter(float t) /* box (*) box (*) box (*) box */
 }
 
 //
-#define Lanczos3_support (3.0)
+static constexpr float Lanczos3_support = 3.0f;
 float sinc(float x)
 {
     x *= 3.1415926f;
@@ -158,12 +155,12 @@ float Lanczos3_filter(float t)
 }
 
 //
-#define Mitchell_support (2.0)
-#define B (1.0f / 3.0f)
-#define C (1.0f / 3.0f)
-
+static constexpr float Mitchell_support = 2.0f;
 float Mitchell_filter(float t)
 {
+    constexpr float B = 1.0f / 3.0f;
+    constexpr float C = 1.0f / 3.0f;
+
     float tt;
 
     tt = t * t;

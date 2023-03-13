@@ -103,7 +103,7 @@ private:
 
 } //namespace gamespy_profile
 
-typedef gamespy_profile::profile_store	gamespy_profile_profile_store;
+using gamespy_profile_profile_store = gamespy_profile::profile_store;
 
 add_to_type_list(gamespy_profile_profile_store)
 #undef script_type_list

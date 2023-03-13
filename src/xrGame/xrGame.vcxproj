@@ -37,6 +37,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <VCToolsVersion>
     </VCToolsVersion>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Dedicated|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -2109,7 +2110,9 @@
     <ClCompile Include="..\xrServerEntities\script_debugger.cpp" />
     <ClCompile Include="..\xrServerEntities\script_debugger_threads.cpp" />
     <ClCompile Include="..\xrServerEntities\script_engine.cpp" />
-    <ClCompile Include="..\xrServerEntities\script_engine_export.cpp" />
+    <ClCompile Include="..\xrServerEntities\script_engine_export.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</IncludeInUnityFile>
+    </ClCompile>
     <ClCompile Include="..\xrServerEntities\script_engine_script.cpp" />
     <ClCompile Include="..\xrServerEntities\script_fcolor_script.cpp" />
     <ClCompile Include="..\xrServerEntities\script_flags_script.cpp" />

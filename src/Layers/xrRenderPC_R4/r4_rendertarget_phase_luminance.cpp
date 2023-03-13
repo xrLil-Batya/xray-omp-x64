@@ -1,18 +1,18 @@
 #include "stdafx.h"
 
 #pragma pack(push,4)
-struct v_build	{
+struct v_build_luminance {
 	Fvector4	p;
 	Fvector2	uv0;
 	Fvector2	uv1;
 	Fvector2	uv2;
 	Fvector2	uv3;
 };
-
-struct v_filter {
+struct v_filter_luminance {
 	Fvector4	p;
 	Fvector4	uv[8];
 };
+
 #pragma pack(pop)
 
 void	CRenderTarget::phase_luminance()
@@ -47,7 +47,7 @@ void	CRenderTarget::phase_luminance()
 		Fvector2	b_3				= { 1 + a_3.x,		1 + a_3.y		};
 
 		// Fill vertex buffer
-		v_build* pv					= (v_build*) RCache.Vertex.Lock	(4,g_bloom_build->vb_stride,Offset);
+		v_build_luminance* pv					= (v_build_luminance*) RCache.Vertex.Lock	(4,g_bloom_build->vb_stride,Offset);
 		pv->p.set	(eps,			float(ts+eps),	eps,1.f);	pv->uv0.set	(a_0.x,b_0.y);	pv->uv1.set	(a_1.x,b_1.y);	pv->uv2.set	(a_2.x,b_2.y);	pv->uv3.set	(a_3.x,b_3.y);	pv++;
 		pv->p.set	(eps,			eps,			eps,1.f);	pv->uv0.set	(a_0.x,a_0.y);	pv->uv1.set	(a_1.x,a_1.y);	pv->uv2.set	(a_2.x,a_2.y);	pv->uv3.set	(a_3.x,a_3.y);	pv++;
 		pv->p.set	(float(ts+eps), float(ts+eps),	eps,1.f);	pv->uv0.set	(b_0.x,b_0.y);	pv->uv1.set	(b_1.x,b_1.y);	pv->uv2.set	(b_2.x,b_2.y);	pv->uv3.set	(b_3.x,b_3.y);	pv++;
@@ -74,7 +74,7 @@ void	CRenderTarget::phase_luminance()
 		}
 
 		// Fill vertex buffer
-		v_filter* pv				= (v_filter*) RCache.Vertex.Lock	(4,g_bloom_filter->vb_stride,Offset);
+		v_filter_luminance* pv				= (v_filter_luminance*) RCache.Vertex.Lock	(4,g_bloom_filter->vb_stride,Offset);
 		pv->p.set	(eps,			float(_ts+eps),	eps,1.f);	for (int t=0; t<8; t++)	pv->uv[t].set(a[t].x,b[t].y, b[t+8].y,a[t+8].x);	// xy/yx	- left+down
 		pv++;
 		pv->p.set	(eps,			eps,			eps,1.f);	for (int t=0; t<8; t++)	pv->uv[t].set(a[t].x,a[t].y, a[t+8].y,a[t+8].x);	// xy/yx	- left+up
@@ -106,7 +106,7 @@ void	CRenderTarget::phase_luminance()
 		}
 
 		// Fill vertex buffer
-		v_filter* pv				= (v_filter*) RCache.Vertex.Lock	(4,g_bloom_filter->vb_stride,Offset);
+		v_filter_luminance* pv				= (v_filter_luminance*) RCache.Vertex.Lock	(4,g_bloom_filter->vb_stride,Offset);
 		pv->p.set	(eps,			float(_ts+eps),	eps,1.f);	for (int t=0; t<8; t++)	pv->uv[t].set(a[t].x,b[t].y, b[t+8].y,a[t+8].x);	// xy/yx	- left+down
 		pv++;
 		pv->p.set	(eps,			eps,			eps,1.f);	for (int t=0; t<8; t++)	pv->uv[t].set(a[t].x,a[t].y, a[t+8].y,a[t+8].x);	// xy/yx	- left+up

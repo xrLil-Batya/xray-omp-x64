@@ -53,14 +53,7 @@ IC void Vclamp(int& v, int a, int b)
 {
 	if (v<a)	v=a; else if (v>=b) v=b-1;
 }
-IC BOOL shared(occTri* T1, occTri* T2)
-{
-	if (T1==T2)					return TRUE;
-	if (T1->adjacent[0]==T2)	return TRUE;
-	if (T1->adjacent[1]==T2)	return TRUE;
-	if (T1->adjacent[2]==T2)	return TRUE;
-	return FALSE;
-}
+extern BOOL shared(occTri* T1, occTri* T2);
 IC BOOL lesser(float& a, float& b)
 {
 	u32* A = (u32*)(&a);

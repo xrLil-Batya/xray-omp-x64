@@ -17,10 +17,9 @@ using smart_cover::detail::parse_table;
 using smart_cover::detail::parse_string;
 using smart_cover::detail::parse_fvector;
 using smart_cover::detail::parse_int;
-using smart_cover::transitions::action;
 using smart_cover::transitions::animation_action;
 
-action::action					(luabind::object const &table)
+smart_cover::transitions::action::action::action					(luabind::object const &table)
 {
 	VERIFY						(table.type() == LUA_TTABLE);
 
@@ -32,12 +31,12 @@ action::action					(luabind::object const &table)
 	load_animations				(anim_table);
 }
 
-action::~action()
+smart_cover::transitions::action::action::~action()
 {
 	delete_data(m_animations);
 }
 
-bool action::applicable			() const
+bool smart_cover::transitions::action::action::applicable			() const
 {
 	luabind::functor<bool>		functor;
 
@@ -49,7 +48,7 @@ bool action::applicable			() const
 	return						(functor(m_precondition_params.c_str()));
 }
 
-void action::load_animations	(luabind::object const &table)
+void smart_cover::transitions::action::action::load_animations	(luabind::object const &table)
 {
 	luabind::object::iterator	I = table.begin();
 	luabind::object::iterator	E = table.end();
@@ -84,7 +83,7 @@ public:
 	}
 };
 
-animation_action const &action::animation	(MonsterSpace::EBodyState const &target_body_state) const
+animation_action const & smart_cover::transitions::action::action::animation	(MonsterSpace::EBodyState const &target_body_state) const
 {
 	Animations::const_iterator found = 
 		std::find_if			(m_animations.begin(), m_animations.end(), body_state_predicate(target_body_state));
@@ -106,7 +105,7 @@ animation_action const &action::animation	(MonsterSpace::EBodyState const &targe
 	return						(**found);
 }
 
-animation_action const	&action::animation	() const
+animation_action const	& smart_cover::transitions::action::action::animation	() const
 {
 	return						(*m_animations[Random.randI(m_animations.size())]);
 }

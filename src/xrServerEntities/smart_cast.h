@@ -10,7 +10,7 @@
 #	define PURE_DYNAMIC_CAST
 #endif // DEBUG
 
-#define  TL_FAST_COMPILATION
+//#define  TL_FAST_COMPILATION
 #undef   STATIC_CHECK
 #include <loki/typelist.h>
 

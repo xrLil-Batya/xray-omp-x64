@@ -39,6 +39,7 @@ using namespace Opcode;
 #include "OPC_SphereAABBOverlap.h"
 #include "OPC_SphereTriOverlap.h"
 
+#undef SET_CONTACT
 #define SET_CONTACT(prim_index, flag)									\
 	/* Set contact status */											\
 	mFlags |= flag;														\

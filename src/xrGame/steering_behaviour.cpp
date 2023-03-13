@@ -17,6 +17,8 @@ namespace steering_behaviour
 {
 
 #define STEER_ASSERT VERIFY
+#undef min
+#undef max
 
 namespace detail
 {

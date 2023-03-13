@@ -6,8 +6,7 @@
 *******************************************************************
 */
 
-#ifndef EAX_H_INCLUDED
-#define EAX_H_INCLUDED
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -453,5 +452,3 @@ typedef struct _EAXBUFFERPROPERTIES
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-
-#endif

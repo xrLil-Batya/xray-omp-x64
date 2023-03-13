@@ -50,7 +50,7 @@ inline int istwopi(float x, const float eps = AINT_EPSILON)
     return equal(x, 2.0f*M_PI, eps);
 }
 
-inline int iszero(float x, const float eps = AINT_EPSILON)
+inline int iszero(float x, const float eps)
 {
     return _abs(x) < eps;
 }
@@ -177,8 +177,8 @@ public:
 			return 0;
 
 		a = angle_normalize(a);
-		if (iszero(a) || istwopi(a))
-			return (low > high) || iszero(low) || istwopi(high);
+		if (iszero(a, AINT_EPSILON) || istwopi(a))
+			return (low > high) || iszero(low, AINT_EPSILON) || istwopi(high);
 		else
 			return (low < high) ? 
 			le(low,a,eps) && le(a,high,eps) : le(a,high,eps) || ge(a,low,eps);

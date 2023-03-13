@@ -23,11 +23,11 @@ namespace smart_cover {
 	shared_str	parse_vertex	(luabind::object const &table, LPCSTR identifier, bool const &in);
 } // namespace smart_cover
 
-class id_predicate {
+class id_predicate_loophole {
 	shared_str m_id;
 
 public:
-	IC	id_predicate(shared_str const &id) :
+	IC	id_predicate_loophole(shared_str const &id) :
 		m_id	(id)
 	{
 	}
@@ -116,7 +116,7 @@ void loophole::add_action(LPCSTR type, luabind::object const &table)
 		std::find_if(
 			m_actions.begin(),
 			m_actions.end(),
-			id_predicate(type)
+			id_predicate_loophole(type)
 		) ==
 		m_actions.end()
 	);

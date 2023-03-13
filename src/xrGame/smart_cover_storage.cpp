@@ -18,11 +18,11 @@ using smart_cover::description;
 
 typedef storage::DescriptionPtr		DescriptionPtr;
 
-struct id_predicate {
+struct id_predicate_cover_storage {
 	shared_str		m_id;
 
 public:
-	IC				id_predicate	(shared_str const &id) :
+	IC				id_predicate_cover_storage(shared_str const &id) :
 		m_id				(id)
 	{
 	}
@@ -41,7 +41,7 @@ DescriptionPtr storage::description(shared_str const &table_id)
 		std::find_if(
 			m_descriptions.begin(),
 			m_descriptions.end(),
-			id_predicate(table_id)
+			id_predicate_cover_storage(table_id)
 		);
 
 	if (found != m_descriptions.end())

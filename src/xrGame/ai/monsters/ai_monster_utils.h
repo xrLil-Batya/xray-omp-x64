@@ -18,9 +18,9 @@ IC Fvector random_position(const Fvector &center, float R)
 	return v;
 }
 
-IC bool	from_right(float ty, float cy) 
+IC bool	from_right(float fty, float fcy) 
 {
-	return ((angle_normalize_signed(ty - cy) > 0));
+	return ((angle_normalize_signed(fty - fcy) > 0));
 }
 
 IC bool	is_angle_between(float yaw, float yaw_from, float yaw_to)

@@ -727,7 +727,7 @@ public:
 	}
 	virtual void	Info	(TInfo& I)
 	{	
-		xr_sprintf(I,"vector3 in range [%f,%f,%f]-[%f,%f,%f]",min.x,min.y,min.z,max.x,max.y,max.z);
+		xr_sprintf(I,"vector3 in range [%f,%f,%f]-[%f,%f,%f]",vector_min.x, vector_min.y, vector_min.z, vector_min.x, vector_min.y, vector_min.z);
 	}
 
 };

@@ -243,21 +243,21 @@ class ENGINE_API CCC_Float : public IConsole_Command
 {
 protected:
     float* value;
-    float min, max;
+    float ffmin, ffmax;
 public:
     CCC_Float(LPCSTR N, float* V, float _min = 0, float _max = 1) :
         IConsole_Command(N),
         value(V),
-        min(_min),
-        max(_max)
+        ffmin(_min),
+        ffmax(_max)
     {};
     const float GetValue() const { return *value; };
-    void GetBounds(float& fmin, float& fmax) const { fmin = min; fmax = max; }
+    void GetBounds(float& fmin, float& fmax) const { fmin = ffmin; fmax = ffmax; }
 
     virtual void Execute(LPCSTR args)
     {
         float v = float(atof(args));
-        if (v<(min - EPS) || v>(max + EPS)) InvalidSyntax();
+        if (v<(ffmin - EPS) || v>(ffmax + EPS)) InvalidSyntax();
         else *value = v;
     }
     virtual void Status(TStatus& S)
@@ -267,12 +267,12 @@ public:
     }
     virtual void Info(TInfo& I)
     {
-        xr_sprintf(I, sizeof(I), "float value in range [%3.3f,%3.3f]", min, max);
+        xr_sprintf(I, sizeof(I), "float value in range [%3.3f,%3.3f]", ffmin, ffmax);
     }
     virtual void fill_tips(vecTips& tips, u32 mode)
     {
         TStatus str;
-        xr_sprintf(str, sizeof(str), "%3.5f (current) [%3.3f,%3.3f]", *value, min, max);
+        xr_sprintf(str, sizeof(str), "%3.5f (current) [%3.3f,%3.3f]", *value, ffmin, ffmax);
         tips.push_back(str);
         IConsole_Command::fill_tips(tips, mode);
     }
@@ -283,15 +283,15 @@ class ENGINE_API CCC_Vector3 : public IConsole_Command
 {
 protected:
     Fvector* value;
-    Fvector min, max;
+    Fvector vector_min, vector_max;
     public
 :
     CCC_Vector3(LPCSTR N, Fvector* V, const Fvector _min, const Fvector _max) :
         IConsole_Command(N),
         value(V)
     {
-        min.set(_min);
-        max.set(_max);
+        vector_min.set(_min);
+        vector_max.set(_max);
     };
     const Fvector GetValue() const { return *value; };
     Fvector* GetValuePtr() const { return value; };
@@ -300,8 +300,8 @@ protected:
     {
         Fvector v;
         if (3 != sscanf(args, "%f,%f,%f", &v.x, &v.y, &v.z)) { InvalidSyntax(); return; }
-        if (v.x < min.x || v.y < min.y || v.z<min.z) { InvalidSyntax(); return; }
-        if (v.x>max.x || v.y > max.y || v.z > max.z) { InvalidSyntax(); return; }
+        if (v.x < vector_min.x || v.y < vector_min.y || v.z< vector_min.z) { InvalidSyntax(); return; }
+        if (v.x> vector_max.x || v.y > vector_max.y || v.z > vector_max.z) { InvalidSyntax(); return; }
         value->set(v);
     }
     virtual void Status(TStatus& S)
@@ -310,12 +310,12 @@ protected:
     }
     virtual void Info(TInfo& I)
     {
-        xr_sprintf(I, sizeof(I), "vector3 in range [%e,%e,%e]-[%e,%e,%e]", min.x, min.y, min.z, max.x, max.y, max.z);
+        xr_sprintf(I, sizeof(I), "vector3 in range [%e,%e,%e]-[%e,%e,%e]", vector_min.x, vector_min.y, vector_min.z, vector_max.x, vector_max.y, vector_max.z);
     }
     virtual void fill_tips(vecTips& tips, u32 mode)
     {
         TStatus str;
-        xr_sprintf(str, sizeof(str), "(%e, %e, %e) (current) [(%e,%e,%e)-(%e,%e,%e)]", value->x, value->y, value->z, min.x, min.y, min.z, max.x, max.y, max.z);
+        xr_sprintf(str, sizeof(str), "(%e, %e, %e) (current) [(%e,%e,%e)-(%e,%e,%e)]", value->x, value->y, value->z, vector_min.x, vector_min.y, vector_min.z, vector_max.x, vector_max.y, vector_max.z);
         tips.push_back(str);
         IConsole_Command::fill_tips(tips, mode);
     }
@@ -326,22 +326,22 @@ class ENGINE_API CCC_Integer : public IConsole_Command
 {
 protected:
     int* value;
-    int min, max;
+    int iimin, iimax;
 public:
     const int GetValue() const { return *value; };
-    void GetBounds(int& imin, int& imax) const { imin = min; imax = max; }
+    void GetBounds(int& imin, int& imax) const { imin = iimin; imax = iimax; }
 
     CCC_Integer(LPCSTR N, int* V, int _min = 0, int _max = 999) :
         IConsole_Command(N),
         value(V),
-        min(_min),
-        max(_max)
+        iimin(_min),
+        iimax(_max)
     {};
 
     virtual void Execute(LPCSTR args)
     {
         int v = atoi(args);
-        if (v<min || v>max) InvalidSyntax();
+        if (v<iimin || v>iimax) InvalidSyntax();
         else *value = v;
     }
     virtual void Status(TStatus& S)
@@ -350,12 +350,12 @@ public:
     }
     virtual void Info(TInfo& I)
     {
-        xr_sprintf(I, sizeof(I), "integer value in range [%d,%d]", min, max);
+        xr_sprintf(I, sizeof(I), "integer value in range [%d,%d]", iimin, iimax);
     }
     virtual void fill_tips(vecTips& tips, u32 mode)
     {
         TStatus str;
-        xr_sprintf(str, sizeof(str), "%d (current) [%d,%d]", *value, min, max);
+        xr_sprintf(str, sizeof(str), "%d (current) [%d,%d]", *value, iimin, iimax);
         tips.push_back(str);
         IConsole_Command::fill_tips(tips, mode);
     }

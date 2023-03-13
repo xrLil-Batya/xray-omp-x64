@@ -141,10 +141,10 @@ void stalker_movement_params::cover_id							(shared_str const& cover_id)
 	m_cover								= ai().cover_manager().smart_cover(cover_id);
 }
 
-struct loophole_id_predicate {
+struct loophole_id_predicate_movement_magager_params {
 	shared_str							m_id;
 
-	IC			loophole_id_predicate		(shared_str const &id) :
+	IC			loophole_id_predicate_movement_magager_params(shared_str const &id) :
 		m_id							(id)
 	{
 	}
@@ -153,7 +153,7 @@ struct loophole_id_predicate {
 	{
 		return							(loophole->id()._get() == m_id._get());
 	}
-}; // struct loophole_id_predicate
+}; // struct loophole_id_predicate_movement_magager_params
 
 void stalker_movement_params::cover_loophole_id					(shared_str const& loophole_id)
 {
@@ -180,7 +180,7 @@ void stalker_movement_params::cover_loophole_id					(shared_str const& loophole_
 		std::find_if(
 			loopholes.begin(),
 			loopholes.end(),
-			loophole_id_predicate(loophole_id)
+			loophole_id_predicate_movement_magager_params(loophole_id)
 		);
 
 	VERIFY2								(

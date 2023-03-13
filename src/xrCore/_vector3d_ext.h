@@ -62,6 +62,8 @@ Fvector operator / (const Fvector& v, float f)
     return cr_fvector3(v.x*repr_f, v.y*repr_f, v.z*repr_f);
 }
 
+#undef min
+#undef max
 inline
 Fvector _min(const Fvector& v1, const Fvector& v2)
 {

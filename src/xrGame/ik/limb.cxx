@@ -135,10 +135,7 @@ void select_best_family(const AngleInt jt_limits[],
     }
 }
 
-inline float min(float x, float y)
-{
-    return x < y ? x : y;
-}
+extern float min(float x, float y);
 
 //
 // If possible put v (0 < v < 2*M_PI) in the range low < v < high

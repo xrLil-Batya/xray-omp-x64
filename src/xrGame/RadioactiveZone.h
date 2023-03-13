@@ -19,7 +19,7 @@ public:
 
 protected:
 	virtual bool BlowoutState			();
-	DECLARE_SCRIPT_REGISTER_FUNCTION
+	//DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 add_to_type_list(CRadioactiveZone)
 #undef script_type_list
