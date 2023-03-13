@@ -5,6 +5,13 @@ X-Ray OMP Engine x64
 * Движок основан на [STCOP Engine x64](https://github.com/mortany/stcop-engine) и [X-Ray OMP](https://github.com/xray-omp/omp-engine)
 * Использованы наработки: [xrMPE (old)](https://github.com/FreeZoneMods/xray16), [Advanced X-Ray](https://github.com/DanceManiac/Advanced-X-Ray-Public), [OpenXRay](https://github.com/OpenXRay/xray-16), [xrOxygen](https://github.com/xrLil-Batya/xray-oxygen), [OGSR Engine](https://github.com/OGSR/OGSR-Engine).
 
+## Инструкция по сборке
+* Необходима Visual Studio 2022 самой актуальной версии.
+* ВАЖНО: в пути к исходникам не должно быть русских символов, иначе будут ошибки при сборке.
+* Открываем src/xrOMP Engine x64.sln.
+* На данный момент работает лишь конфигурация Release|x64, поэтому выбираем именно её.
+* Выбираем Сборка -> Собрать решение.
+
 ## Изменения
 *  Перенесена графическая часть из Anomaly 1.5.2 и Screen Space Shaders
 *  Добавлена поддержка погоды из Anomaly
