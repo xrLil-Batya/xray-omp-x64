@@ -1,13 +1,8 @@
-#ifndef xrXMLParserH
-#define xrXMLParserH
 #pragma once
-
-
 #ifdef XRXMLPARSER_EXPORTS
 	#define XRXMLPARSER_API __declspec(dllexport)
 #else
 	#define XRXMLPARSER_API __declspec(dllimport)
-	#pragma comment			(lib,"xrXMLParser.lib")
 #endif
 
 const LPCSTR CONFIG_PATH			= "$game_config$";
@@ -101,5 +96,3 @@ private:
 	typedef TiXmlElement						XML_ELEM;
 	TiXmlDocument								m_Doc;
 };
-
-#endif //xrXMLParserH

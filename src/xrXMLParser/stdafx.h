@@ -3,18 +3,6 @@
 //      are changed infrequently
 //
 // Third generation by Oles.
-
-#ifndef stdafxH
-#define stdafxH
-
 #pragma once
-
 #include "../xrCore/xrCore.h"
-
 #include "xrXMLParser.h"
-
-#ifdef __BORLANDC__
-#pragma comment( lib, "x:\\xrCoreB.lib"	)
-#endif
-
-#endif //stdafxH
