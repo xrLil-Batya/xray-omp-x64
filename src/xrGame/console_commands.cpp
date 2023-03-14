@@ -443,8 +443,8 @@ public:
 		}
 		Console->Hide	();
 
-		LPSTR			fn_; 
-		STRCONCAT		(fn_, args, ".xrdemo");
+		string_path fn_; 
+		xr_strconcat(fn_, args, ".xrdemo");
 		string_path		fn;
 		FS.update_path	(fn, "$game_saves$", fn_);
 
@@ -534,8 +534,8 @@ void get_files_list( xr_vector<shared_str>& files, LPCSTR dir, LPCSTR file_ext )
 	FS.m_Flags.set( CLocatorAPI::flNeedCheck, TRUE );
 	FS.rescan_pathes();
 
-	LPCSTR fext;
-	STRCONCAT( fext, "*", file_ext );
+	string_path fext;
+	xr_strconcat( fext, "*", file_ext );
 
 	FS_FileSet  files_set;
 	FS.file_list( files_set, dir, FS_ListFiles, fext );
@@ -611,8 +611,8 @@ public:
 		Msg						("Game save overhead  : %f milliseconds",timer.GetElapsed_sec()*1000.f);
 #endif
 		StaticDrawableWrapper* _s		= CurrentGameUI()->AddCustomStatic("game_saved", true);
-		LPSTR						save_name;
-		STRCONCAT					(save_name, CStringTable().translate("st_game_saved").c_str(), ": ", S);
+		string_path save_name;
+		xr_strconcat(save_name, CStringTable().translate("st_game_saved").c_str(), ": ", S);
 		_s->wnd()->TextItemControl()->SetText(save_name);
 
 		xr_strcat				(S,".dds");
@@ -749,14 +749,14 @@ public:
 			return;
 		}
 
-		LPSTR					command;
+		string_path command;
 		if (ai().get_alife()) {
-			STRCONCAT			(command, "load ", g_last_saved_game);
+			xr_strconcat(command, "load ", g_last_saved_game);
 			Console->Execute	(command);
 			return;
 		}
 
-		STRCONCAT				(command, "start server(", g_last_saved_game, "/single/alife/load)");
+		xr_strconcat(command, "start server(", g_last_saved_game, "/single/alife/load)");
 		Console->Execute		(command);
 	}
 	

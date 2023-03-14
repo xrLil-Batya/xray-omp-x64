@@ -139,7 +139,7 @@ void configs_dumper::write_configs()
 	string16 tmp_strbuff;
 	for (active_objects_t::size_type i = 0; i < aobjs_count; ++i)
 	{
-		xr_sprintf				(tmp_strbuff, "%d", i + 1);
+		xr_sprintf				(tmp_strbuff, "%ll", i + 1);
 		m_active_params.dump	(active_objects[i], tmp_strbuff, active_params_dumper);
 	}
 	active_params_dumper.save_as	(m_dump_result);
@@ -154,19 +154,19 @@ char const * cd_creation_date		= "creation_date";
 void configs_dumper::sign_configs		()
 {
 	string64	creation_date;
-	LPSTR		tmp_player_name		= NULL;
+	string_path tmp_player_name;
 	CInifile	tmp_ini				(NULL, FALSE, FALSE, FALSE);
 	game_cl_mp*	tmp_cl_game			= smart_cast<game_cl_mp*>(&Game());
 	R_ASSERT						(tmp_cl_game);
-	STRCONCAT						(tmp_player_name, "\"", 
+	xr_strconcat(tmp_player_name, "\"",
 		tmp_cl_game->local_player ? tmp_cl_game->local_player->getName() : "unknown_just_connected",
 		"\"");
 	LPCSTR		tmp_cdkey_digest	= Level().get_cdkey_digest().c_str();
 	if (!tmp_cdkey_digest)
 		tmp_cdkey_digest = "null";
 
-	LPCSTR		add_str = NULL;
-	STRCONCAT(add_str,
+	string_path add_str;
+	xr_strconcat(add_str,
 		tmp_player_name,
 		tmp_cdkey_digest,
 		current_time(creation_date));

@@ -381,8 +381,8 @@ bool CScriptStorage::parse_namespace(LPCSTR caNamespaceName, LPSTR b, u32 const 
 {
 	*b				= 0;
 	*c				= 0;
-	LPSTR			S2;
-	STRCONCAT		(S2,caNamespaceName);
+	string_path S2;
+	xr_strconcat(S2,caNamespaceName);
 	LPSTR			S	= S2;
 	for (int i=0;;++i) {
 		if (!xr_strlen(S)) {

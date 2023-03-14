@@ -733,28 +733,19 @@ void CConsole::ExecuteScript(LPCSTR str)
 
 IConsole_Command* CConsole::find_next_cmd(LPCSTR in_str, shared_str& out_str)
 {
-    LPCSTR radmin_cmd_name = "ra ";
-    bool b_ra = (in_str == strstr(in_str, radmin_cmd_name));
-    u32 offset = (b_ra) ? xr_strlen(radmin_cmd_name) : 0;
-
-    LPSTR t2;
-    STRCONCAT(t2, in_str + offset, " ");
+    string_path t2;
+    xr_strconcat(t2, in_str, " ");
 
     vecCMD_IT it = Commands.lower_bound(t2);
     if (it != Commands.end())
     {
         IConsole_Command* cc = it->second;
         LPCSTR name_cmd = cc->Name();
-        u32 name_cmd_size = xr_strlen(name_cmd);
-        PSTR new_str = (PSTR)_alloca((offset + name_cmd_size + 2) * sizeof(char));
 
-        xr_strcpy(new_str, offset + name_cmd_size + 2, (b_ra) ? radmin_cmd_name : "");
-        xr_strcat(new_str, offset + name_cmd_size + 2, name_cmd);
-
-        out_str._set((LPCSTR)new_str);
+        out_str._set(name_cmd);
         return cc;
     }
-    return NULL;
+    return nullptr;
 }
 
 bool CConsole::add_next_cmds(LPCSTR in_str, vecTipsEx& out_v)
@@ -765,8 +756,8 @@ bool CConsole::add_next_cmds(LPCSTR in_str, vecTipsEx& out_v)
         return false;
     }
 
-    LPSTR t2;
-    STRCONCAT(t2, in_str, " ");
+    string_path t2;
+    xr_strconcat(t2, in_str, " ");
 
     shared_str temp;
     IConsole_Command* cc = find_next_cmd(t2, temp);
@@ -790,8 +781,8 @@ bool CConsole::add_next_cmds(LPCSTR in_str, vecTipsEx& out_v)
         {
             break; // for
         }
-        LPSTR t3;
-        STRCONCAT(t3, out_v.back().text.c_str(), " ");
+        string_path t3;
+        xr_strconcat(t3, out_v.back().text.c_str(), " ");
         cc = find_next_cmd(t3, temp);
         if (!cc)
         {

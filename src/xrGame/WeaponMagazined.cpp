@@ -1703,7 +1703,7 @@ bool CWeaponMagazined::GetBriefInfo(II_BriefInfo& info)
 					ap += GetAmmoCount(m);
 				m++;
 			}
-			xr_sprintf(ammo, "%d", ap);
+			xr_sprintf(ammo, "%llu", ap);
 			info.ap_ammo._set(ammo);
 		}
 	}

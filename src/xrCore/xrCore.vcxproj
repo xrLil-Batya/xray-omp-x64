@@ -494,7 +494,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Mixed|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="stream_reader.cpp" />
-    <ClCompile Include="string_concatenations.cpp" />
     <ClCompile Include="Threading\Event.cpp" />
     <ClCompile Include="xrCore.cpp" />
     <ClCompile Include="xrDebug.cpp">
@@ -599,8 +598,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stream_reader.h" />
     <ClInclude Include="stream_reader_inline.h" />
-    <ClInclude Include="string_concatenations.h" />
-    <ClInclude Include="string_concatenations_inline.h" />
     <ClInclude Include="SubAlloc.hpp" />
     <ClInclude Include="Threading\Event.hpp" />
     <ClInclude Include="Utils.hpp" />

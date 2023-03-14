@@ -198,7 +198,7 @@ void CServerList::FillUpDetailedServerInfo()
 
 		if (2 == teams)
 		{
-			LPSTR _buff = NULL;
+			string_path _buff;
 
 			CUIListBoxItem* pItemAdv;
 
@@ -214,7 +214,7 @@ void CServerList::FillUpDetailedServerInfo()
 
 				if (!t1)		// add header
 				{
-					STRCONCAT(_buff, CStringTable().translate("ui_st_team").c_str(),
+					xr_strconcat(_buff, CStringTable().translate("ui_st_team").c_str(),
 						"\"", CTeamInfo::GetTeam1_name().c_str(), "\"");
 
 					pItemAdv					= m_list[LST_PLAYERS].AddItem();
@@ -253,7 +253,7 @@ void CServerList::FillUpDetailedServerInfo()
 
 				if (!t2)
 				{
-					STRCONCAT(_buff, CStringTable().translate("ui_st_team").c_str(),
+					xr_strconcat(_buff, CStringTable().translate("ui_st_team").c_str(),
 						"\"", CTeamInfo::GetTeam2_name().c_str(), "\"");
 
 					m_list[LST_PLAYERS].AddTextItem	(_buff);

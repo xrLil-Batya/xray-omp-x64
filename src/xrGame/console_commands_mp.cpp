@@ -331,11 +331,11 @@ struct SearcherClientByName
 	bool operator()(IClient* client)
 	{
 		xrClientData*	temp_client = smart_cast<xrClientData*>(client);
-		LPSTR tmp_player = NULL;
+		string_path tmp_player;
 		if (!temp_client->ps)
 			return false;
 
-		STRCONCAT(tmp_player, temp_client->ps->getName());
+		xr_strconcat(tmp_player, temp_client->ps->getName());
 		xr_strlwr(tmp_player);
 
 		if (!xr_strcmp(player_name, tmp_player))
@@ -673,8 +673,8 @@ public:
 
 	virtual void	Info	(TInfo& I)
 	{
-		LPCSTR info_str = NULL;
-		STRCONCAT(info_str,
+		string_path info_str;
+		xr_strconcat(info_str,
 			"Play demo until specified event (then pause playing). Format: mpdemoplay_pause_on ",
 			DemoPlayControlArgParser::GetInfoString());
 		xr_strcpy(I, info_str);
@@ -726,8 +726,8 @@ public:
 
 	virtual void	Info	(TInfo& I)
 	{
-		LPCSTR info_str = NULL;
-		STRCONCAT(info_str,
+		string_path info_str;
+		xr_strconcat(info_str,
 			"Rewind demo until specified event (then pause playing). Format: mpdemoplay_rewind_until ",
 			DemoPlayControlArgParser::GetInfoString());
 		xr_strcpy(I, info_str);
@@ -1195,7 +1195,7 @@ public:
 				DWORD dwPort		= 0;
 				Level().Server->GetClientAddress(client->ID, Address, &dwPort);
 				string512 tmp_string;
-				xr_sprintf(tmp_string, "- (player session id : %u), (name : %s), (ip: %s), (ping: %u);", "(money: %d);",
+				xr_sprintf(tmp_string, "- (player session id : %u), (name : %s), (ip: %s), (ping: %u);" "(money: %d);",
 					client->ID.value(),
 					l_pC->ps->getName(),
 					Address.to_string().c_str(),
@@ -1930,8 +1930,8 @@ public:
 			game_sv_mp* game = smart_cast<game_sv_mp*>(Level().Server->game);
 			if ( game )
 			{
-				LPSTR msg;
-				STRCONCAT(msg,args);
+				string_path msg;
+				xr_strconcat(msg,args);
 				if ( xr_strlen(msg) > 256 )
 				{
 					msg[256] = 0;

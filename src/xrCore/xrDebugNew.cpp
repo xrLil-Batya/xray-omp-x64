@@ -168,7 +168,7 @@ void xrDebug::do_exit	(const std::string &message)
 	TerminateProcess	(GetCurrentProcess(),1);
 }
 
-void xrDebug::backend	(const char *expression, const char *description, const char *argument0, const char *argument1, const char *file, int line, const char *function, bool &ignore_always)
+void xrDebug::backend	(const char *expression, const char *description, const char *argument0, const char *argument1, const char *file, int line, const char *function)
 {
 	static xrCriticalSection CS
 #ifdef PROFILE_CRITICAL_SECTIONS
@@ -229,7 +229,6 @@ void xrDebug::backend	(const char *expression, const char *description, const ch
 			}
 			case IDCONTINUE : {
 				error_after_dialog	= false;
-				ignore_always	= true;
 				break;
 			}
 			default : NODEFAULT;
@@ -274,39 +273,39 @@ LPCSTR xrDebug::error2string(long code)
 	return result	;
 }
 
-void xrDebug::error(long hr, const char* expr, const char *file, int line, const char *function, bool &ignore_always)
+void xrDebug::error(long hr, const char* expr, const char *file, int line, const char *function)
 {
-	backend(error2string(hr), expr, 0, 0, file, line, function, ignore_always);
+	backend(error2string(hr), expr, 0, 0, file, line, function);
 }
 
-void xrDebug::error(long hr, const char* expr, const char* e2, const char *file, int line, const char *function, bool &ignore_always)
+void xrDebug::error(long hr, const char* expr, const char* e2, const char *file, int line, const char *function)
 {
-	backend(error2string(hr), expr, e2, 0, file, line, function, ignore_always);
+	backend(error2string(hr), expr, e2, 0, file, line, function);
 }
 
-void xrDebug::fail		(const char *e1, const char *file, int line, const char *function, bool &ignore_always)
+void xrDebug::fail		(const char *e1, const char *file, int line, const char *function)
 {
-	backend("assertion failed", e1, 0, 0, file, line, function, ignore_always);
+	backend("assertion failed", e1, 0, 0, file, line, function);
 }
 
-void xrDebug::fail		(const char *e1, const std::string &e2, const char *file, int line, const char *function, bool &ignore_always)
+void xrDebug::fail		(const char *e1, const std::string &e2, const char *file, int line, const char *function)
 {
-	backend(e1, e2.c_str(), 0, 0, file, line, function, ignore_always);
+	backend(e1, e2.c_str(), 0, 0, file, line, function);
 }
 
-void xrDebug::fail(const char *e1, const char *e2, const char *file, int line, const char *function, bool &ignore_always)
+void xrDebug::fail(const char *e1, const char *e2, const char *file, int line, const char *function)
 {
-	backend(e1, e2, 0, 0, file, line, function, ignore_always);
+	backend(e1, e2, 0, 0, file, line, function);
 }
 
-void xrDebug::fail(const char *e1, const char *e2, const char *e3, const char *file, int line, const char *function, bool &ignore_always)
+void xrDebug::fail(const char *e1, const char *e2, const char *e3, const char *file, int line, const char *function)
 {
-	backend(e1, e2, e3, 0, file, line, function, ignore_always);
+	backend(e1, e2, e3, 0, file, line, function);
 }
 
-void xrDebug::fail(const char *e1, const char *e2, const char *e3, const char *e4, const char *file, int line, const char *function, bool &ignore_always)
+void xrDebug::fail(const char *e1, const char *e2, const char *e3, const char *e4, const char *file, int line, const char *function)
 {
-	backend(e1, e2, e3, e4, file, line, function, ignore_always);
+	backend(e1, e2, e3, e4, file, line, function);
 }
 
 void __cdecl xrDebug::fatal(const char *file, int line, const char *function, const char* F,...)
@@ -318,9 +317,7 @@ void __cdecl xrDebug::fatal(const char *file, int line, const char *function, co
 	vsprintf(buffer, F, p);
 	va_end(p);
 
-	bool ignore_always = true;
-
-	backend("fatal error", "<no expression>", buffer, 0, file, line, function, ignore_always);
+	backend("fatal error", "<no expression>", buffer, 0, file, line, function);
 }
 
 int out_of_memory_handler	(size_t size)
@@ -750,14 +747,12 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo)
 
 	static void handler_base(LPCSTR reason_string)
 	{
-		bool ignore_always = false;
 		Debug.backend(
 			"error handler is invoked!",
 			reason_string,
 			0,
 			0,
-			DEBUG_INFO,
-			ignore_always
+			DEBUG_INFO
 		);
 	}
 
@@ -769,7 +764,6 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo)
 			uintptr_t reserved
 		)
 	{
-		bool ignore_always = false;
 
 		string4096 expression_;
 		string4096 function_;
@@ -819,8 +813,7 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo)
 			0,
 			file_,
 			line,
-			function_,
-			ignore_always
+			function_
 		);
 	}
 

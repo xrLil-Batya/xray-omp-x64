@@ -1039,7 +1039,7 @@ bool CWeaponMagazinedWGrenade::GetBriefInfo(II_BriefInfo& info)
 					ap += m_bGrenadeMode ? GetAmmoCount2(m) : GetAmmoCount(m);
 				m++;
 			}
-			xr_sprintf(ammo, "%d", ap);
+			xr_sprintf(ammo, "%llu", ap);
 			info.ap_ammo._set(ammo);
 		}
 	}

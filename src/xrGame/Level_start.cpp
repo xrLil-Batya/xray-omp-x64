@@ -268,15 +268,15 @@ bool CLevel::net_start6				()
 		else
 		if (!map_data.m_map_loaded && map_data.m_name.size() && m_bConnectResult)	//if (map_data.m_name == "") - level not loaded, see CLevel::net_start_client3
 		{
-			LPCSTR level_id_string = NULL;
-			LPCSTR dialog_string = NULL;
+			string_path level_id_string;
+			string_path dialog_string;
 			LPCSTR download_url = !!map_data.m_map_download_url ? map_data.m_map_download_url.c_str() : "";
 			CStringTable	st;
 			LPCSTR tmp_map_ver = !!map_data.m_map_version ? map_data.m_map_version.c_str() : "";
 			
-			STRCONCAT(level_id_string, st.translate("st_level"), ":",
+			xr_strconcat(level_id_string, st.translate("st_level").c_str(), ":",
 				map_data.m_name.c_str(), "(", tmp_map_ver, "). ");
-			STRCONCAT(dialog_string, level_id_string, st.translate("ui_st_map_not_found"));
+			xr_strconcat(dialog_string, level_id_string, st.translate("ui_st_map_not_found").c_str());
 
 			DEL_INSTANCE	(g_pGameLevel);
 			Console->Execute("main_menu on");
@@ -290,15 +290,15 @@ bool CLevel::net_start6				()
 		else
 		if (map_data.IsInvalidClientChecksum())
 		{
-			LPCSTR level_id_string = NULL;
-			LPCSTR dialog_string = NULL;
+			string_path level_id_string;
+			string_path dialog_string;
 			LPCSTR download_url = !!map_data.m_map_download_url ? map_data.m_map_download_url.c_str() : "";
 			CStringTable	st;
 			LPCSTR tmp_map_ver = !!map_data.m_map_version ? map_data.m_map_version.c_str() : "";
 
-			STRCONCAT(level_id_string, st.translate("st_level"), ":",
+			xr_strconcat(level_id_string, st.translate("st_level").c_str(), ":",
 				map_data.m_name.c_str(), "(", tmp_map_ver, "). ");
-			STRCONCAT(dialog_string, level_id_string, st.translate("ui_st_map_data_corrupted"));
+			xr_strconcat(dialog_string, level_id_string, st.translate("ui_st_map_data_corrupted").c_str());
 
 			g_pGameLevel->net_Stop();
 			DEL_INSTANCE	(g_pGameLevel);

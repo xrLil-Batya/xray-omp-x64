@@ -194,92 +194,28 @@ IC char* xr_strlwr(char* S)
     return strlwr(S);
 }
 
-#ifdef BREAK_AT_STRCMP
-XRCORE_API int xr_strcmp(const char* S1, const char* S2);
-#else
 IC int xr_strcmp(const char* S1, const char* S2)
 {
     return (int)strcmp(S1, S2);
 }
-#endif
 
-#ifndef _EDITOR
-#ifndef MASTER_GOLD
-
-inline errno_t xr_strcpy(LPSTR destination, size_t const destination_size, LPCSTR source)
+template <typename StrType, typename StrType2, typename... Args>
+inline char* xr_strconcat(StrType& dest, const StrType2& arg1, const Args&... args)
 {
-    return strcpy_s(destination, destination_size, source);
+    static_assert(std::is_array_v<StrType>);
+    static_assert(std::is_same_v<std::remove_extent_t<StrType>, char>);
+
+    strcpy_s(dest, arg1);
+
+    (strcat_s(dest, args), ...);
+
+    return &dest[0];
 }
 
-inline errno_t xr_strcat(LPSTR destination, size_t const buffer_size, LPCSTR source)
-{
-    return strcat_s(destination, buffer_size, source);
-}
-
-inline int __cdecl xr_sprintf(LPSTR destination, size_t const buffer_size, LPCSTR format_string, ...)
-{
-    va_list args;
-    va_start(args, format_string);
-    return vsprintf_s(destination, buffer_size, format_string, args);
-}
-
-template <int count>
-inline int __cdecl xr_sprintf(char(&destination)[count], LPCSTR format_string, ...)
-{
-    va_list args;
-    va_start(args, format_string);
-    return vsprintf_s(destination, count, format_string, args);
-}
-#else // #ifndef MASTER_GOLD
-
-inline errno_t xr_strcpy(LPSTR destination, size_t const destination_size, LPCSTR source)
-{
-    return strncpy_s(destination, destination_size, source, destination_size);
-}
-
-inline errno_t xr_strcat(LPSTR destination, size_t const buffer_size, LPCSTR source)
-{
-    size_t const destination_length = xr_strlen(destination);
-    LPSTR i = destination + destination_length;
-    LPSTR const e = destination + buffer_size - 1;
-    if (i > e)
-        return 0;
-
-    for (LPCSTR j = source; *j && (i != e); ++i, ++j)
-        *i = *j;
-
-    *i = 0;
-    return 0;
-}
-
-inline int __cdecl xr_sprintf(LPSTR destination, size_t const buffer_size, LPCSTR format_string, ...)
-{
-    va_list args;
-    va_start(args, format_string);
-    return vsnprintf_s(destination, buffer_size, buffer_size - 1, format_string, args);
-}
-
-template <int count>
-inline int __cdecl xr_sprintf(char(&destination)[count], LPCSTR format_string, ...)
-{
-    va_list args;
-    va_start(args, format_string);
-    return vsnprintf_s(destination, count, count - 1, format_string, args);
-}
-#endif // #ifndef MASTER_GOLD
-
-template <int count>
-inline errno_t xr_strcpy(char(&destination)[count], LPCSTR source)
-{
-    return xr_strcpy(destination, count, source);
-}
-
-template <int count>
-inline errno_t xr_strcat(char(&destination)[count], LPCSTR source)
-{
-    return xr_strcat(destination, count, source);
-}
-#endif // #ifndef _EDITOR
+#define strconcat(unused_arg, ...) xr_strconcat(__VA_ARGS__)
+#define xr_strcpy strcpy_s
+#define xr_sprintf sprintf_s
+#define xr_strcat strcat_s
 
 XRCORE_API char* timestamp(string64& dest);
 

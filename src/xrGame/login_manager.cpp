@@ -460,8 +460,8 @@ bool login_manager::get_remember_me_from_registry	()
 
 void login_manager::forgot_password(char const * url)
 {
-	LPCSTR params = NULL;
-	STRCONCAT(params, "/C start ", url);
+	string_path params;
+	xr_strconcat(params, "/C start ", url);
 	ShellExecute(0, "open", "cmd.exe", params, NULL, SW_SHOW);
 }
 

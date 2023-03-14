@@ -1150,8 +1150,8 @@ void game_sv_mp::OnVoteStart				(LPCSTR VoteCommand, ClientID sender)
 			LevelName[255] = 0;
 			LevelVersion[255] = 0;
 			
-			LPCSTR sv_vote_command = NULL;
-			STRCONCAT(sv_vote_command, votecommands[i].command, " ", LevelName, " ", LevelVersion);
+			string_path sv_vote_command;
+			xr_strconcat(sv_vote_command, votecommands[i].command, " ", LevelName, " ", LevelVersion);
 			m_pVoteCommand = sv_vote_command;
 			xr_sprintf(resVoteCommand, 
 				"%s %s [%s]",

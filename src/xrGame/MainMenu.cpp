@@ -636,15 +636,15 @@ void	CMainMenu::OnSessionTerminate				(LPCSTR reason)
 	m_start_time = Device.dwTimeGlobal;
 	CStringTable	st;
 	LPCSTR str = st.translate("ui_st_kicked_by_server").c_str();
-	LPSTR		text;
+	string_path text;
 
 	if ( reason && xr_strlen(reason) && reason[0] == '@' )
 	{
-		STRCONCAT( text, reason + 1 );
+		xr_strconcat( text, reason + 1 );
 	}
 	else
 	{
-		STRCONCAT( text, str, " ", reason );
+		xr_strconcat( text, str, " ", reason );
 	}
 	
 	m_pMB_ErrDlgs[SessionTerminate]->SetText(st.translate(text).c_str());
@@ -828,8 +828,8 @@ void CMainMenu::OnDownloadMPMap_CopyURL(CUIWindow* w, void* d)
 void CMainMenu::OnDownloadMPMap(CUIWindow* w, void* d)
 {
 	LPCSTR url = m_downloaded_mp_map_url.c_str();
-	LPCSTR params = NULL;
-	STRCONCAT(params, "/C start ", url);
+	string_path params;
+	xr_strconcat(params, "/C start ", url);
 	ShellExecute(0, "open", "cmd.exe", params, NULL, SW_SHOW);
 }
 

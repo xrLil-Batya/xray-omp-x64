@@ -123,9 +123,6 @@
     <ClCompile Include="clsid.cpp">
       <Filter>Math\Extensions</Filter>
     </ClCompile>
-    <ClCompile Include="string_concatenations.cpp">
-      <Filter>Math\Extensions</Filter>
-    </ClCompile>
     <ClCompile Include="xr_trims.cpp">
       <Filter>Math\Extensions</Filter>
     </ClCompile>
@@ -411,12 +408,6 @@
       <Filter>Math\Extensions</Filter>
     </ClInclude>
     <ClInclude Include="clsid.h">
-      <Filter>Math\Extensions</Filter>
-    </ClInclude>
-    <ClInclude Include="string_concatenations.h">
-      <Filter>Math\Extensions</Filter>
-    </ClInclude>
-    <ClInclude Include="string_concatenations_inline.h">
       <Filter>Math\Extensions</Filter>
     </ClInclude>
     <ClInclude Include="xr_trims.h">

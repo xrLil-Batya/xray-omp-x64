@@ -117,7 +117,7 @@ void Log(const char* msg, const char* dop)
     }
 
     u32 buffer_size = (xr_strlen(msg) + 1 + xr_strlen(dop) + 1) * sizeof(char);
-    PSTR buf = (PSTR)_alloca(buffer_size);
+    string_path buf{};
     strconcat(buffer_size, buf, msg, " ", dop);
     Log(buf);
 }

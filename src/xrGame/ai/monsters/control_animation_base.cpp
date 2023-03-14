@@ -144,8 +144,8 @@ bool CControlAnimationBase::get_animation_info (EMotionAnim anim, u32 index, Mot
 	}
 
 	char  index_string_buffer[128];
-	char* animation_name_buffer;
-	STRCONCAT(animation_name_buffer, anim_it->target_name, itoa(index, index_string_buffer, 10));
+	string_path animation_name_buffer;
+	xr_strconcat(animation_name_buffer, anim_it->target_name.c_str(), itoa(index, index_string_buffer, 10));
 
 	IKinematicsAnimated*	animated	=	smart_cast<IKinematicsAnimated*>(m_object->Visual());
 	if ( !animated )

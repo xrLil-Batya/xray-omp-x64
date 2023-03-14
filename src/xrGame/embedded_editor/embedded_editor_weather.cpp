@@ -134,7 +134,10 @@ void nextTexture(char* tex, int texSize, int offset)
 	}
 	string_path newFn;
 	_splitpath((*files)[newIndex], nullptr, nullptr, newFn, nullptr);
-	strconcat(texSize, tex, dir, newFn);
+
+	string_path tex_path{};
+	xr_strconcat(tex_path, dir, newFn);
+	strncpy(tex, tex_path, 6);
 	FS.file_list_close(files);
 }
 
