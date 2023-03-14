@@ -261,6 +261,8 @@ void game_sv_freemp::OnEvent(NET_Packet &P, u16 type, u32 time, ClientID sender)
 }
 
 #include "Actor.h"
+#include <tbb/parallel_for_each.h>
+
 void game_sv_freemp::Update()
 {
 	inherited::Update();
@@ -274,33 +276,32 @@ void game_sv_freemp::Update()
 
 	if (Level().game && Device.dwFrame % 60 == 0)
 	{
-		for (auto player : Level().game->players)
+		const auto processPlayer = [&](std::pair<ClientID, game_PlayerState*> player)
 		{
 			if (player.second->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 			{
-				if (player.first == server().GetServerClient()->ID)
-					continue;
+				if (player.first != server().GetServerClient()->ID)
+				{
+					const auto obj = Level().Objects.net_Find(player.second->GameID);
+					const auto actor = smart_cast<CActor*>(obj);
+					if (actor && actor->g_Alive())
+					{
+						string_path file_name;
+						string32 filename;
+						xr_strcpy(filename, player.second->getName());
+						xr_strcat(filename, ".ltx");
 
-				CObject* obj = Level().Objects.net_Find(player.second->GameID);
-				CActor* actor = smart_cast<CActor*>(obj);
-				if (!actor)
-					return;
-				if (!actor->g_Alive())
-					return;
+						FS.update_path(file_name, "$mp_saves$", filename);
 
-				string_path file_name;
-				string32 filename;
-				xr_strcpy(filename, player.second->getName());
-				xr_strcat(filename, ".ltx");
-
-				FS.update_path(file_name, "$mp_saves$", filename);
-
-				CInifile* file = xr_new<CInifile>(file_name, false, false);
-				SavePlayer(player.second, file);
-				file->save_as(file_name);
+						CInifile* file = xr_new<CInifile>(file_name, false, false);
+						SavePlayer(player.second, file);
+						file->save_as(file_name);
+					}
+				}
 			}
-		}
-
+		};
+		tbb::parallel_for_each(Level().game->players, processPlayer);
+		
 		for (int i = 0; i != server().GetEntitiesNum(); i++)
 		{
 			CSE_Abstract* abs = server().GetEntity(i);
