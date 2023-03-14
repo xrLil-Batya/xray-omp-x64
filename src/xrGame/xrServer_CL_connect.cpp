@@ -218,9 +218,18 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	P.r_begin( Type );
 	u64 _our		=	FS.auth_get();
 	u64 _him		=	P.r_u64();
+#ifdef DEBUG
+	Msg("_our = %llu, _him = %llu", _our, _him);
+#endif
 	shared_str login, password;  
 	P.r_stringZ(login);
 	P.r_stringZ(password);
+
+	if(_our != _him)
+	{
+		SendConnectResult(CL, 0, ecr_data_verification_failed, "Data verification failed. Cheater?");
+		return;
+	}
 
 	string_path path_xray;
 	FS.update_path(path_xray, "$mp_saves_logins$", "logins.ltx");
