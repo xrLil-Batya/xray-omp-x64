@@ -946,7 +946,11 @@ void dInternalStepIsland_x2 (dxWorld *world, dxBody * const *body, int nb,
 # ifdef TIMING
   dTimerNow ("update position");
 # endif
-  for (i=0; i<nb; i++) dxStepBody (body[i],stepsize);
+  for (i=0; i<nb; i++)
+  {
+    if((body[i]->flags & dxBodyNoUpdatePos)==0)
+        dxStepBody (body[i],stepsize);
+  }
 
 # ifdef COMPARE_METHODS
   dReal *tmp_vnew = (dReal*) ALLOCA (nb*6*sizeof(dReal));
