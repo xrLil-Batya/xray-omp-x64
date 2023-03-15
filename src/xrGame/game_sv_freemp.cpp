@@ -96,10 +96,10 @@ void game_sv_freemp::AddMoneyToPlayer(game_PlayerState * ps, s32 amount)
 	if (total_money < 0)
 		total_money = 0;
 
-	if (total_money > std::numeric_limits<s32>().max())
+	if (total_money > int_max)
 	{
 		Msg("! The limit of the maximum amount of money has been exceeded.");
-		total_money = std::numeric_limits<s32>().max() - 1;
+		total_money = int_max - 1;
 	}
 
 	ps->money_for_round = s32(total_money);
