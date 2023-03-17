@@ -758,12 +758,6 @@ LPCSTR translate_string(LPCSTR str)
 {
 	return *CStringTable().translate(str);
 }
-
-void reload_language()
-{
-	CStringTable().ReloadLanguage();
-}
-
 bool has_active_tutotial()
 {
 	return (g_tutorial!=NULL);
@@ -1074,7 +1068,6 @@ void CLevel::script_register(lua_State *L)
 	def("play_hud_anm", &PlayBlendAnm),
 	def("stop_hud_anm", &StopBlendAnm),
 	def("stop_all_hud_anms", &StopAllBlendAnms),
-	def("set_hud_anm_time", &SetBlendAnmTime),
-	def("reload_language", &reload_language)
+	def("set_hud_anm_time", &SetBlendAnmTime)
 	];
 }

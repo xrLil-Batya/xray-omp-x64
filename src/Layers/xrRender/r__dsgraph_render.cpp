@@ -75,12 +75,7 @@ void __fastcall sorted_L1		(const T& N)
 	RCache.set_xform_world			(N.second.Matrix);
 	RImplementation.apply_object	(N.second.pObject);
 	RImplementation.apply_lmaterial	();
-
-    const float LOD = calcLOD(N.first, V->vis.sphere.R);
-#ifdef USE_DX11
-    RCache.LOD.set_LOD(LOD);
-#endif
-    V->Render(LOD);
+	V->Render						(calcLOD(N.first,V->vis.sphere.R));
 }
 
 IC	bool	cmp_vs_nrm			(mapNormalVS::value_type* N1, mapNormalVS::value_type* N2)

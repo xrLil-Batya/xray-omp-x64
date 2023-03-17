@@ -112,7 +112,6 @@ public:
 	void								apply_object			(IRenderable*	O);
 	IC void								apply_lmaterial			()				{};
 public:
-	void							PdaRenderToTarget();
 	// feature level
 	virtual	GenerationLevel			get_generation			()	{ return IRender_interface::GENERATION_R1; }
 	virtual DWORD					get_dx_level			()	{ return 0x00090000; }
@@ -211,6 +210,7 @@ public:
 	// [FFT++]
 	virtual void BeforeWorldRender(); //--#SM+#-- +SecondVP+ Вызывается перед началом рендера мира и пост-эффектов
 	virtual void AfterWorldRender();  //--#SM+#-- +SecondVP+ Вызывается после рендера мира и перед UI
+	virtual void PdaRenderToTarget();
 
 	// Render mode
 	virtual void					rmNear					();

@@ -13,11 +13,9 @@
 #include "StateManager\dx10SamplerStateCache.h"
 #include "StateManager\dx10StateCache.h"
 
-#ifdef USE_DX11
 #include <imgui.h>
 #include "backends\imgui_impl_dx11.h"
 #include "backends\imgui_impl_win32.h"
-#endif
 
 #ifndef _EDITOR
 void	fill_vid_mode_list			(CHW* _hw);
@@ -112,7 +110,7 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	m_move_window			= move_window;
 	CreateD3D();
 
-	BOOL	bWindowed = !psDeviceFlags.is(rsFullscreen) || strstr(Core.Params, "-window_mode");
+	BOOL  bWindowed			= !psDeviceFlags.is(rsFullscreen);
 
 	m_DriverType = Caps.bForceGPU_REF ? 
 		D3D_DRIVER_TYPE_REFERENCE : D3D_DRIVER_TYPE_HARDWARE;
@@ -250,8 +248,6 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	updateWindowProps							(m_hWnd);
 	fill_vid_mode_list							(this);
 #endif
-
-#ifdef USE_DX11
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -266,17 +262,14 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(m_hWnd);
     ImGui_ImplDX11_Init(pDevice, pContext);
-#endif
 }
 
 void CHW::DestroyDevice()
 {
-#ifdef USE_DX11
     // Cleanup
     ImGui_ImplWin32_Shutdown();
     ImGui_ImplDX11_Shutdown();
     ImGui::DestroyContext();
-#endif
 
 	//	Destroy state managers
 	StateManager.Reset();
@@ -327,10 +320,9 @@ void CHW::DestroyDevice()
 //////////////////////////////////////////////////////////////////////
 void CHW::Reset (HWND hwnd)
 {
-	ImGui_ImplDX11_InvalidateDeviceObjects();
 	DXGI_SWAP_CHAIN_DESC &cd = m_ChainDesc;
 
-	BOOL	bWindowed = !psDeviceFlags.is(rsFullscreen) || strstr(Core.Params, "-window_mode");
+	BOOL	bWindowed		= !psDeviceFlags.is	(rsFullscreen);
 
 	cd.Windowed = bWindowed;
 
@@ -379,7 +371,7 @@ void CHW::Reset (HWND hwnd)
 	UpdateViews();
 
 	updateWindowProps	(hwnd);
-	ImGui_ImplDX11_CreateDeviceObjects();
+
 }
 
 void CHW::SwitchVP(ViewPort vp)
@@ -521,7 +513,7 @@ BOOL CHW::support( D3DFORMAT fmt, DWORD type, DWORD usage)
 void CHW::updateWindowProps(HWND m_hWnd)
 {
 	//	BOOL	bWindowed				= strstr(Core.Params,"-dedicated") ? TRUE : !psDeviceFlags.is	(rsFullscreen);
-	BOOL	bWindowed				= !psDeviceFlags.is	(rsFullscreen) || strstr(Core.Params, "-window_mode");
+	BOOL	bWindowed				= !psDeviceFlags.is	(rsFullscreen);
 
 	u32		dwWindowStyle			= 0;
 	// Set window properties depending on what mode were in.

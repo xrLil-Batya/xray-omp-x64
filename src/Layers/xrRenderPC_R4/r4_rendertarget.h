@@ -36,7 +36,6 @@ public:
 	IBlender*					b_bloom;
 	IBlender*					b_luminance;
 	IBlender*					b_combine;
-	IBlender* b_sunshafts;
 	IBlender*					b_postprocess_msaa;
 	IBlender*					b_bloom_msaa;
 	IBlender*					b_combine_msaa[8];
@@ -51,14 +50,6 @@ public:
 	IBlender*					b_ssao;
 	IBlender*					b_ssao_msaa[8];
 
-	IBlender* b_blur;	
-	IBlender* b_dof;
-	IBlender* b_pp_bloom;	
-	IBlender* b_gasmask_drops;
-	IBlender* b_gasmask_dudv;
-	IBlender* b_nightvision;
-	IBlender* b_lut;
-	IBlender* b_smaa;
 	IBlender*					b_cut;
 
     // compute shader for hdao
@@ -91,28 +82,12 @@ public:
 	// 
 	ref_rt						rt_Accumulator;		// 64bit		(r,g,b,specular)
 	ref_rt						rt_Accumulator_temp;// only for HW which doesn't feature fp16 blend
-	ref_rt rt_sunshafts_0; // ss0
-	ref_rt rt_sunshafts_1; // ss1
 	ref_rt						rt_Generic_0;		// 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
 	ref_rt						rt_Generic_1;		// 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
 
 	//  Second viewport
 	ref_rt						rt_secondVP;		// 32bit		(r,g,b,a) --//#SM+#-- +SecondVP+
 	ref_rt						rt_ui_pda;
-	ref_rt rt_blur_h_2;
-	ref_rt rt_blur_2;
-
-	ref_rt rt_blur_h_4;
-	ref_rt rt_blur_4;
-	
-	ref_rt rt_blur_h_8;
-	ref_rt rt_blur_8;
-
-	ref_rt rt_pp_bloom;
-
-	ref_rt rt_smaa_edgetex;
-	ref_rt rt_dof;
-	ref_rt rt_smaa_blendtex;
 
 	//	Igor: for volumetric lights
 	ref_rt						rt_Generic_2;		// 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
@@ -149,7 +124,7 @@ public:
 	ref_texture					t_noise_mipped;
 private:
 	// OCCq
-	ref_shader s_sunshafts;
+
 	ref_shader					s_occq;
 
 	// SSAO
@@ -169,16 +144,8 @@ private:
 	ref_shader					s_accum_spot	;
 	ref_shader					s_accum_reflected;
 	ref_shader					s_accum_volume;
-	ref_shader s_blur;	
-	ref_shader s_dof;
-	ref_shader s_pp_bloom;	
-	ref_shader s_gasmask_drops;
-	ref_shader s_gasmask_dudv;
-	ref_shader s_nightvision;	
-	ref_shader s_smaa;
 
 	ref_shader					s_cut;
-	ref_shader s_lut;
 
 	//	generate min/max
 	ref_shader					s_create_minmax_sm;
@@ -227,7 +194,6 @@ private:
 	float						f_luminance_adapt;
 
 	// Combine
-	ref_geom g_KD;
 	ref_geom					g_combine;
 	ref_geom					g_combine_VP;		// xy=p,zw=tc
 	ref_geom					g_combine_2UV;
@@ -312,15 +278,6 @@ public:
 	void						phase_vol_accumulator	();
 	void						shadow_direct			(light* L, u32 dls_phase);
 	void						phase_cut();
-	void phase_dof();
-	void phase_blur();
-	void phase_gasmask_drops();
-	void phase_gasmask_dudv();
-	void phase_nightvision();
-	void phase_lut();
-	void phase_pp_bloom();
-	void phase_sunshafts();
-	void phase_smaa();
 
 	void						SwitchViewPort(ViewPort vp);
 	//	Generates min/max sm

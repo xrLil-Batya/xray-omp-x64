@@ -20,10 +20,10 @@ public:
 	virtual		LPCSTR	getComment()	{ return "INTERNAL: mask direct light msaa";	}
 	virtual		BOOL		canBeDetailed()	{ return FALSE;	}
 	virtual		BOOL		canBeLMAPped()	{ return FALSE;	}
-  virtual  void     SetDefine( LPCSTR name, LPCSTR definition )
+  virtual  void     SetDefine( LPCSTR Name, LPCSTR Definition )
   {
-      Name = name;
-      Definition = definition;
+      this->Name = Name;
+      this->Definition = Definition;
   }
 
 	virtual		void		Compile			(CBlender_Compile& C);

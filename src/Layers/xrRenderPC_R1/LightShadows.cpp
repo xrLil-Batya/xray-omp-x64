@@ -253,8 +253,8 @@ void CLightShadows::calculate	()
 			mCombineR.mul			(mProjectR,mView);
 			
 			// Select slot and set viewport
-			u32		s_x			=	u32(slot_id%slot_line);
-			u32		s_y			=	u32(slot_id/slot_line);
+			DWORD s_x =	static_cast<DWORD>(slot_id%slot_line);
+			DWORD s_y =	static_cast<DWORD>(slot_id/slot_line);
 			D3DVIEWPORT9 VP		=	{s_x*S_size,s_y*S_size,S_size,S_size,0,1 };
 			CHK_DX					(HW.pDevice->SetViewport(&VP));
 			

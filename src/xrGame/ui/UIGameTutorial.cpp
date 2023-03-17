@@ -13,7 +13,6 @@
 #include "UIActorMenu.h"
 #include "UIPdaWnd.h"
 
-shared_str extern g_language;
 extern ENGINE_API BOOL bShowPauseString;
 
 void CallFunction(shared_str const& func)
@@ -106,15 +105,7 @@ void CUISequencer::Start(LPCSTR tutor_name)
 	m_UIWindow					= xr_new<CUIWindow>();
 
 	CUIXml uiXml;
-	string128		GAME_TUTORIALS_XML;
-	xr_sprintf(GAME_TUTORIALS_XML, "game_tutorials_%s.xml", *g_language);
-
-	string128		xml_name;
-	xr_sprintf(xml_name, "%s\\%s", UI_PATH, GAME_TUTORIALS_XML);
-
-	if (!FS.exist(CONFIG_PATH, xml_name))
-		xr_strcpy(GAME_TUTORIALS_XML, "game_tutorials.xml");
-	uiXml.Load					(CONFIG_PATH, UI_PATH, GAME_TUTORIALS_XML);
+	uiXml.Load					(CONFIG_PATH, UI_PATH, "game_tutorials.xml");
 	
 	int items_count				= uiXml.GetNodesNum	(tutor_name, 0, "item");	VERIFY(items_count>0);
 	uiXml.SetLocalRoot			(uiXml.NavigateToNode(tutor_name, 0));

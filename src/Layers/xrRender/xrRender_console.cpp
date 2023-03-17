@@ -1,25 +1,7 @@
-#include "stdafx.h"
-#include "xrRender_console.h"
-#include "dxRenderDeviceRender.h"
+#include	"stdafx.h"
 
-// Screen Space Shaders Stuff
-Fvector4 ps_ssfx_wpn_dof_1 = { .50f, .50f, .50f, .50f };
-float ps_ssfx_wpn_dof_2 = 1.0f;
-
-int opt_static = 0;
-int opt_dynamic = 0;
-
-Flags32 psDeviceFlags2 = { 0 };
-
-u32 ps_smaa_quality = 3;
-xr_token smaa_quality_token[] = {
-	{ "off", 0 },
-	{ "low", 1 },
-	{ "medium", 2 },
-	{ "high", 3 },
-	{ "ultra", 4 },
-	{ 0, 0 }
-};
+#include	"xrRender_console.h"
+#include	"dxRenderDeviceRender.h"
 
 u32			ps_Preset				=	2	;
 xr_token							qpreset_token							[ ]={
@@ -61,14 +43,6 @@ xr_token							qssao_token									[ ]={
 	{ 0,							0												}
 };
 
-u32 ps_sunshafts_mode = 2;
-xr_token sunshafts_mode_token[] = {
-	{"off", 0},
-	{"volumetric", 1},
-	{"screen_space", 2},
-	{"combined", 3},
-	{0, 0}
-};
 u32			ps_r_sun_quality		=	1;			//	=	0;
 xr_token							qsun_quality_token							[ ]={
 	{ "st_opt_low",					0												},
@@ -90,11 +64,11 @@ xr_token							qmsaa_token							[ ]={
 	{ 0,							0												}
 };
 
-u32			ps_r3_msaa_atest		=	1;			//	=	0;
+u32			ps_r3_msaa_atest		=	0;			//	=	0;
 xr_token							qmsaa__atest_token					[ ]={
 	{ "st_opt_off",					0												},
 	{ "st_opt_atest_msaa_dx10_0",	1												},
-	//{ "st_opt_atest_msaa_dx10_1",	2												},
+	{ "st_opt_atest_msaa_dx10_1",	2												},
 	{ 0,							0												}
 };
 
@@ -172,7 +146,7 @@ Flags32		ps_r2_ls_flags				= { R2FLAG_SUN
 	| R2FLAG_EXP_MT_CALC | R3FLAG_DYN_WET_SURF
 	| R3FLAG_VOLUMETRIC_SMOKE
 	//| R3FLAG_MSAA 
-	| R3FLAG_MSAA_OPT
+	//| R3FLAG_MSAA_OPT
 	| R3FLAG_GBUFFER_OPT
 	|R2FLAG_DETAIL_BUMP
 	|R2FLAG_DOF
@@ -240,45 +214,6 @@ int			ps_r2_wait_sleep			= 0;
 
 float		ps_r2_lt_smooth				= 1.f;				// 1.f
 float		ps_r2_slight_fade			= 0.5f;				// 1.f
-///////lvutner
-Fvector4 ps_r2_mask_control = {.0f, .0f, .0f, .0f}; // r2-only
-Fvector ps_r2_drops_control = {.0f, 1.15f, .0f}; // r2-only
-
-int ps_r2_nightvision = 0;
-
-float ps_r2_ss_sunshafts_length = 1.f;
-float ps_r2_ss_sunshafts_radius = 1.f;
-
-float ps_r2_tnmp_a = .205f; // r2-only
-float ps_r2_tnmp_b = .35f; // r2-only
-float ps_r2_tnmp_c = .55f; // r2-only
-float ps_r2_tnmp_d = .20f; // r2-only
-float ps_r2_tnmp_e = .02f; // r2-only
-float ps_r2_tnmp_f = .15f; // r2-only
-float ps_r2_tnmp_w = 7.5f; // r2-only
-float ps_r2_tnmp_exposure = 7.0f; // r2-only
-float ps_r2_tnmp_gamma = .25f; // r2-only
-float ps_r2_tnmp_onoff = .0f; // r2-only
-
-float ps_r2_img_exposure = 1.0f; // r2-only
-float ps_r2_img_gamma = 1.0f; // r2-only
-float ps_r2_img_saturation = 1.0f; // r2-only
-Fvector ps_r2_img_cg = {.0f, .0f, .0f}; // r2-only
-
-Fvector4 ps_pp_bloom_thresh = { .7, .8f, .9f, .0f };
-Fvector4 ps_pp_bloom_weight = { .33f, .33f, .33f, .0f };
-
-//debug
-Fvector4 ps_dev_param_1 = { 1.0f, 1.0f, 1.0f, .250f };
-Fvector4 ps_dev_param_2 = { .0f, .0f, .0f, .0f };
-Fvector4 ps_dev_param_3 = { 1.0f, 1.0f, 1.0f, -.15f };
-Fvector4 ps_dev_param_4 = { 1.0f, 1.0f, 1.0f, -.30f };
-Fvector4 ps_dev_param_5 = { 1.0f, .0f, .0f, .0f };
-Fvector4 ps_dev_param_6 = { 1.0f, 0.0f, .0f, .0f };
-Fvector4 ps_dev_param_7 = { .0f, .0f, 1.0f, .0f };
-Fvector4 ps_dev_param_8 = { .0f, .0f, .0f, .0f };
-
-/////////////////////////////////
 
 //	x - min (0), y - focus (1.4), z - max (100)
 Fvector3	ps_r2_dof					= Fvector3().set(-1.25f, 1.4f, 600.f);
@@ -727,7 +662,7 @@ public:
 	}
 	virtual void	Info	(TInfo& I)
 	{	
-		xr_sprintf(I,"vector3 in range [%f,%f,%f]-[%f,%f,%f]",vector_min.x, vector_min.y, vector_min.z, vector_min.x, vector_min.y, vector_min.z);
+		xr_sprintf(I,"vector3 in range [%f,%f,%f]-[%f,%f,%f]",vector_min.x, vector_min.y, vector_min.z, vector_max.x, vector_max.y, vector_max.z);
 	}
 
 };
@@ -902,35 +837,6 @@ void		xrRender_initconsole	()
 	CMD4(CCC_Float,		"r2_aa_kernel",			&ps_r2_aa_kernel,			0.3f,	0.7f	);
 	CMD4(CCC_Float,		"r2_mblur",				&ps_r2_mblur,				0.0f,	1.0f	);
 
-	///////lvutner
-	tw_min.set(0, 0, 0);
-	tw_max.set(1, 2, 1);
-	CMD4(CCC_Vector3, "r2_drops_control", &ps_r2_drops_control, tw_min, tw_max);
-	CMD3(CCC_Token, "r2_sunshafts_mode", &ps_sunshafts_mode, sunshafts_mode_token);
-	CMD4(CCC_Float, "r2_ss_sunshafts_length", &ps_r2_ss_sunshafts_length, .2f, 1.5f);
-	CMD4(CCC_Float, "r2_ss_sunshafts_radius", &ps_r2_ss_sunshafts_radius, .5f, 2.f);
-
-	CMD4(CCC_Float, "r2_tnmp_a", &ps_r2_tnmp_a, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_b", &ps_r2_tnmp_b, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_c", &ps_r2_tnmp_c, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_d", &ps_r2_tnmp_d, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_e", &ps_r2_tnmp_e, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_f", &ps_r2_tnmp_f, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_w", &ps_r2_tnmp_w, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_exposure", &ps_r2_tnmp_exposure, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_gamma", &ps_r2_tnmp_gamma, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_onoff", &ps_r2_tnmp_onoff, 0.0f, 1.0f);
-
-
-	CMD4(CCC_Float, "r__exposure", &ps_r2_img_exposure, 0.5f, 4.0f);
-	CMD4(CCC_Float, "r__gamma", &ps_r2_img_gamma, 0.5f, 2.2f);
-	CMD4(CCC_Float, "r__saturation", &ps_r2_img_saturation, 0.0f, 2.0f);
-
-	tw_min.set(0, 0, 0);
-	tw_max.set(1, 1, 1);
-	CMD4(CCC_Vector3, "r__color_grading", &ps_r2_img_cg, tw_min, tw_max);
-
-	CMD3(CCC_Token, "r2_smaa", &ps_smaa_quality, smaa_quality_token);
 	CMD3(CCC_Mask,		"r2_gi",				&ps_r2_ls_flags,			R2FLAG_GI);
 	CMD4(CCC_Float,		"r2_gi_clip",			&ps_r2_GI_clip,				EPS,	0.1f	);
 	CMD4(CCC_Integer,	"r2_gi_depth",			&ps_r2_GI_depth,			1,		5		);
@@ -1006,7 +912,7 @@ void		xrRender_initconsole	()
 	//CMD3(CCC_Mask,		"r3_msaa_hybrid",				&ps_r2_ls_flags,			R3FLAG_MSAA_HYBRID);
 	//CMD3(CCC_Mask,		"r3_msaa_opt",					&ps_r2_ls_flags,			R3FLAG_MSAA_OPT);
 	CMD3(CCC_Mask,		"r3_gbuffer_opt",				&ps_r2_ls_flags,			R3FLAG_GBUFFER_OPT);
-	//CMD3(CCC_Mask,		"r3_use_dx10_1",				&ps_r2_ls_flags,			(u32)R3FLAG_USE_DX10_1);
+	CMD3(CCC_Mask,		"r3_use_dx10_1",				&ps_r2_ls_flags,			(u32)R3FLAG_USE_DX10_1);
 	//CMD3(CCC_Mask,		"r3_msaa_alphatest",			&ps_r2_ls_flags,			(u32)R3FLAG_MSAA_ALPHATEST);
 	CMD3(CCC_Token,		"r3_msaa_alphatest",			&ps_r3_msaa_atest,			qmsaa__atest_token);
 	//CMD3(CCC_Token,		"r3_minmax_sm",					&ps_r3_minmax_sm,			qminmax_sm_token);
@@ -1027,16 +933,7 @@ void		xrRender_initconsole	()
 
 	CMD3(CCC_Mask,			"r3_volumetric_smoke",			&ps_r2_ls_flags,			R3FLAG_VOLUMETRIC_SMOKE);
 	CMD1(CCC_memory_stats,	"render_memory_stats" );
-
-	// Screen Space Shaders
-	//CMD4(CCC_Vector4, "ssfx_wpn_dof_1", &ps_ssfx_wpn_dof_1, tw2_min, tw2_max);
-	CMD4(CCC_Float, "ssfx_wpn_dof_2", &ps_ssfx_wpn_dof_2, 0, 1);
-
-	// Geometry optimization
-	CMD4(CCC_Integer,		"r__optimize_static_geom",		&opt_static,				0,	4		);
-	CMD4(CCC_Integer,		"r__optimize_dynamic_geom",		&opt_dynamic,				0,	4		);
-	psDeviceFlags2.set(rsOptShadowGeom, TRUE);
-	CMD3(CCC_Mask,			"r__optimize_shadow_geom",		&psDeviceFlags2,			rsOptShadowGeom);
+	
 
 //	CMD3(CCC_Mask,		"r2_sun_ignore_portals",		&ps_r2_ls_flags,			R2FLAG_SUN_IGNORE_PORTALS);
 }

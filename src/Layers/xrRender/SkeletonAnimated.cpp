@@ -672,7 +672,7 @@ CBlend*	CKinematicsAnimated::IBlend_Create	()
 }
 void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
 {
-	inherited::Load(N, data, dwFlags);
+	inherited::Load	(N, data, dwFlags);
 
 	// Globals
 	blend_instances = NULL;
@@ -706,7 +706,6 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
 		}
 	};
 
-	// Load animation
 	if (data->find_chunk(OGF_S_MOTION_REFS))
 	{
 		string_path items_nm;
@@ -744,7 +743,6 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
 
 				continue;
 			}
-
 			xr_strcat(nm, ".omf");
 			loadOMF(nm);
 		}
@@ -761,7 +759,7 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
 
 	m_Partition = m_Motions[0].motions.partition();
 	m_Partition->load(this, N);
-
+    
 	// initialize motions
 	for (MotionsSlotVecIt m_it = m_Motions.begin(); m_it != m_Motions.end(); m_it++)
 	{
@@ -773,7 +771,6 @@ void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)
 			MS.bone_motions[i] = *MS.motions.bone_motions(BD->name);
 		}
 	}
-
 
 	// Init blend pool
 	IBlend_Startup();

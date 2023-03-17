@@ -51,28 +51,9 @@
 #define		r2_RT_ui			"$user$ui"
 
 #define		r2_RT_secondVP		"$user$viewport2"		// --#SM+#-- +SecondVP+ Хранит картинку со второго вьюпорта
+#define r2_RT_ui "$user$ui"
 #define     r2_RT_temp          "$user$temp"
 #define     r2_RT_temp_without_samples          "$user$temp_ws"
-
-#define		r2_RT_blur_h_2	"$user$blur_h_2"
-#define		r2_RT_blur_2		"$user$blur_2"
-
-#define		r2_RT_blur_h_4	"$user$blur_h_4"
-#define		r2_RT_blur_4	"$user$blur_4"
-
-#define		r2_RT_blur_h_8	"$user$blur_h_8"
-#define		r2_RT_blur_8	"$user$blur_8"
-
-#define		r2_RT_pp_bloom	"$user$pp_bloom"
-
-#define		r2_RT_dof			"$user$dof"
-#define		r2_RT_ui			"$user$ui"
-
-#define		r2_RT_smaa_edgetex "$user$smaa_edgetex"
-#define		r2_RT_smaa_blendtex "$user$smaa_blendtex"
-
-#define 	r2_RT_sunshafts0	"$user$sun_shafts0"		// first rt
-#define		r2_RT_sunshafts1	"$user$sun_shafts1"		// second rt
 
 #define		JITTER(a) r2_jitter #a
 

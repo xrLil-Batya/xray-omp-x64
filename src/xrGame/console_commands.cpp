@@ -59,7 +59,6 @@
 #endif // DEBUG
 
 string_path		g_last_saved_game;
-shared_str			g_language;
 
 #ifdef DEBUG
 	extern float air_resistance_epsilon;
@@ -1226,46 +1225,6 @@ public:
 */
 #endif
 
-struct CCC_ChangeLanguage : public IConsole_Command {
-	CCC_ChangeLanguage(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; }
-
-	virtual void Execute(LPCSTR args) {
-
-		if (!args || !*args)
-		{
-			Msg("! no arguments passed");
-			return;
-		}
-
-		bool b_exist = !!pSettings->line_exist("languages", args);
-		if (!b_exist)
-		{
-			Msg("! Can't find language \"%s\" in the section [languages]!", args);
-			return;
-		}
-
-		g_language = args;
-
-		CStringTable().ReloadLanguage();
-
-		//reload language
-		if (g_pGamePersistent && !MainMenu()->IsActive())
-			 CStringTable().ReloadLanguage();
-	}
-
-	virtual void	Save(IWriter *F)
-	{
-		if (!*g_language)
-			return;
-
-		F->w_printf("%s %s\r\n", cName, g_language.c_str());
-	}
-	virtual void	Status(TStatus& S)
-		{
-			sprintf_s(S, "%s", g_language.c_str());
-		}
-};
-
 #	include "game_graph.h"
 struct CCC_JumpToLevel : public IConsole_Command {
 	CCC_JumpToLevel(LPCSTR N) : IConsole_Command(N)  {};
@@ -2280,7 +2239,6 @@ CMD4(CCC_FloatBlock,		"dbg_text_height_scale",	&dbg_text_height_scale	,			0.2f	,
 
 	CMD3(CCC_Mask,			"cl_dynamiccrosshair",	&psHUD_Flags,	HUD_CROSSHAIR_DYNAMIC);
 	CMD1(CCC_MainMenu,		"main_menu"				);
-	CMD1(CCC_ChangeLanguage, "language");
 
 	CMD1(CCC_StartTimeSingle,	"start_time_single");
 	CMD4(CCC_TimeFactorSingle,	"time_factor_single", &g_fTimeFactor, 0.f, 1000.0f);

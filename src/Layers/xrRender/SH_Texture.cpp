@@ -38,7 +38,7 @@ CTexture::CTexture		()
 	flags.bUser			= false;
 	flags.seqCycles		= FALSE;
 	m_material			= 1.0f;
-	bind				= fastdelegate::FastDelegate<void(u32)>(this,&CTexture::apply_load);
+	bind				= fastdelegate::MakeDelegate(this,&CTexture::apply_load);
 }
 
 CTexture::~CTexture()
@@ -66,10 +66,10 @@ ID3DBaseTexture*	CTexture::surface_get	()
 
 void CTexture::PostLoad	()
 {
-	if (pTheora)				bind		= fastdelegate::FastDelegate<void(u32)>(this,&CTexture::apply_theora);
-	else if (pAVI)				bind		= fastdelegate::FastDelegate<void(u32)>(this,&CTexture::apply_avi);
-	else if (!seqDATA.empty())	bind		= fastdelegate::FastDelegate<void(u32)>(this,&CTexture::apply_seq);
-	else						bind		= fastdelegate::FastDelegate<void(u32)>(this,&CTexture::apply_normal);
+	if (pTheora)				bind		= fastdelegate::MakeDelegate(this,&CTexture::apply_theora);
+	else if (pAVI)				bind		= fastdelegate::MakeDelegate(this,&CTexture::apply_avi);
+	else if (!seqDATA.empty())	bind		= fastdelegate::MakeDelegate(this,&CTexture::apply_seq);
+	else						bind		= fastdelegate::MakeDelegate(this,&CTexture::apply_normal);
 }
 
 void CTexture::apply_load	(u32 dwStage)	{
@@ -124,9 +124,9 @@ void CTexture::apply_avi	(u32 dwStage)
 void CTexture::apply_seq	(u32 dwStage)	{
 	// SEQ
 	u32	frame		=RDEVICE.dwTimeContinual/seqMSPF; //RDEVICE.dwTimeGlobal
-	size_t	frame_data	= seqDATA.size();
+	u32	frame_data	= seqDATA.size();
 	if (flags.seqCycles)		{
-		size_t	frame_id	= frame%(frame_data*2);
+		u32	frame_id	= frame%(frame_data*2);
 		if (frame_id>=frame_data)	frame_id = (frame_data-1) - (frame_id%frame_data);
 		pSurface 			= seqDATA[frame_id];
 	} else {
@@ -317,7 +317,7 @@ void CTexture::Unload	()
 	xr_delete		(pAVI);
 	xr_delete		(pTheora);
 
-	bind			= fastdelegate::FastDelegate<void(u32)>(this,&CTexture::apply_load);
+	bind			= fastdelegate::MakeDelegate(this,&CTexture::apply_load);
 }
 
 void CTexture::desc_update	()

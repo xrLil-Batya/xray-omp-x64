@@ -15,16 +15,6 @@
 #include "../xrRenderDX10/msaa/dx10MSAABlender.h"
 #include "../xrRenderDX10/DX10 Rain/dx10RainBlender.h"
 
-////////////////////////////lvutner
-#include "blender_ss_sunshafts.h"
-#include "blender_gasmask_drops.h"
-#include "blender_gasmask_dudv.h"
-#include "blender_smaa.h"
-#include "blender_blur.h"
-#include "blender_dof.h"
-#include "blender_pp_bloom.h"
-#include "blender_nightvision.h"
-#include "blender_lut.h"
 #include "blender_cut.h"
 
 #include "../xrRender/dxRenderDeviceRender.h"
@@ -152,7 +142,6 @@ void	CRenderTarget::u_stencil_optimize	(eStencilOptimizeMode eSOM)
 		break;
 	default:
 		VERIFY(!"CRenderTarget::u_stencil_optimize. switch no default!");
-		break;
 	}	
 
 	RCache.set_Geometry			(g_combine		);
@@ -304,9 +293,6 @@ CRenderTarget::CRenderTarget		()
 	param_noise_fps		= 25.f;
 	param_noise_scale	= 1.f;
 
-	rt_secondVP = nullptr; //--#SM+# +SecondVP+
-	rt_ui_pda = nullptr;
-
 	im_noise_time		= 1/100;
 	im_noise_shift_w	= 0;
 	im_noise_shift_h	= 0;
@@ -336,16 +322,6 @@ CRenderTarget::CRenderTarget		()
 	b_luminance				= xr_new<CBlender_luminance>		();
 	b_combine				= xr_new<CBlender_combine>			();
 	b_ssao					= xr_new<CBlender_SSAO_noMSAA>		();
-	///////////////////////////////////lvutner
-	b_sunshafts = xr_new<CBlender_sunshafts>();
-	b_blur = xr_new<CBlender_blur>();	
-	b_pp_bloom = xr_new<CBlender_pp_bloom>();	
-	b_dof = xr_new<CBlender_dof>();
-	b_gasmask_drops = xr_new<CBlender_gasmask_drops>();
-	b_gasmask_dudv = xr_new<CBlender_gasmask_dudv>();
-	b_nightvision = xr_new<CBlender_nightvision>();
-	b_lut = xr_new<CBlender_lut>();
-	b_smaa = xr_new<CBlender_smaa>();
 
 	// HDAO
 	b_hdao_cs               = xr_new<CBlender_CS_HDAO>			();
@@ -438,22 +414,6 @@ CRenderTarget::CRenderTarget		()
 		rt_Generic_1.create		(r2_RT_generic1, vp_params_main_secondary,D3DFMT_A8R8G8B8, 1		);
 		rt_ui_pda.create		(r2_RT_ui, vp_params_main_secondary, D3DFMT_A8R8G8B8, 1			);
 		rt_secondVP.create(r2_RT_secondVP, RtCreationParams(Device.m_SecondViewport.screenWidth, Device.m_SecondViewport.screenHeight, MAIN_VIEWPORT), D3DFMT_A8R8G8B8, 1); //--#SM+#-- +SecondVP+
-		rt_dof.create(r2_RT_dof, vp_params_main_secondary, D3DFMT_A8R8G8B8);
-		// RT - KD
-		rt_sunshafts_0.create(r2_RT_sunshafts0, vp_params_main_secondary, D3DFMT_A8R8G8B8);
-		rt_sunshafts_1.create(r2_RT_sunshafts1, vp_params_main_secondary, D3DFMT_A8R8G8B8);
-
-		// RT Blur
-		rt_blur_h_2.create(r2_RT_blur_h_2, vp_params_main_secondary, D3DFMT_A8R8G8B8);
-		rt_blur_2.create(r2_RT_blur_2, vp_params_main_secondary, D3DFMT_A8R8G8B8);		
-
-		rt_blur_h_4.create(r2_RT_blur_h_4, vp_params_main_secondary, D3DFMT_A8R8G8B8);
-		rt_blur_4.create(r2_RT_blur_4, vp_params_main_secondary, D3DFMT_A8R8G8B8);		
-		
-		rt_blur_h_8.create(r2_RT_blur_h_8, vp_params_main_secondary, D3DFMT_A8R8G8B8);
-		rt_blur_8.create(r2_RT_blur_8, vp_params_main_secondary, D3DFMT_A8R8G8B8);	
-		
-		rt_pp_bloom.create(r2_RT_pp_bloom, vp_params_main_secondary, D3DFMT_A8R8G8B8);
 		if( RImplementation.o.dx10_msaa )
 		{
 			rt_Generic_0_r.create			(r2_RT_generic0_r, vp_params_main_secondary,D3DFMT_A8R8G8B8, SampleCount	);
@@ -467,14 +427,6 @@ CRenderTarget::CRenderTarget		()
 			rt_Generic_2.create			(r2_RT_generic2, vp_params_main_secondary,D3DFMT_A16B16G16R16F, SampleCount );
 	}
 
-	s_sunshafts.create(b_sunshafts, "r2\\sunshafts");
-	s_blur.create(b_blur, "r2\\blur");
-	s_pp_bloom.create(b_pp_bloom, "r2\\pp_bloom");		
-	s_dof.create(b_dof, "r2\\dof");
-	s_gasmask_drops.create(b_gasmask_drops, "r2\\gasmask_drops");
-	s_gasmask_dudv.create(b_gasmask_dudv, "r2\\gasmask_dudv");
-	s_nightvision.create(b_nightvision, "r2\\nightvision");
-	s_lut.create(b_lut, "r2\\lut");	
 	// OCCLUSION
 	s_occq.create					(b_occq,		"r2\\occq");
 
@@ -563,8 +515,8 @@ CRenderTarget::CRenderTarget		()
 	//	TODO: DX10: Create resources only when DX10 rain is enabled.
 	//	Or make DX10 rain switch dynamic?
 	{
-		CBlender_rain	TempRainBlender;
-		s_rain.create( &TempRainBlender, "null");
+		CBlender_rain	TempBlender;
+		s_rain.create( &TempBlender, "null");
 
 		if( RImplementation.o.dx10_msaa )
 		{
@@ -664,17 +616,6 @@ CRenderTarget::CRenderTarget		()
 	{
 		rt_temp.create(r2_RT_temp, RtCreationParams(Device.dwWidth, Device.dwHeight, MAIN_VIEWPORT), RtCreationParams(Device.m_SecondViewport.screenWidth, Device.m_SecondViewport.screenHeight, SECONDARY_WEAPON_SCOPE), D3DFORMAT::D3DFMT_A16B16G16R16, SampleCount);
 		rt_temp_without_samples.create(r2_RT_temp_without_samples, RtCreationParams(Device.dwWidth, Device.dwHeight, MAIN_VIEWPORT), RtCreationParams(Device.m_SecondViewport.screenWidth, Device.m_SecondViewport.screenHeight, SECONDARY_WEAPON_SCOPE), D3DFORMAT::D3DFMT_A16B16G16R16);
-	}
-
-	//SMAA
-	{
-		u32 w = Device.dwWidth;
-		u32 h = Device.dwHeight;
-	
-		rt_smaa_edgetex.create(r2_RT_smaa_edgetex, RtCreationParams(w, h, MAIN_VIEWPORT), D3DFMT_A8R8G8B8);
-		rt_smaa_blendtex.create(r2_RT_smaa_blendtex, RtCreationParams(w, h, MAIN_VIEWPORT), D3DFMT_A8R8G8B8);
-		
-		s_smaa.create(b_smaa, "r3\\smaa");
 	}
 
 	// TONEMAP
@@ -791,9 +732,6 @@ CRenderTarget::CRenderTarget		()
 
 		u32 fvf_aa_AA				= D3DFVF_XYZRHW|D3DFVF_TEX7|D3DFVF_TEXCOORDSIZE2(0)|D3DFVF_TEXCOORDSIZE2(1)|D3DFVF_TEXCOORDSIZE2(2)|D3DFVF_TEXCOORDSIZE2(3)|D3DFVF_TEXCOORDSIZE2(4)|D3DFVF_TEXCOORDSIZE4(5)|D3DFVF_TEXCOORDSIZE4(6);
 		g_aa_AA.create				(fvf_aa_AA,		RCache.Vertex.Buffer(), RCache.QuadIB);
-
-		u32 fvf_KD = D3DFVF_XYZRHW | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE2(0);
-		g_KD.create(fvf_KD, RCache.Vertex.Buffer(), RCache.QuadIB);
 
 		t_envmap_0.create			(r2_T_envs0);
 		t_envmap_1.create			(r2_T_envs1);
@@ -1004,7 +942,7 @@ CRenderTarget::CRenderTarget		()
 			descHBAO.CPUAccessFlags = 0;
 			descHBAO.MiscFlags = 0;
 
-			auto it = TEX_jitter_count-1;
+			u32 it = TEX_jitter_count-1;
 			subData[it].pSysMem = tempDataHBAO;
 			subData[it].SysMemPitch = descHBAO.Width*sampleSize * sizeof(float);
 
@@ -1129,8 +1067,6 @@ CRenderTarget::~CRenderTarget	()
 	accum_omnip_geom_destroy	();
 	accum_point_geom_destroy	();
 	accum_volumetric_geom_destroy();
-	rt_secondVP.destroy(); //--#SM+#-- +SecondVP+
-	rt_ui_pda.destroy();
 
 	// Blenders
 	xr_delete					(b_combine				);
@@ -1144,16 +1080,6 @@ CRenderTarget::~CRenderTarget	()
 	xr_delete(b_postprocess_msaa);
 	xr_delete(b_bloom_msaa);
 
-	////////////lvutner
-	xr_delete(b_blur);		
-	xr_delete(b_dof);
-	xr_delete(b_pp_bloom);	
-	xr_delete(b_gasmask_drops);
-	xr_delete(b_gasmask_dudv);
-	xr_delete(b_nightvision);
-	xr_delete(b_lut);	
-	xr_delete(b_smaa);
-	xr_delete(b_sunshafts);
    if( RImplementation.o.dx10_msaa )
    {
       int bound = RImplementation.o.dx10_msaa_samples;

@@ -170,7 +170,7 @@ void dx103DFluidData::ParseProfile(const xr_string &Profile)
 
 	u32 iEmittersNum = ini.r_u32("volume", "EmittersNum");
 
-    m_Emitters.clear();
+	m_Emitters.clear();
 	m_Emitters.resize(iEmittersNum);
 	for ( u32 i=0; i<iEmittersNum; ++i )
 	{

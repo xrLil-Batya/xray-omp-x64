@@ -173,10 +173,10 @@ void CRenderDevice::End(void)
 	{
 		ImGui::Render();
         extern ENGINE_API int g_current_renderer;
-		if(g_current_renderer == 3)
-			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-		else
+		if(g_current_renderer == 1 || g_current_renderer == 2)
 			ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+		else
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	}
 
     m_pRender->End();
@@ -290,10 +290,10 @@ void ImGui_NewFrame()
 
 	// Start the frame
     extern ENGINE_API int g_current_renderer;
-	if(g_current_renderer == 3)
-		ImGui_ImplDX11_NewFrame();
-	else
+	if(g_current_renderer == 1 || g_current_renderer == 2)
 		ImGui_ImplDX9_NewFrame();
+	else
+		ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 }

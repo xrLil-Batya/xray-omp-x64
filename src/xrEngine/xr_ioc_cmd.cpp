@@ -15,8 +15,7 @@
 
 #include "xr_object.h"
 
-xr_token* vid_quality_token = NULL;
-
+xr_vector<xr_token> vid_quality_token;
 xr_token vid_bpp_token[] =
 {
     {"16", 16},
@@ -531,13 +530,7 @@ public:
 ENGINE_API BOOL r2_sun_static = TRUE;
 ENGINE_API BOOL r2_advanced_pp = FALSE; // advanced post process and effects
 
-#define EXCLUDE_R2_AND_R3
-
-#ifdef EXCLUDE_R2_AND_R3
-u32 renderer_value = 0;
-#else
 u32 renderer_value = 3;
-#endif
 
 //void fill_render_mode_list();
 //void free_render_mode_list();
@@ -548,11 +541,7 @@ class CCC_r2 : public CCC_Token
 public:
     CCC_r2(LPCSTR N) :inherited(N, &renderer_value, nullptr)
 	{
-#ifdef EXCLUDE_R2_AND_R3
-		renderer_value = 0;
-#else
 		renderer_value = 3;
-#endif
 	};
     virtual ~CCC_r2()
     {
@@ -562,25 +551,15 @@ public:
     {
         //fill_render_mode_list ();
         // vid_quality_token must be already created!
-        tokens = vid_quality_token;
+        tokens = vid_quality_token.data();
 
         inherited::Execute(args);
-		
-#ifdef EXCLUDE_R2_AND_R3
-        // 0 - r1
-        // 1 - r4
-        psDeviceFlags.set(rsR2, false);
-        psDeviceFlags.set(rsR3, false);
-        psDeviceFlags.set(rsR4, renderer_value > 0);
 
-        r2_sun_static = (renderer_value == 0);
-
-        r2_advanced_pp = (renderer_value > 0);
-#else
         // 0 - r1
         // 1..3 - r2
         // 4 - r3
 		// 5 - r4
+		psDeviceFlags.set(rsR1, renderer_value == 0);
         psDeviceFlags.set(rsR2, ((renderer_value > 0) && renderer_value < 4));
         psDeviceFlags.set(rsR3, (renderer_value == 4));
         psDeviceFlags.set(rsR4, (renderer_value >= 5));
@@ -588,13 +567,12 @@ public:
         r2_sun_static = (renderer_value < 2);
 
         r2_advanced_pp = (renderer_value >= 3);
-#endif
     }
 
     virtual void Save(IWriter* F)
     {
         //fill_render_mode_list ();
-        tokens = vid_quality_token;
+        tokens = vid_quality_token.data();
         if (!strstr(Core.Params, "-r2"))
         {
             inherited::Save(F);
@@ -602,7 +580,7 @@ public:
     }
     virtual xr_token* GetToken()
     {
-        tokens = vid_quality_token;
+        tokens = vid_quality_token.data();
         return inherited::GetToken();
     }
 

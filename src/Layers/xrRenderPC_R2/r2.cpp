@@ -384,7 +384,7 @@ void CRender::OnFrame()
 	if (ps_r2_ls_flags.test(R2FLAG_EXP_MT_CALC))	{
 		// MT-HOM (@front)
 		Device.seqParallel.insert	(Device.seqParallel.begin(),
-			fastdelegate::FastDelegate<void()>(&HOM, &CHOM::MT_RENDER));
+			fastdelegate::MakeDelegate(&HOM,&CHOM::MT_RENDER));
 	}
 }
 
@@ -653,7 +653,7 @@ static inline bool match_shader_id	( LPCSTR const debug_shader_id, LPCSTR const 
 class	includer				: public ID3DXInclude
 {
 public:
-	HRESULT	Open	(D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes)
+	HRESULT __stdcall	Open	(D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes)
 	{
 		string_path				pname;
 		strconcat				(sizeof(pname),pname,::Render->getShaderPath(),pFileName);
@@ -675,7 +675,7 @@ public:
 		*pBytes					= size;
 		return	D3D_OK;
 	}
-	HRESULT	Close	(LPCVOID	pData)
+	HRESULT __stdcall	Close	(LPCVOID	pData)
 	{
 		xr_free	(pData);
 		return	D3D_OK;

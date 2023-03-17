@@ -8,11 +8,11 @@ struct v_build_luminance {
 	Fvector2	uv2;
 	Fvector2	uv3;
 };
+
 struct v_filter_luminance {
 	Fvector4	p;
 	Fvector4	uv[8];
 };
-
 #pragma pack(pop)
 
 void	CRenderTarget::phase_luminance()

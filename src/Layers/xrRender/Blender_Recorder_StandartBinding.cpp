@@ -319,22 +319,6 @@ static class cl_screen_res : public R_constant_setup
 	}
 }	binder_screen_res;
 
-static class cl_sky_color : public R_constant_setup
-{
-	u32 marker;
-	Fvector4 result;
-
-	virtual void setup(R_constant* C)
-	{
-		if (marker != Device.dwFrame)
-		{
-			CEnvDescriptor& desc = *g_pGamePersistent->Environment().CurrentEnv;
-			result.set(desc.sky_color.x, desc.sky_color.y, desc.sky_color.z, desc.sky_rotation);
-		}
-		RCache.set_c(C, result);
-	}
-} binder_sky_color;
-
 static class cl_spv_screen_res : public R_constant_setup //--#SM+#--
 {
 	virtual void setup(R_constant* C) { RCache.set_c(C, (float)Device.m_SecondViewport.screenWidth, (float)Device.m_SecondViewport.screenHeight, 0, 0); }
@@ -355,211 +339,6 @@ static class cl_pda_params : public R_constant_setup
 
 } binder_pda_params;
 
-// Screen Space Shaders Stuff
-extern Fvector4 ps_ssfx_wpn_dof_1;
-extern float ps_ssfx_wpn_dof_2;
-
-//Sneaky debug stuff
-extern Fvector4 ps_dev_param_1;
-extern Fvector4 ps_dev_param_2;
-extern Fvector4 ps_dev_param_3;
-extern Fvector4 ps_dev_param_4;
-extern Fvector4 ps_dev_param_5;
-extern Fvector4 ps_dev_param_6;
-extern Fvector4 ps_dev_param_7;
-extern Fvector4 ps_dev_param_8;
-
-static class dev_param_1 : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_dev_param_1.x, ps_dev_param_1.y, ps_dev_param_1.z, ps_dev_param_1.w);
-	}
-}    dev_param_1;
-
-static class dev_param_2 : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_dev_param_2.x, ps_dev_param_2.y, ps_dev_param_2.z, ps_dev_param_2.w);
-	}
-}    dev_param_2;
-
-static class dev_param_3 : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_dev_param_3.x, ps_dev_param_3.y, ps_dev_param_3.z, ps_dev_param_3.w);
-	}
-}    dev_param_3;
-
-static class dev_param_4 : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_dev_param_4.x, ps_dev_param_4.y, ps_dev_param_4.z, ps_dev_param_4.w);
-	}
-}    dev_param_4;
-
-static class dev_param_5 : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_dev_param_5.x, ps_dev_param_5.y, ps_dev_param_5.z, ps_dev_param_5.w);
-	}
-}    dev_param_5;
-
-static class dev_param_6 : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_dev_param_6.x, ps_dev_param_6.y, ps_dev_param_6.z, ps_dev_param_6.w);
-	}
-}    dev_param_6;
-
-static class dev_param_7 : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_dev_param_7.x, ps_dev_param_7.y, ps_dev_param_7.z, ps_dev_param_7.w);
-	}
-}    dev_param_7;
-
-static class dev_param_8 : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_dev_param_8.x, ps_dev_param_8.y, ps_dev_param_8.z, ps_dev_param_8.w);
-	}
-}    dev_param_8;
-
-static class ssfx_wpn_dof_1 : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_ssfx_wpn_dof_1.x, ps_ssfx_wpn_dof_1.y, ps_ssfx_wpn_dof_1.z, ps_ssfx_wpn_dof_1.w);
-	}
-} ssfx_wpn_dof_1;
-
-static class ssfx_wpn_dof_2 : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_ssfx_wpn_dof_2, 0, 0, 0);
-	}
-} ssfx_wpn_dof_2;
-
-static class pp_image_corrections : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, 1, 1, 1, 1);
-	}
-} pp_image_corrections;
-
-static class pp_color_grading : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, 0, 0, 0, 1);
-	}
-} pp_color_grading;
-
-static class cl_wind_params : public R_constant_setup
-{
-	u32 marker;
-	Fvector4 result;
-
-	virtual void setup(R_constant* C)
-	{
-		if (marker != Device.dwFrame)
-		{
-			CEnvDescriptor& E = *g_pGamePersistent->Environment().CurrentEnv;
-			result.set(E.wind_direction, E.wind_velocity, 0.0f, 0.0f);
-		}
-		RCache.set_c(C, result);
-	}
-} binder_wind_params;
-
-static class cl_screen_params : public R_constant_setup
-{
-	Fvector4 result;
-
-	virtual void setup(R_constant* C)
-	{
-		float fov = float(Device.fFOV);
-		float aspect = float(Device.fASPECT);
-		result.set(fov, aspect, tan(deg2rad(fov) / 2), g_pGamePersistent->Environment().CurrentEnv->far_plane * 0.75f);
-		RCache.set_c(C, result);
-	}
-} binder_screen_params;
-
-static class cl_rain_params : public R_constant_setup
-{
-	u32 marker;
-	Fvector4 result;
-
-	virtual void setup(R_constant* C)
-	{
-		float rainDensity = g_pGamePersistent->Environment().CurrentEnv->rain_density;
-		float rainWetness = 0.f;
-
-		RCache.set_c(C, rainDensity, rainWetness, 0.0f, 0.0f);
-	}
-} binder_rain_params;
-
-static class cl_inv_v : public R_constant_setup
-{
-	u32	marker;
-	Fmatrix	result;
-
-	virtual void setup(R_constant* C)
-	{
-		result.invert(Device.mView);
-
-		RCache.set_c(C, result);
-	}
-} binder_inv_v;
-
-// game time
-class cl_game_times : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		float t = g_pGamePersistent->Environment().GetGameTime();
-		RCache.set_c(C, t, t / DAY_LENGTH, t / (DAY_LENGTH / 24), floor(t / (DAY_LENGTH / 24)));
-	}
-} binder_game_times;
-
-/*static class cl_actor_params : public R_constant_setup
-{
-	u32 marker;
-	Fvector4 result;
-
-	virtual void setup(R_constant* C)
-	{
-		float actorHealth = g_pGamePersistent->actor_data.health;
-		float actorStamina = g_pGamePersistent->actor_data.stamina;
-		float actorBleeding = g_pGamePersistent->actor_data.bleeding;
-		int actorHelmet = g_pGamePersistent->actor_data.helmet;
-
-		RCache.set_c(C, actorHealth, actorStamina, actorBleeding, actorHelmet);
-	}
-} binder_actor_data;*/
-
-static class cl_near_far_plane : public R_constant_setup
-{
-	Fvector4 result;
-
-	virtual void setup(R_constant* C)
-	{
-		float nearPlane = float(VIEWPORT_NEAR);
-		float farPlane = g_pGamePersistent->Environment().CurrentEnv->far_plane;
-		result.set(nearPlane, farPlane, 0, 0);
-		RCache.set_c(C, result);
-	}
-} binder_near_far_plane;
-
 // Standart constant-binding
 void	CBlender_Compile::SetMapping	()
 {
@@ -577,7 +356,6 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant				("m_WV",			&binder_wv);
 	r_Constant				("m_VP",			&binder_vp);
 	r_Constant				("m_WVP",			&binder_wvp);
-	r_Constant("m_inv_V", &binder_inv_v);
 
 	r_Constant				("m_xform_v",		&tree_binder_m_xform_v);
 	r_Constant				("m_xform",			&tree_binder_m_xform);
@@ -602,11 +380,9 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant				("fog_plane",		&binder_fog_plane);
 	r_Constant				("fog_params",		&binder_fog_params);
 	r_Constant				("fog_color",		&binder_fog_color);
-	r_Constant("wind_params", &binder_wind_params);
 #endif
 	// time
 	r_Constant				("timers",			&binder_times);
-	r_Constant("timers_game", &binder_game_times);
 
 	// eye-params
 	r_Constant				("eye_position",	&binder_eye_P);
@@ -623,35 +399,9 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant				("L_ambient",		&binder_amb_color);
 #endif
 	r_Constant				("screen_res",		&binder_screen_res);
-	r_Constant("ogse_c_screen", &binder_screen_params);
-	r_Constant("near_far_plane", &binder_near_far_plane);
 
 	// PDA
 	r_Constant				("pda_params",		&binder_pda_params);
-
-	// Screen Space Shaders
-	r_Constant("sky_color", &binder_sky_color);
-	r_Constant("ssfx_wpn_dof_1", &ssfx_wpn_dof_1);
-	r_Constant("ssfx_wpn_dof_2", &ssfx_wpn_dof_2);
-
-	// Shader stuff
-	r_Constant("shader_param_1", &dev_param_1);
-	r_Constant("shader_param_2", &dev_param_2);
-	r_Constant("shader_param_3", &dev_param_3);
-	r_Constant("shader_param_4", &dev_param_4);
-	r_Constant("shader_param_5", &dev_param_5);
-	r_Constant("shader_param_6", &dev_param_6);
-	r_Constant("shader_param_7", &dev_param_7);
-	r_Constant("shader_param_8", &dev_param_8);
-
-	// Rain
-	r_Constant("rain_params", &binder_rain_params);
-	//Actor data
-	//r_Constant("actor_data", &binder_actor_data);
-	//Image corrections
-	r_Constant("pp_img_corrections", &pp_image_corrections);
-	//Image corrections
-	r_Constant("pp_img_cg", &pp_color_grading);
 
 	// detail
 	//if (bDetail	&& detail_scaler)
@@ -662,9 +412,9 @@ void	CBlender_Compile::SetMapping	()
 		r_Constant			("dt_params",		detail_scaler);
 
 	// other common
-	for (u32 it = 0; it < DEV->v_constant_setup.size(); it++)
+	for (u32 it=0; it<DEV->v_constant_setup.size(); it++)
 	{
-		std::pair<shared_str, R_constant_setup*> cs = DEV->v_constant_setup[it];
-		r_Constant(*cs.first, cs.second);
+		std::pair<shared_str,R_constant_setup*>	cs	= DEV->v_constant_setup[it];
+		r_Constant			(*cs.first,cs.second);
 	}
 }

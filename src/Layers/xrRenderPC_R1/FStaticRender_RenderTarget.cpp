@@ -3,11 +3,11 @@
 #include "../../xrEngine/IGame_Persistent.h"
 
 
-constexpr const char* RTname = "$user$rendertarget";
-constexpr const char* RTname_color_map = "$user$rendertarget_color_map";
-constexpr const char* RTname_distort = "$user$distort";
-constexpr const char* RTname_SecondVP = "$user$viewport2"; //--#SM+#-- +SecondVP+
-constexpr const char* RTname_pda_ui	= "$user$ui";
+static LPCSTR RTname = "$user$rendertarget";
+static LPCSTR RTname_color_map = "$user$rendertarget_color_map";
+static LPCSTR RTname_distort = "$user$distort";
+static LPCSTR RTname_SecondVP = "$user$viewport2"; //--#SM+#-- +SecondVP+
+static LPCSTR RTname_pda_ui	= "$user$ui";
 
 CRenderTarget::CRenderTarget()
 {
@@ -26,7 +26,6 @@ CRenderTarget::CRenderTarget()
 	param_noise_fps		= 25.f;
 	param_noise_scale	= 1.f;
 	RT_SecondVP			= nullptr; //--#SM+# +SecondVP+
-	rt_ui_pda = nullptr;
 	param_color_map_influence	=	0.0f;
 	param_color_map_interpolate	=	0.0f;
 
@@ -111,7 +110,6 @@ CRenderTarget::~CRenderTarget	()
 	RT_color_map.destroy		();
 	RT.destroy					();
 	RT_SecondVP.destroy			(); //--#SM+#-- +SecondVP+
-	rt_ui_pda.destroy();
 }
 
 void	CRenderTarget::calc_tc_noise		(Fvector2& p0, Fvector2& p1)

@@ -15,9 +15,6 @@ extern ECORE_API	xr_token	qssao_mode_token[];
 extern ECORE_API	u32			ps_r_sun_quality;	//	=	0;
 extern ECORE_API	xr_token	qsun_quality_token[];
 
-extern ECORE_API u32 ps_smaa_quality;
-extern ECORE_API xr_token smaa_quality_token[];
-
 extern ECORE_API	u32			ps_r3_msaa;	//	=	0;
 extern ECORE_API	xr_token	qmsaa_token[];
 
@@ -129,32 +126,6 @@ extern ECORE_API int			ps_r2_dhemi_count;			// 5
 extern ECORE_API float			ps_r2_slight_fade;			// 1.f
 extern ECORE_API int			ps_r2_wait_sleep;
 
-////lvutner
-extern ECORE_API Fvector4 ps_r2_mask_control; // r2-only
-extern ECORE_API Fvector ps_r2_drops_control; // r2-only
-extern ECORE_API int ps_r2_nightvision;
-extern ECORE_API float ps_r2_ss_sunshafts_length;
-extern ECORE_API float ps_r2_ss_sunshafts_radius;
-extern u32 ps_sunshafts_mode;
-
-extern ECORE_API float ps_r2_tnmp_a; // r2-only
-extern ECORE_API float ps_r2_tnmp_b; // r2-only
-extern ECORE_API float ps_r2_tnmp_c; // r2-only
-extern ECORE_API float ps_r2_tnmp_d; // r2-only
-extern ECORE_API float ps_r2_tnmp_e; // r2-only
-extern ECORE_API float ps_r2_tnmp_f; // r2-only
-extern ECORE_API float ps_r2_tnmp_w; // r2-only
-extern ECORE_API float ps_r2_tnmp_exposure; // r2-only
-extern ECORE_API float ps_r2_tnmp_gamma; // r2-only
-extern ECORE_API float ps_r2_tnmp_onoff; // r2-only
-
-extern ECORE_API float ps_r2_img_exposure; // r2-only
-extern ECORE_API float ps_r2_img_gamma; // r2-only
-extern ECORE_API float ps_r2_img_saturation; // r2-only
-extern ECORE_API Fvector ps_r2_img_cg; // r2-only
-
-////
-
 //	x - min (0), y - focus (1.4), z - max (100)
 extern ECORE_API Fvector3		ps_r2_dof;
 extern ECORE_API float			ps_r2_dof_sky;				//	distance to sky
@@ -164,19 +135,6 @@ extern ECORE_API float			ps_r3_dyn_wet_surf_near;	// 10.0f
 extern ECORE_API float			ps_r3_dyn_wet_surf_far;		// 30.0f
 extern ECORE_API int			ps_r3_dyn_wet_surf_sm_res;	// 256
 
-//ogse sunshafts
-extern ECORE_API float			ps_r2_ss_sunshafts_length;
-extern ECORE_API float			ps_r2_ss_sunshafts_radius;
-extern u32						ps_sunshafts_mode;
-extern ECORE_API float			ps_rcol;
-extern ECORE_API float			ps_gcol;
-extern ECORE_API float			ps_bcol;
-extern ECORE_API float			ps_saturation;
-extern ECORE_API float			ps_r2_rain_drops_intensity;
-extern ECORE_API float			ps_r2_rain_drops_speed;
-
-extern ECORE_API int			opt_static;
-extern ECORE_API int			opt_dynamic;
 enum
 {
 	R2FLAG_SUN					= (1<<0),
@@ -237,16 +195,6 @@ enum
 	R2FLAGEXT_SUN_ZCULLING			= (1<<8),
 	R2FLAGEXT_SUN_OLD				= (1<<9),
 };
-
-enum
-{
-	R2SS_VOLUMETRIC = 1,
-	R2SS_SCREEN_SPACE,
-	R2SS_COMBINE_SUNSHAFTS,
-};
-
-//Rezy: cleanup flags
-extern Flags32 psDeviceFlags2;
 
 extern void						xrRender_initconsole	();
 extern BOOL						xrRender_test_hw		();

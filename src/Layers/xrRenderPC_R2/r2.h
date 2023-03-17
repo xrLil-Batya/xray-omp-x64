@@ -227,8 +227,6 @@ public:
 	}
 
 public:
-	void							PdaRenderToTarget() {}; // тупо заглушка, чтоб собиралось.
-
 	// feature level
 	virtual	GenerationLevel			get_generation			()	{ return IRender_interface::GENERATION_R2; }
 
@@ -322,6 +320,7 @@ public:
 	// [FFT++]
 	virtual void BeforeWorldRender(); //--#SM+#-- +SecondVP+ Вызывается перед началом рендера мира и пост-эффектов
 	virtual void AfterWorldRender();  //--#SM+#-- +SecondVP+ Вызывается после рендера мира и перед UI
+	virtual void PdaRenderToTarget();
 
 	// Render mode
 	virtual void					rmNear						();

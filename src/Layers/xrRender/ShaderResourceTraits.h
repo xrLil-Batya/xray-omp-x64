@@ -114,7 +114,14 @@
 			HRESULT	const _hr			= ::Render->shader_compile(name,(DWORD const*)file->pointer(),file->length(), c_entry, c_target, D3D10_SHADER_PACK_MATRIX_ROW_MAJOR, (void*&)sh );
 
 			FS.r_close					( file );
-			R_ASSERT3(!FAILED(_hr), "Can't compile shader:", name);
+
+			VERIFY(SUCCEEDED(_hr));
+
+			CHECK_OR_EXIT				(
+				!FAILED(_hr),
+				make_string("Your video card doesn't meet game requirements.\n\nTry to lower game settings.")
+			);
+
 			return			sh;
 		}
 	}

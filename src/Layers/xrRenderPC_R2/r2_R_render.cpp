@@ -551,3 +551,12 @@ void CRender::AfterWorldRender()
 		pBackBuffer->Release(); // Корректно очищаем ссылку на бэкбуфер (иначе игра зависнет в опциях)
 	}
 }
+
+void CRender::PdaRenderToTarget()
+{
+	const auto RT = &Target->rt_ui_pda;
+	IDirect3DSurface9* pBackBuffer = nullptr;
+	HW.pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer);
+	D3DXLoadSurfaceFromSurface((*RT)->pRT, 0, 0, pBackBuffer, 0, 0, D3DX_DEFAULT, 0);
+	pBackBuffer->Release();
+}

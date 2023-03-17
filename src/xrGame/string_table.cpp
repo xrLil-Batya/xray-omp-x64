@@ -3,11 +3,9 @@
 
 #include "ui/xrUIXmlParser.h"
 #include "xr_level_controller.h"
-#include "MainMenu.h"
 
 STRING_TABLE_DATA* CStringTable::pData = NULL;
 BOOL CStringTable::m_bWriteErrorsToLog = FALSE;
-shared_str extern g_language;
 CStringTable::CStringTable	()
 {
 	Init();
@@ -30,18 +28,9 @@ void CStringTable::Init		()
     
 	pData				= xr_new<STRING_TABLE_DATA>();
 	
-	R_ASSERT2(pSettings->section_exist("languages"), "Section [languages] is not exist!");
-	R_ASSERT2(pSettings->line_count("languages"), "Can't find languages in the section [languages]!");
+	//eiy ycuea, anee ia caaaii (NULL), oi ia?aue <text> a <string> a XML
+	pData->m_sLanguage	= pSettings->r_string("string_table", "language");
 
-	if (*g_language && pSettings->line_exist("languages", *g_language))
-		pData->m_sLanguage = g_language;
-	else {
-		LPCSTR name;
-		LPCSTR value;
-		pSettings->r_line("languages", 0, &name, &value);
-
-		pData->m_sLanguage = g_language = name;
-	}
 //---
 	FS_FileSet fset;
 	string_path			files_mask;
@@ -104,24 +93,6 @@ void CStringTable::ReparseKeyBindings()
 	for(;it!=it_e;++it)
 	{
 		pData->m_StringTable[it->first]			= ParseLine(*it->second, *it->first, false);
-	}
-}
-
-void CStringTable::ReloadLanguage()
- {
-	if (0 == xr_strcmp(g_language.c_str(), *(pData->m_sLanguage)))	return;
-
-	//destroy
-	xr_delete(pData);
-
-	//init
-	Init();
-
-	//reload language in menu
-	if (MainMenu()->IsActive())
-	{
-		MainMenu()->Activate(FALSE);
-		MainMenu()->Activate(TRUE);
 	}
 }
 

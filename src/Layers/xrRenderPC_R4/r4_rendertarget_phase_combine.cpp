@@ -307,79 +307,41 @@ void	CRenderTarget::phase_combine	()
 	//u_setrt(rt_Generic_1,0,0,HW.pBaseZB);
 
 	// Distortion filter
-	BOOL bDistort = RImplementation.o.distortion_enabled; // This can be modified
+	BOOL	bDistort	= RImplementation.o.distortion_enabled;				// This can be modified
 	{
-		if ((0 == RImplementation.mapDistort.size()) && !_menu_pp)
-			bDistort = FALSE;
-		if (bDistort)
+		if ((0==RImplementation.mapDistort.size()) && !_menu_pp)		
+			bDistort= FALSE;
+		if (bDistort)		
 		{
 			PIX_EVENT(render_distort_objects);
-			FLOAT ColorRGBA[4] = {127.0f / 255.0f, 127.0f / 255.0f, 0.0f, 127.0f / 255.0f};
-			if (!RImplementation.o.dx10_msaa)
+			FLOAT ColorRGBA[4] = { 127.0f/255.0f, 127.0f/255.0f, 0.0f, 127.0f/255.0f};
+			if( !RImplementation.o.dx10_msaa )
 			{
-				u_setrt(rt_Generic_1, 0, 0, HW.pBaseZB); // Now RT is a distortion mask
-				HW.pContext->ClearRenderTargetView(rt_Generic_1->pRT, ColorRGBA);
+				u_setrt(rt_Generic_1,0,0,HW.pBaseZB);		// Now RT is a distortion mask
+				HW.pContext->ClearRenderTargetView( rt_Generic_1->pRT, ColorRGBA);
 			}
 			else
 			{
-				u_setrt(rt_Generic_1_r, 0, 0, RImplementation.Target->rt_MSAADepth->pZRT);
-				// Now RT is a distortion mask
-				HW.pContext->ClearRenderTargetView(rt_Generic_1_r->pRT, ColorRGBA);
+				u_setrt(rt_Generic_1_r,0,0,RImplementation.Target->rt_MSAADepth->pZRT);		// Now RT is a distortion mask
+				HW.pContext->ClearRenderTargetView( rt_Generic_1_r->pRT, ColorRGBA);
 			}
-			RCache.set_CullMode(CULL_CCW);
-			RCache.set_Stencil(FALSE);
-			RCache.set_ColorWriteEnable();
+			RCache.set_CullMode			(CULL_CCW);
+			RCache.set_Stencil			(FALSE);
+			RCache.set_ColorWriteEnable	();
 			//CHK_DX(HW.pDevice->Clear	( 0L, NULL, D3DCLEAR_TARGET, color_rgba(127,127,0,127), 1.0f, 0L));
-			RImplementation.r_dsgraph_render_distort();
-			if (g_pGamePersistent) g_pGamePersistent->OnRenderPPUI_PP(); // PP-UI
+			RImplementation.r_dsgraph_render_distort	();
+			if (g_pGamePersistent)	g_pGamePersistent->OnRenderPPUI_PP()	;	// PP-UI
 		}
 	}
 
-	/*
-	   if( RImplementation.o.dx10_msaa )
-	   {
-	      // we need to resolve rt_Generic_1 into rt_Generic_1_r
-	      if( bDistort )
-	         HW.pDevice->ResolveSubresource( rt_Generic_1_r->pTexture->surface_get(), 0, rt_Generic_1->pTexture->surface_get(), 0, DXGI_FORMAT_R8G8B8A8_UNORM );
-	   }
-	   */
-	RCache.set_Stencil(FALSE);
-
-	if (!_menu_pp)
-	{
-		if (ps_sunshafts_mode == R2SS_SCREEN_SPACE || ps_sunshafts_mode == R2SS_COMBINE_SUNSHAFTS)
-			phase_sunshafts();
-	}
-	
-	//Compute blur textures
-	phase_blur();
-
-	//Compute bloom (new)
-	phase_pp_bloom();
-	
-	/*if (ps_r2_ls_flags.test(R2FLAG_DOF)) // Тут ещё более пиздецовая тьма
-	{	
-		phase_dof();
-	}*/
-	
-	phase_lut();
-	
-	if(ps_r2_mask_control.x > 0)
-	{
-		phase_gasmask_dudv();
-		phase_gasmask_drops();
-	}
-	
-	if(ps_r2_nightvision > 0)
-		phase_nightvision();
-	
-    //SMAA
-	if (ps_smaa_quality)
-	{
-        //PIX_EVENT(SMAA);
-        phase_smaa();
-        RCache.set_Stencil(FALSE);
-    }
+/*
+   if( RImplementation.o.dx10_msaa )
+   {
+      // we need to resolve rt_Generic_1 into rt_Generic_1_r
+      if( bDistort )
+         HW.pDevice->ResolveSubresource( rt_Generic_1_r->pTexture->surface_get(), 0, rt_Generic_1->pTexture->surface_get(), 0, DXGI_FORMAT_R8G8B8A8_UNORM );
+   }
+   */
 
 	// PP enabled ?
 	//	Render to RT texture to be able to copy RT even in windowed mode.
@@ -462,24 +424,7 @@ void	CRenderTarget::phase_combine	()
 		RCache.set_c				("dof_params",	dof.x, dof.y, dof.z, ps_r2_dof_sky);
 //.		RCache.set_c				("dof_params",	ps_r2_dof.x, ps_r2_dof.y, ps_r2_dof.z, ps_r2_dof_sky);
 		RCache.set_c				("dof_kernel",	vDofKernel.x, vDofKernel.y, ps_r2_dof_kernel_size, 0);
-
-		/////lvutner		
-		RCache.set_c("mask_control", ps_r2_mask_control.x, ps_r2_mask_control.y, ps_r2_mask_control.z, ps_r2_mask_control.w);
-
-		RCache.set_c("tnmp_a", ps_r2_tnmp_a);
-		RCache.set_c("tnmp_b", ps_r2_tnmp_b);
-		RCache.set_c("tnmp_c", ps_r2_tnmp_c);
-		RCache.set_c("tnmp_d", ps_r2_tnmp_d);
-		RCache.set_c("tnmp_e", ps_r2_tnmp_e);
-		RCache.set_c("tnmp_f", ps_r2_tnmp_f);
-		RCache.set_c("tnmp_w", ps_r2_tnmp_w);
-
-		RCache.set_c("tnmp_exposure", ps_r2_tnmp_exposure);
-		RCache.set_c("tnmp_gamma", ps_r2_tnmp_gamma);
-		RCache.set_c("tnmp_onoff", ps_r2_tnmp_onoff);
-
-		//////////
-
+		
 		RCache.set_Geometry			(g_aa_AA);
 		RCache.Render				(D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 	}

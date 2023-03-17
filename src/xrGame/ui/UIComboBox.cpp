@@ -87,12 +87,12 @@ void CUIComboBox::OnListItemSelect()
 	m_text.SetText			(m_list_box.GetSelectedText());    
 	CUIListBoxItem* itm		= m_list_box.GetSelectedItem();
 	
-	m_opt_backup_value = m_itoken_id;
+	int bk_itoken_id		= m_itoken_id;
 	
 	m_itoken_id				= (int)(__int64)itm->GetData();
 	ShowList				(false);
 
-	if(m_opt_backup_value != m_itoken_id)
+	if(bk_itoken_id != m_itoken_id)
 		GetMessageTarget()->SendMessage(this, LIST_ITEM_SELECT, NULL);
 }
 
@@ -123,60 +123,31 @@ void CUIComboBox::SetCurrentOptValue()
 	CUIOptionsItem::SetCurrentOptValue();
 
 	m_list_box.Clear		();
-	if (IsLanguangeItem())
-	{
-		u32 LanguagesCount = pSettings->line_count("languages");
-		for (u32 i = 0; i < LanguagesCount; i++)
+	xr_token* tok			= GetOptToken();
+	while (tok->name)
+	{		
+		if(m_disabled.end()==std::find(m_disabled.begin(),m_disabled.end(),tok->id))
 		{
-			LPCSTR name, value;
-			pSettings->r_line("languages", i, &name, &value);
-			AddItem_(name, i);
+			AddItem_(tok->name, tok->id);
 		}
-	}
-	else
-	{
-		auto tok = GetOptToken();
-		while (tok->name)
-		{		
-			if(m_disabled.end()==std::find(m_disabled.begin(),m_disabled.end(),tok->id))
-			{
-				AddItem_(tok->name, tok->id);
-			}
-			tok++;
-		}
+		tok++;
 	}
 
-	LPCSTR cur_val;
-	if (IsLanguangeItem())
-		cur_val = *CStringTable().ReturnLanguage();
-	else
-		cur_val = *CStringTable().translate(GetOptTokenValue());
+	LPCSTR cur_val		= *CStringTable().translate( GetOptTokenValue());
+	m_text.SetText		( cur_val );
+	m_list_box.SetSelectedText( cur_val );
 
-	m_text.SetText(cur_val);
-	m_list_box.SetSelectedText(cur_val);
-
-	const auto itm = m_list_box.GetSelectedItem();
-	if (itm)
-		m_itoken_id = m_list_box.GetSelectedIDX(); // (int)(__int64)itm->GetData();
+	CUIListBoxItem* itm	= m_list_box.GetSelectedItem();
+	if(itm)
+		m_itoken_id			= (int)(__int64)itm->GetData();
 	else
-		m_itoken_id = 0; //1; //first
+		m_itoken_id			= 1; //first
 }
 
 void CUIComboBox::SaveBackUpOptValue()
 {
-	CUIOptionsItem::SaveBackUpOptValue();
-	if (IsLanguangeItem())
-	{
-		LPCSTR					name, value;
-		pSettings->r_line("languages", m_itoken_id, &name, &value);
-		SaveOptStringValue(name);
-	}
-	else
-	{
-		const xr_token* tok = GetOptToken();
-		const char*	cur_val = tok[m_itoken_id].name;
-		SaveOptStringValue(cur_val);
-	}
+	CUIOptionsItem::SaveBackUpOptValue	();
+	m_opt_backup_value = m_itoken_id;
 }
 
 void CUIComboBox::UndoOptValue()

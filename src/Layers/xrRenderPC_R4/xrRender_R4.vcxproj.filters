@@ -184,9 +184,6 @@
     <Filter Include="Debug">
       <UniqueIdentifier>{8d6caf5d-f49d-40f7-b1ae-f1fd5c4f0d58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Anomaly Port">
-      <UniqueIdentifier>{8cdb7815-9ff7-497d-883f-49f747e02d17}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cl_intersect.h">
@@ -747,15 +744,6 @@
     <ClInclude Include="..\xrRender\light.h">
       <Filter>Lights</Filter>
     </ClInclude>
-    <ClInclude Include="blender_blur.h" />
-    <ClInclude Include="blender_dof.h" />
-    <ClInclude Include="blender_gasmask_drops.h" />
-    <ClInclude Include="blender_gasmask_dudv.h" />
-    <ClInclude Include="blender_lut.h" />
-    <ClInclude Include="blender_nightvision.h" />
-    <ClInclude Include="blender_pp_bloom.h" />
-    <ClInclude Include="blender_smaa.h" />
-    <ClInclude Include="blender_ss_sunshafts.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1367,23 +1355,5 @@
     <ClCompile Include="blender_cut.cpp">
       <Filter>Shading templates</Filter>
     </ClCompile>
-    <ClCompile Include="blender_blur.cpp" />
-    <ClCompile Include="blender_dof.cpp" />
-    <ClCompile Include="blender_gasmask_drops.cpp" />
-    <ClCompile Include="blender_gasmask_dudv.cpp" />
-    <ClCompile Include="blender_lut.cpp" />
-    <ClCompile Include="blender_nightvision.cpp" />
-    <ClCompile Include="blender_pp_bloom.cpp" />
-    <ClCompile Include="blender_smaa.cpp" />
-    <ClCompile Include="blender_ss_sunshafts.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_phase_blur.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_phase_dof.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_phase_gasmask_drops.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_phase_gasmask_dudv.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_phase_lut.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_phase_nightvision.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_phase_pp_bloom.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_phase_smaa.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_phase_sunshafts.cpp" />
   </ItemGroup>
 </Project>

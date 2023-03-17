@@ -7,8 +7,12 @@
 #include "../xrcdb/xrXRC.h"
 #include "XR_IOConsole.h"
 
-#define EXCLUDE_R2_AND_R3
-extern xr_token* vid_quality_token;
+extern xr_vector<xr_token> vid_quality_token;
+
+constexpr const char* r1_name = "xrRender_R1";
+constexpr const char* r2_name = "xrRender_R2";
+constexpr const char* r4_name = "xrRender_R4";
+
 bool extern ENGINE_API g_dedicated_server;
 
 //////////////////////////////////////////////////////////////////////
@@ -33,15 +37,7 @@ CEngineAPI::CEngineAPI()
 CEngineAPI::~CEngineAPI()
 {
     // destroy quality token here
-    if (vid_quality_token)
-    {
-        for (int i = 0; vid_quality_token[i].name; i++)
-        {
-            xr_free(vid_quality_token[i].name);
-        }
-        xr_free(vid_quality_token);
-        vid_quality_token = nullptr;
-    }
+	vid_quality_token.clear();
 }
 
 extern u32 renderer_value; //con cmd
@@ -56,12 +52,8 @@ ENGINE_API bool is_enough_address_space_available()
 
 void CEngineAPI::InitializeNotDedicated()
 {
-#ifndef EXCLUDE_R2_AND_R3
-    constexpr const char* r2_name = "xrRender_R2.dll";
-    constexpr const char* r3_name = "xrRender_R3.dll";
-#endif
-    constexpr const char* r4_name = "xrRender_R4.dll";
-
+	// If we failed to load render,
+	// then try to fallback to lower one.
     if (psDeviceFlags.test(rsR4))
     {
         psDeviceFlags.set(rsR3, false);
@@ -73,49 +65,44 @@ void CEngineAPI::InitializeNotDedicated()
         {
             // try to load R1
             Msg("! ...Failed - incompatible hardware/pre-Vista OS.");
-#ifndef EXCLUDE_R2_AND_R3
             psDeviceFlags.set(rsR3, true);
-#endif
         }
 		else
-		{
-			psDeviceFlags.set(rsR4, true);
-			g_current_renderer = 3;
-		}
-    }
-
-#ifndef EXCLUDE_R2_AND_R3
-    if (psDeviceFlags.test(rsR3))
-    {
-        // try to initialize R3
-        Log("Loading DLL:", r3_name);
-        hRender = LoadLibrary(r3_name);
-        if (!hRender)
-        {
-            // try to load R1
-            Msg("! ...Failed - incompatible hardware/pre-Vista OS.");
-            psDeviceFlags.set(rsR2, TRUE);
-        }
-        else
-            g_current_renderer = 3;
+			g_current_renderer = 4;
     }
 
     if (psDeviceFlags.test(rsR2))
     {
         // try to initialize R2
-        psDeviceFlags.set(rsR4, FALSE);
-        psDeviceFlags.set(rsR3, FALSE);
+        psDeviceFlags.set(rsR4, false);
+        psDeviceFlags.set(rsR3, false);
         Log("Loading DLL:", r2_name);
         hRender = LoadLibrary(r2_name);
         if (!hRender)
         {
             // try to load R1
             Msg("! ...Failed - incompatible hardware.");
+			psDeviceFlags.set(rsR1, true);
         }
         else
             g_current_renderer = 2;
     }
-#endif
+
+	if (psDeviceFlags.test(rsR1))
+	{
+		// try to load R1
+		renderer_value = 0; //con cmd
+
+		Log("Loading DLL:", r1_name);
+		hRender = LoadLibrary(r1_name);
+		if (0 == hRender)
+		{
+			// try to load R1
+			Msg("! ...Failed - incompatible hardware.");
+		}
+		else
+			g_current_renderer = 1;
+	}
 }
 
 
@@ -129,21 +116,40 @@ void CEngineAPI::Initialize(void)
 
     if (!hRender)
     {
-		Console->Execute("renderer renderer_r1");
-		
-        // try to load R1
-        psDeviceFlags.set(rsR4, FALSE);
-        psDeviceFlags.set(rsR3, FALSE);
-        psDeviceFlags.set(rsR2, FALSE);
-        renderer_value = 0; //con cmd
+		if(g_dedicated_server)
+		{
+			Console->Execute("renderer renderer_r1");
+			
+			// try to load R1
+			psDeviceFlags.set(rsR4, false);
+			psDeviceFlags.set(rsR3, false);
+			psDeviceFlags.set(rsR2, false);
+			psDeviceFlags.set(rsR1, true);
+			renderer_value = 0; //con cmd
 
-        Log("Loading DLL:", r1_name);
-        hRender = LoadLibrary(r1_name);
-        if (!hRender) R_CHK(GetLastError());
-        R_ASSERT(hRender);
-        g_current_renderer = 1;
+			Log("Loading DLL:", r1_name);
+			hRender = LoadLibrary(r1_name);
+			if (!hRender) R_CHK(GetLastError());
+			R_ASSERT(hRender);
+			g_current_renderer = 1;
+		}
+		else
+		{
+			// if engine failed to load renderer
+			// but there is at least one available
+			// then try again
+			string32 buf;
+			xr_sprintf(buf, "renderer %s", vid_quality_token[0].name);
+			Console->Execute(buf);
+
+			// Second attempt
+			InitializeNotDedicated();
+		}
     }
+	if (0 == hRender)
+		R_CHK(GetLastError());
 
+	R_ASSERT2(hRender, "Can't load renderer");
     Device.ConnectToRender();
 
     // game
@@ -187,168 +193,67 @@ void CEngineAPI::Destroy(void)
 }
 
 extern "C" {
-#ifndef EXCLUDE_R2_AND_R3
     typedef bool __cdecl SupportsAdvancedRendering(void);
     typedef bool _declspec(dllexport) SupportsDX10Rendering();
-#endif
     typedef bool _declspec(dllexport) SupportsDX11Rendering();
 };
 
 void CEngineAPI::CreateRendererList()
 {
-	if(g_dedicated_server)
-	{
-		vid_quality_token = xr_alloc<xr_token>(2);
-
-		vid_quality_token[0].id = 0;
-		vid_quality_token[0].name = xr_strdup("renderer_r1");
-
-		vid_quality_token[1].id = -1;
-		vid_quality_token[1].name = nullptr;
+	if (!vid_quality_token.empty())
 		return;
+
+	xr_vector<xr_token> modes;
+
+	// try to initialize R1
+	Log("Loading DLL:", r1_name);
+	hRender = LoadLibrary(r1_name);
+	if (hRender)
+	{
+		modes.emplace_back(xr_token("renderer_r1", 0));
+		FreeLibrary(hRender);
 	}
-    // TODO: ask renderers if they are supported!
-    if (vid_quality_token) return;
-#ifndef EXCLUDE_R2_AND_R3
-    bool bSupports_r2 = false;
-    bool bSupports_r2_5 = false;
-    bool bSupports_r3 = false;
-#endif
-    bool bSupports_r4 = false;
 
-#ifndef EXCLUDE_R2_AND_R3
-    constexpr const char* r2_name = "xrRender_R2.dll";
-    constexpr const char* r3_name = "xrRender_R3.dll";
-#endif
-    constexpr const char* r4_name = "xrRender_R4.dll";
+	// try to initialize R2
+	Log("Loading DLL:", r2_name);
+	hRender = LoadLibrary(r2_name);
+	if (hRender)
+	{
+		modes.push_back(xr_token("renderer_r2a", 1));
+		modes.emplace_back(xr_token("renderer_r2", 2));
+		SupportsAdvancedRendering *test_rendering = (SupportsAdvancedRendering*)GetProcAddress(hRender, "SupportsAdvancedRendering");
+		if (test_rendering && test_rendering())
+			modes.emplace_back(xr_token("renderer_r2.5", 3));
+		FreeLibrary(hRender);
+	}
 
-    if (strstr(Core.Params, "-perfhud_hack"))
-    {
-        R_ASSERT(0); // это не должно быть вызвано
-    }
-    else
-    {
-#ifndef EXCLUDE_R2_AND_R3
-        // try to initialize R2
-        Log("Loading DLL:", r2_name);
-        hRender = LoadLibrary(r2_name);
-        if (hRender)
-        {
-            bSupports_r2 = true;
-            SupportsAdvancedRendering* test_rendering = (SupportsAdvancedRendering*)GetProcAddress(hRender, "SupportsAdvancedRendering");
-            R_ASSERT(test_rendering);
-            bSupports_r2_5 = test_rendering();
-            FreeLibrary(hRender);
-        }
+	// try to initialize R4
+	Log("Loading DLL:", r4_name);
+	//	Hide "d3d10 not found" message box for XP
+	SetErrorMode(SEM_FAILCRITICALERRORS);
+	hRender = LoadLibrary(r4_name);
+	//	Restore error handling
+	SetErrorMode(0);
+	if (hRender)
+	{
+		SupportsDX11Rendering *test_dx11_rendering = (SupportsDX11Rendering*)GetProcAddress(hRender, "SupportsDX11Rendering");
+		if (test_dx11_rendering && test_dx11_rendering())
+			modes.emplace_back(xr_token("renderer_r4", 5));
+		FreeLibrary(hRender);
+	}
 
-        // try to initialize R3
-        Log("Loading DLL:", r3_name);
-        // Hide "d3d10.dll not found" message box for XP
-        SetErrorMode(SEM_FAILCRITICALERRORS);
-        hRender = LoadLibrary(r3_name);
-        // Restore error handling
-        SetErrorMode(0);
-        if (hRender)
-        {
-            SupportsDX10Rendering* test_dx10_rendering = (SupportsDX10Rendering*)GetProcAddress(hRender, "SupportsDX10Rendering");
-            R_ASSERT(test_dx10_rendering);
-            bSupports_r3 = test_dx10_rendering();
-            FreeLibrary(hRender);
-        }
-#endif
+	modes.emplace_back(xr_token(nullptr, -1));
 
-        // try to initialize R4
-        Log("Loading DLL:", r4_name);
-        // Hide "d3d10.dll not found" message box for XP
-        SetErrorMode(SEM_FAILCRITICALERRORS);
-        hRender = LoadLibrary(r4_name);
-        // Restore error handling
-        SetErrorMode(0);
-        if (hRender)
-        {
-            SupportsDX11Rendering* test_dx11_rendering = (SupportsDX11Rendering*)GetProcAddress(hRender, "SupportsDX11Rendering");
-            R_ASSERT(test_dx11_rendering);
-            bSupports_r4 = test_dx11_rendering();
-            FreeLibrary(hRender);
-        }
-    }
+	hRender = nullptr;
 
-    hRender = 0;
-    vid_quality_token = xr_alloc<xr_token>(3);
-    vid_quality_token[0].id = 0;
-    vid_quality_token[0].name = xr_strdup("renderer_r1");
-    vid_quality_token[1].id = 1;
-    vid_quality_token[1].name = xr_strdup("renderer_r4");
-    vid_quality_token[2].id = -1;
-    vid_quality_token[2].name = nullptr;
+	Msg("Available render modes[%d]:", modes.size());
+	for (auto& mode : modes)
+		if (mode.name)
+			Log(mode.name);
 
-//#ifdef DEBUG
-    Msg("Available render modes[%d]:", 2);
-//#endif // DEBUG
-    for (u8 i = 0; i < 2; ++i)
-    {
-//#ifdef DEBUG
-        Msg("[%s]", vid_quality_token[i].name);
-//#endif // DEBUG
-    }
+#ifdef DEBUG
+	Msg("Available render modes[%d]:",_tmp.size());
+#endif // DEBUG
 
-    /*
-    if(vid_quality_token != NULL) return;
-
-    D3DCAPS9 caps;
-    CHW _HW;
-    _HW.CreateD3D ();
-    _HW.pD3D->GetDeviceCaps (D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,&caps);
-    _HW.DestroyD3D ();
-    u16 ps_ver_major = u16 ( u32(u32(caps.PixelShaderVersion)&u32(0xf << 8ul))>>8 );
-
-    xr_vector<LPCSTR> _tmp;
-    u32 i = 0;
-    for(; i<5; ++i)
-    {
-    bool bBreakLoop = false;
-    switch (i)
-    {
-    case 3: //"renderer_r2.5"
-    if (ps_ver_major < 3)
-    bBreakLoop = true;
-    break;
-    case 4: //"renderer_r_dx10"
-    bBreakLoop = true;
-    break;
-    default: ;
-    }
-
-    if (bBreakLoop) break;
-
-    _tmp.push_back (NULL);
-    LPCSTR val = NULL;
-    switch (i)
-    {
-    case 0: val ="renderer_r1"; break;
-    case 1: val ="renderer_r2a"; break;
-    case 2: val ="renderer_r2"; break;
-    case 3: val ="renderer_r2.5"; break;
-    case 4: val ="renderer_r_dx10"; break; // -)
-    }
-    _tmp.back() = xr_strdup(val);
-    }
-    u32 _cnt = _tmp.size()+1;
-    vid_quality_token = xr_alloc<xr_token>(_cnt);
-
-    vid_quality_token[_cnt-1].id = -1;
-    vid_quality_token[_cnt-1].name = NULL;
-
-    #ifdef DEBUG
-    Msg("Available render modes[%d]:",_tmp.size());
-    #endif // DEBUG
-    for(u32 i=0; i<_tmp.size();++i)
-    {
-    vid_quality_token[i].id = i;
-    vid_quality_token[i].name = _tmp[i];
-    #ifdef DEBUG
-    Msg ("[%s]",_tmp[i]);
-    #endif // DEBUG
-    }
-    */
+	vid_quality_token = std::move(modes);
 }

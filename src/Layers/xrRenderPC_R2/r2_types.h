@@ -44,6 +44,7 @@
 #define		r2_sunmask			"sunmask"
 
 #define		r2_RT_secondVP		"$user$viewport2"		// --#SM+#-- +SecondVP+ Хранит картинку со второго вьюпорта
+#define r2_RT_ui "$user$ui"
 
 #define		JITTER(a) r2_jitter #a
 

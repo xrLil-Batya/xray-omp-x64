@@ -304,7 +304,11 @@ void					CRender::create					()
     if( o.ssao_hdao )
         o.ssao_opt_data = false;
 
+	o.dx10_sm4_1		= ps_r2_ls_flags.test((u32)R3FLAG_USE_DX10_1);
+	o.dx10_sm4_1		= o.dx10_sm4_1 && ( HW.FeatureLevel >= D3D_FEATURE_LEVEL_10_1 );
+
 	//	MSAA option dependencies
+
 	o.dx10_msaa			= !!ps_r3_msaa;
 	o.dx10_msaa_samples = (1 << ps_r3_msaa);
 
@@ -312,8 +316,9 @@ void					CRender::create					()
 	o.dx10_msaa_opt		= o.dx10_msaa_opt && o.dx10_msaa && ( HW.FeatureLevel >= D3D_FEATURE_LEVEL_10_1 )
 			|| o.dx10_msaa && (HW.FeatureLevel >= D3D_FEATURE_LEVEL_11_0);
 
-	o.dx10_sm4_1 = o.dx10_msaa_opt;
-	o.dx10_msaa_hybrid = o.dx10_msaa_opt;
+	//o.dx10_msaa_hybrid	= ps_r2_ls_flags.test(R3FLAG_MSAA_HYBRID);
+	o.dx10_msaa_hybrid	= ps_r2_ls_flags.test((u32)R3FLAG_USE_DX10_1);
+	o.dx10_msaa_hybrid	&= !o.dx10_msaa_opt && o.dx10_msaa && ( HW.FeatureLevel >= D3D_FEATURE_LEVEL_10_1 ) ;
 
 	//	Allow alpha test MSAA for DX10.0
 
@@ -526,7 +531,7 @@ void CRender::OnFrame()
 	{
 		// MT-HOM (@front)
 		Device.seqParallel.insert	(Device.seqParallel.begin(),
-			fastdelegate::FastDelegate<void()>(&HOM, &CHOM::MT_RENDER));
+			fastdelegate::MakeDelegate(&HOM,&CHOM::MT_RENDER));
 	}
 }
 
@@ -605,7 +610,7 @@ BOOL					CRender::occ_visible			(vis_data& P)		{ return HOM.visible(P);								}
 BOOL					CRender::occ_visible			(sPoly& P)			{ return HOM.visible(P);								}
 BOOL					CRender::occ_visible			(Fbox& P)			{ return HOM.visible(P);								}
 
-void					CRender::add_Visual				(IRenderVisual* V)	{ add_leafs_Dynamic((dxRender_Visual*)V, V->_ignore_optimization);}
+void					CRender::add_Visual				(IRenderVisual*		V )	{ add_leafs_Dynamic((dxRender_Visual*)V, V->bIgnoreOpt);								}
 void					CRender::add_Geometry			(IRenderVisual*		V )	{ add_Static((dxRender_Visual*)V,View->getMask());					}
 void					CRender::add_StaticWallmark		(ref_shader& S, const Fvector& P, float s, CDB::TRI* T, Fvector* verts)
 {
@@ -1175,29 +1180,22 @@ HRESULT	CRender::shader_compile			(
 
     if( o.dx10_msaa )
 	{
-		if (o.dx10_msaa_opt) 
-		{
-			static char def[256];
-			def[0] = '0';
-			def[1] = 0;
-			defines[def_it].Name = "ISAMPLE";
-			defines[def_it].Definition = def;
-			def_it++;
-			sh_name[len] = '0'; ++len;
-		}
-		else 
-		{
-			static char def[256];
-			if (m_MSAASample < 0)
-				def[0] = '0';
-			else
-				def[0] = '0' + char(m_MSAASample);
-
-			def[1] = 0;
-			defines[def_it].Name = "ISAMPLE";
-			defines[def_it].Definition = def;
-			def_it++;
-		}
+		static char def[ 256 ];
+		//if( m_MSAASample < 0 )
+		//{
+			def[0]= '0';
+		//	sh_name[len]='0'; ++len;
+		//}
+		//else
+		//{
+		//	def[0]= '0' + char(m_MSAASample);
+		//	sh_name[len]='0' + char(m_MSAASample); ++len;
+		//}
+		def[1] = 0;
+		defines[def_it].Name		=	"ISAMPLE";
+		defines[def_it].Definition	=	def;
+		def_it						++	;
+		sh_name[len]='0'; ++len;
 	}
 	else
 	{
@@ -1338,55 +1336,6 @@ HRESULT	CRender::shader_compile			(
 		sh_name[len]='0'; ++len;
 	}
 
-	//////////////////////////////////lvutner	
-
-	if (1)
-	{
-		defines[def_it].Name = "USE_REFLECTIONS";
-		defines[def_it].Definition = "1";
-		def_it ++;
-		sh_name[len] = '1';
-		++len;
-	}
-	else
-	{
-		sh_name[len] = '0';
-		++len;
-	}
-
-	if (ps_smaa_quality)
-	{
-		char c_smaa_quality[32];
-		xr_sprintf(c_smaa_quality, "%d", ps_smaa_quality);
-		defines[def_it].Name = "SMAA_QUALITY";
-		defines[def_it].Definition = c_smaa_quality;
-		def_it++;
-		sh_name[len] = '0' + char(ps_smaa_quality);
-		++len;
-	}
-	else
-	{
-		sh_name[len] = '0';
-		++len;
-	}
-
-	//Useful shit. 
-	if (HW.Caps.id_vendor == 0x1002) //AMD hardware
-	{
-		defines[def_it].Name = "INT_RENDER_AMD";
-		defines[def_it].Definition = "1";
-		def_it++;
-	}
-
-	if (HW.Caps.id_vendor == 0x10DE) //NVidia hardware
-	{
-		defines[def_it].Name = "INT_RENDER_NVIDIA";
-		defines[def_it].Definition = "1";
-		def_it++;
-	}
-	
-	/////////////////////////////////////////////
-
    if( o.dx10_gbuffer_opt )
 	{
 		defines[def_it].Name		=	"GBUFFER_OPTIMIZATION";
@@ -1419,12 +1368,6 @@ HRESULT	CRender::shader_compile			(
 	   def_it++;
    }
 	sh_name[len]='0'+char(o.dx10_minmax_sm!=0); ++len;
-
-	defines[def_it].Name = "SSFX_MODEXE";
-	defines[def_it].Definition = "1";
-	def_it++;
-	sh_name[len] = '1';
-	++len;
 
 	//Be carefull!!!!! this should be at the end to correctly generate
 	//compiled shader name;

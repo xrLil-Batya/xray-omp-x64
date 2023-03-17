@@ -502,7 +502,7 @@ _DDS_2D:
 				0,
 				&pTexture2D,
 				0
-				));
+				), fn);
 #else
 			R_CHK(D3DX10CreateTextureFromMemory
 				(
@@ -511,7 +511,7 @@ _DDS_2D:
 				0,
 				&pTexture2D,
 				0
-				));
+				), fn);
 #endif
 			FS.r_close				(S);
 			mip_cnt					= IMG.MipLevels;
