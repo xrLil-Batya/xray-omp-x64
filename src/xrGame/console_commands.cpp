@@ -1356,9 +1356,17 @@ public:
 					CCC_TimeFactor	(LPCSTR N) : IConsole_Command(N) {}
 	virtual void	Execute			(LPCSTR args)
 	{
-		float				time_factor = (float)atof(args);
-		clamp				(time_factor,EPS,1000.f);
-		Device.time_factor	(time_factor);
+        if (!OnServer() && !Game().local_player)
+            return;
+
+		if(OnServer() || Game().local_player->testFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS))
+		{
+			float				time_factor = (float)atof(args);
+			clamp				(time_factor,EPS,1000.f);
+			Device.time_factor	(time_factor);
+		}
+		else
+			Msg("! Available only for admins.");
 	}
 	virtual void	Status			(TStatus &S)
 	{

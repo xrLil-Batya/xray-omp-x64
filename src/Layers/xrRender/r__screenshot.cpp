@@ -159,37 +159,25 @@ void CRender::ScreenshotImpl	(ScreenshotMode mode, LPCSTR name, CMemoryWriter* m
 				
 			}
 			break;
-		case IRender_interface::SM_NORMAL:
-			{
-				string64			t_stemp;
-				string_path			buf;
-				xr_sprintf			(buf,sizeof(buf),"ss_%s_%s_(%s).jpg",Core.UserName,timestamp(t_stemp),(g_pGameLevel)?g_pGameLevel->name().c_str():"mainmenu");
-				ID3DBlob			*saved	= 0;
+			case IRender_interface::SM_NORMAL: {
+				static const bool UseTGA = strstr(Core.Params, "-ss_tga"), UsePNG = !strstr(Core.Params, "-ss_jpg") && !UseTGA;
+				string64 t_stemp;
+				string_path buf;
+				sprintf_s(buf, sizeof(buf), "ss_%s_%s_(%s).%s", Core.UserName, timestamp(t_stemp), g_pGameLevel ? g_pGameLevel->name().c_str() : "mainmenu",
+						  UsePNG     ? "png" :
+							  UseTGA ? "bmp" :
+									   "jpg");
+				ID3DBlob* saved = nullptr;
 #ifdef USE_DX11
-				CHK_DX				(D3DX11SaveTextureToMemory(HW.pContext, pSrcTexture, D3DX11_IFF_JPG, &saved, 0));
+				CHK_DX(D3DX11SaveTextureToMemory(HW.pContext, pSrcTexture, UsePNG ? D3DX11_IFF_PNG : UseTGA ? D3DX11_IFF_BMP : D3DX11_IFF_JPG, &saved, 0));
 #else
-				CHK_DX				(D3DX10SaveTextureToMemory( pSrcTexture, D3DX10_IFF_JPG, &saved, 0));
+				CHK_DX(D3DX10SaveTextureToMemory(pSrcTexture, UsePNG ? D3DX10_IFF_PNG : UseTGA ? D3DX10_IFF_BMP : D3DX10_IFF_JPG, &saved, 0));
 #endif
-				IWriter*		fs	= FS.w_open	("$screenshots$",buf); R_ASSERT(fs);
-				fs->w				(saved->GetBufferPointer(),(u32)saved->GetBufferSize());
-				FS.w_close			(fs);
-				_RELEASE			(saved);
-
-				if (strstr(Core.Params,"-ss_tga"))	
-				{ // hq
-					xr_sprintf			(buf,sizeof(buf),"ssq_%s_%s_(%s).tga",Core.UserName,timestamp(t_stemp),(g_pGameLevel)?g_pGameLevel->name().c_str():"mainmenu");
-					ID3DBlob*		saved	= 0;
-#ifdef USE_DX11
-					CHK_DX				(D3DX11SaveTextureToMemory(HW.pContext, pSrcTexture, D3DX11_IFF_BMP, &saved, 0));
-#else
-					CHK_DX				(D3DX10SaveTextureToMemory( pSrcTexture, D3DX10_IFF_BMP, &saved, 0));
-					//		CHK_DX				(D3DXSaveSurfaceToFileInMemory (&saved,D3DXIFF_TGA,pFB,0,0));
-#endif
-					IWriter*		fs	= FS.w_open	("$screenshots$",buf); R_ASSERT(fs);
-					fs->w				(saved->GetBufferPointer(),(u32)saved->GetBufferSize());
-					FS.w_close			(fs);
-					_RELEASE			(saved);
-				}
+				auto fs = FS.w_open("$screenshots$", buf);
+				R_ASSERT(fs);
+				fs->w(saved->GetBufferPointer(), static_cast<u32>(saved->GetBufferSize()));
+				FS.w_close(fs);
+				_RELEASE(saved);
 			}
 			break;
 		case IRender_interface::SM_FOR_LEVELMAP:

@@ -41,15 +41,8 @@ float CalcMotionSpeed(const shared_str& anim_name)
 
 player_hud_motion* player_hud_motion_container::find_motion(const shared_str& name)
 {
-	xr_vector<player_hud_motion>::iterator it	= m_anims.begin();
-	xr_vector<player_hud_motion>::iterator it_e = m_anims.end();
-	for(;it!=it_e;++it)
-	{
-		const shared_str& s = (true)?(*it).m_alias_name:(*it).m_base_name;
-		if( s == name)
-			return &(*it);
-	}
-	return NULL;
+	auto it = m_anims.find(name);
+	return it != m_anims.end() ? &it->second : nullptr;
 }
 
 void player_hud_motion_container::load(IKinematicsAnimated* model, const shared_str& sect)
@@ -57,7 +50,6 @@ void player_hud_motion_container::load(IKinematicsAnimated* model, const shared_
 	CInifile::Sect& _sect		= pSettings->r_section(sect);
 	CInifile::SectCIt _b		= _sect.Data.begin();
 	CInifile::SectCIt _e		= _sect.Data.end();
-	player_hud_motion* pm		= NULL;
 	
 	string512					buff;
 	MotionID					motion_ID;
@@ -66,26 +58,23 @@ void player_hud_motion_container::load(IKinematicsAnimated* model, const shared_
 	{
 		if(strstr(_b->first.c_str(), "anm_")==_b->first.c_str())
 		{
-			const shared_str& anm	= _b->second;
-			m_anims.resize			(m_anims.size()+1);
-			pm						= &m_anims.back();
-			//base and alias name
-			pm->m_alias_name		= _b->first;
+			const shared_str& anm = _b->second;
+			player_hud_motion pm;
 			
 			if(_GetItemCount(anm.c_str())==1)
 			{
-				pm->m_base_name			= anm;
-				pm->m_additional_name	= anm;
+				pm.m_base_name = anm;
+				pm.m_additional_name = anm;
 			}else
 			{
 #pragma todo("xrLil Batya: тут в аномали есть возможность добавить скорость для анимаций. Надо бы сюда перенести после основной адаптации хейза")
 				//R_ASSERT2(_GetItemCount(anm.c_str())==2, anm.c_str());
 				string512				str_item;
 				_GetItem(anm.c_str(),0,str_item);
-				pm->m_base_name			= str_item;
+				pm.m_base_name			= str_item;
 
 				_GetItem(anm.c_str(),1,str_item);
-				pm->m_additional_name	= str_item;
+				pm.m_additional_name	= str_item;
 			}
 
 			//and load all motions for it
@@ -93,9 +82,9 @@ void player_hud_motion_container::load(IKinematicsAnimated* model, const shared_
 			for(u32 i=0; i<=8; ++i)
 			{
 				if(i==0)
-					xr_strcpy				(buff,pm->m_base_name.c_str());		
+					xr_strcpy				(buff,pm.m_base_name.c_str());		
 				else
-					xr_sprintf				(buff,"%s%d",pm->m_base_name.c_str(),i);		
+					xr_sprintf				(buff,"%s%d",pm.m_base_name.c_str(),i);		
 
 				motion_ID				= model->ID_Cycle_Safe(buff);
 				if (!motion_ID.valid() && i == 0)
@@ -105,16 +94,17 @@ void player_hud_motion_container::load(IKinematicsAnimated* model, const shared_
 				}
 				else if(motion_ID.valid())
 				{
-					pm->m_animations.resize			(pm->m_animations.size()+1);
-					pm->m_animations.back().mid		= motion_ID;
-					pm->m_animations.back().name	= buff;
+					pm.m_animations.resize			(pm.m_animations.size()+1);
+					pm.m_animations.back().mid		= motion_ID;
+					pm.m_animations.back().name	= buff;
 					//Msg("motion %s sucessfull loaded", buff);
 #ifdef DEBUG
 //					Msg(" alias=[%s] base=[%s] name=[%s]",pm->m_alias_name.c_str(), pm->m_base_name.c_str(), buff);
 #endif // #ifdef DEBUG
 				}
 			}
-			VERIFY2(pm->m_animations.size(),make_string("motion not found [%s]", pm->m_base_name.c_str()).c_str());
+			ASSERT_FMT(pm.m_animations.size(), "[%s] motion [%s](%s) not found in section [%s]", __FUNCTION__, pm.m_base_name.c_str(), _b->first.c_str(), sect.c_str());
+			m_anims.emplace(std::move(_b->first), std::move(pm));
 		}
 	}
 }
@@ -1476,7 +1466,7 @@ void player_hud::attach_item(CHudItem* item)
 	attachable_hud_item* pi			= create_hud_item(item->HudSection());
 	int item_idx					= pi->m_attach_place_idx;
 	
-	if(	m_attached_items[item_idx] != pi)
+	if (m_attached_items[item_idx] != pi || pi->m_parent_hud_item != item)
 	{
 		if(m_attached_items[item_idx])
 			m_attached_items[item_idx]->m_parent_hud_item->on_b_hud_detach();

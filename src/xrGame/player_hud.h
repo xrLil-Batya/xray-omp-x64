@@ -18,7 +18,6 @@ struct motion_descr
 
 struct player_hud_motion
 {
-	shared_str				m_alias_name;
 	shared_str				m_base_name;
 	shared_str				m_additional_name;
 	xr_vector<motion_descr>	m_animations;
@@ -26,7 +25,7 @@ struct player_hud_motion
 
 struct player_hud_motion_container
 {
-	xr_vector<player_hud_motion>	m_anims;
+	string_unordered_map<shared_str, player_hud_motion> m_anims;
 	player_hud_motion*				find_motion(const shared_str& name);
 	void		load				(IKinematicsAnimated* model, const shared_str& sect);
 };

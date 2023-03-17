@@ -99,7 +99,10 @@ bool Editor_KeyPress(int key)
 		if(Game().local_player->testFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS))
 			stage = static_cast<EditorStage>((static_cast<int>(stage) + 1) % static_cast<int>(EditorStage::Count));
 		else
+		{
 			Msg("ImGUI: Available only for admins.");
+			return false;
+		}
 	}
 	else if (key == DIK_RALT || key == DIK_LALT)
         isAlt = true;
