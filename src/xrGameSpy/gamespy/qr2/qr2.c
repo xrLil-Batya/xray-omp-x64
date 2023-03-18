@@ -115,7 +115,7 @@ PROTOTYPES
 ********/
 static void send_heartbeat(qr2_t qrec, int statechanged);
 static void send_keepalive(qr2_t qrec);
-static int get_sockaddrin(const char *host, int port, struct sockaddr_in *saddr, struct hostent **savehent);
+extern int get_sockaddrin(const char *host, int port, struct sockaddr_in *saddr, struct hostent **savehent);
 static void qr2_check_queries(qr2_t qrec);
 static void qr2_check_send_heartbeat(qr2_t qrec);
 static void enum_local_ips();
@@ -655,37 +655,6 @@ static void enum_local_ips()
 		memcpy(&local_ip_list[num_local_ips], phost->h_addr_list[num_local_ips], sizeof(struct in_addr));
 	}
 }
-
-/****************************************************************************/
-
-
-/* Return a sockaddrin for the given host (numeric or DNS) and port)
-Returns the hostent in savehent if it is not NULL */
-static int get_sockaddrin(const char *host, int port, struct sockaddr_in *saddr, struct hostent **savehent)
-{
-	struct hostent *hent = NULL;
-
-	saddr->sin_family = AF_INET;
-	saddr->sin_port = htons((unsigned short)port);
-	if (host == NULL)
-		saddr->sin_addr.s_addr = INADDR_ANY;
-	else
-		saddr->sin_addr.s_addr = inet_addr(host);
-	
-	if (saddr->sin_addr.s_addr == INADDR_NONE && strcmp(host,"255.255.255.255") != 0)
-	{
-		hent = gethostbyname(host);
-		if (!hent)
-			return 0;
-		saddr->sin_addr.s_addr = *(unsigned int *)hent->h_addr_list[0];
-	}
-	if (savehent != NULL)
-		*savehent = hent;
-	return 1;
-
-} 
-
-
 
 /*****************************************************************************/
 /* Various encryption / encoding routines */

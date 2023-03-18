@@ -93,7 +93,7 @@ static int g_crc32(char *s, int len);
 static void create_challenge(int challenge, char chstr[9]);
 static char *value_for_key(const char *s, const char *key);
 static char *value_for_key_safe(const char *s, const char *key);
-static int get_sockaddrin(const char *host, int port, struct sockaddr_in *saddr, struct hostent **savehent);
+int get_sockaddrin(const char *host, int port, struct sockaddr_in *saddr, struct hostent **savehent);
 /**************
 PERSISTENT STORAGE PROTOTYPES
 **************/
@@ -1223,7 +1223,7 @@ static char *value_for_key_safe(const char *s, const char *key)
 
 /* Return a sockaddrin for the given host (numeric or DNS) and port)
 Returns the hostent in savehent if it is not NULL */
-static int get_sockaddrin(const char *host, int port, struct sockaddr_in *saddr, struct hostent **savehent)
+int get_sockaddrin(const char *host, int port, struct sockaddr_in *saddr, struct hostent **savehent)
 {
 	struct hostent *hent = NULL;
 

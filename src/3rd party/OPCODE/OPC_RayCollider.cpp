@@ -119,6 +119,7 @@ using namespace Opcode;
 #include "OPC_RayAABBOverlap.h"
 #include "OPC_RayTriOverlap.h"
 
+#undef SET_CONTACT
 #define SET_CONTACT(prim_index, flag)											\
 	mNbIntersections++;															\
 	/* Set contact status */													\
