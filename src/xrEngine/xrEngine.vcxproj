@@ -224,7 +224,7 @@
     </Manifest>
     <PostBuildEvent>
       <Command>copy /Y "$(xrSdkDir)binaries\x64\lua51.dll" "$(OutputPath)lua51.dll"
-copy /Y "$(xrSdkDir)binaries\x64\tbb.dll" "$(OutputPath)tbb.dll"
+copy /Y "$(xrSdkDir)binaries\x64\tbb12.dll" "$(OutputPath)tbb12.dll"
 copy /Y "$(xrSdkDir)binaries\x64\soft_oal.dll" "$(OutputPath)soft_oal.dll"
 copy /Y "$(xrSdkDir)binaries\x64\GameNetworkingSockets.dll" "$(OutputPath)GameNetworkingSockets.dll"
 copy /Y "$(xrSdkDir)binaries\x64\libcrypto-3-x64.dll" "$(OutputPath)libcrypto-3-x64.dll"

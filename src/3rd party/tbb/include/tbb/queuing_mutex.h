@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2005-2017 Intel Corporation
+    Copyright (c) 2005-2022 Intel Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -12,99 +12,181 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
-
-
-
 */
 
 #ifndef __TBB_queuing_mutex_H
 #define __TBB_queuing_mutex_H
 
-#include <cstring>
-#include "atomic.h"
-#include "tbb_profiling.h"
+#include "detail/_namespace_injection.h"
+#include "detail/_assert.h"
+#include "detail/_utils.h"
+#include "detail/_mutex_common.h"
+
+#include "profiling.h"
+
+#include <atomic>
 
 namespace tbb {
+namespace detail {
+namespace d1 {
 
 //! Queuing mutex with local-only spinning.
 /** @ingroup synchronization */
-class queuing_mutex : internal::mutex_copy_deprecated_and_disabled {
+class queuing_mutex {
 public:
     //! Construct unacquired mutex.
-    queuing_mutex() {
-        q_tail = NULL;
-#if TBB_USE_THREADING_TOOLS
-        internal_construct();
-#endif
-    }
+    queuing_mutex() noexcept  {
+        create_itt_sync(this, "tbb::queuing_mutex", "");
+    };
+
+    queuing_mutex(const queuing_mutex&) = delete;
+    queuing_mutex& operator=(const queuing_mutex&) = delete;
 
     //! The scoped locking pattern
     /** It helps to avoid the common problem of forgetting to release lock.
         It also nicely provides the "node" for queuing locks. */
-    class scoped_lock: internal::no_copy {
-        //! Initialize fields to mean "no lock held".
-        void initialize() {
-            mutex = NULL;
-#if TBB_USE_ASSERT
-            internal::poison_pointer(next);
-#endif /* TBB_USE_ASSERT */
+    class scoped_lock {
+        //! Reset fields to mean "no lock held".
+        void reset() {
+            m_mutex = nullptr;
         }
 
     public:
         //! Construct lock that has not acquired a mutex.
         /** Equivalent to zero-initialization of *this. */
-        scoped_lock() {initialize();}
+        scoped_lock() = default;
 
         //! Acquire lock on given mutex.
-        scoped_lock( queuing_mutex& m ) {
-            initialize();
+        scoped_lock(queuing_mutex& m) {
             acquire(m);
         }
 
         //! Release lock (if lock is held).
         ~scoped_lock() {
-            if( mutex ) release();
+            if (m_mutex) release();
         }
 
+        //! No Copy
+        scoped_lock( const scoped_lock& ) = delete;
+        scoped_lock& operator=( const scoped_lock& ) = delete;
+
         //! Acquire lock on given mutex.
-        void __TBB_EXPORTED_METHOD acquire( queuing_mutex& m );
+        void acquire( queuing_mutex& m ) {
+            __TBB_ASSERT(!m_mutex, "scoped_lock is already holding a mutex");
+
+            // Must set all fields before the exchange, because once the
+            // exchange executes, *this becomes accessible to other threads.
+            m_mutex = &m;
+            m_next.store(nullptr, std::memory_order_relaxed);
+            m_going.store(0U, std::memory_order_relaxed);
+
+            // x86 compare exchange operation always has a strong fence
+            // "sending" the fields initialized above to other processors.
+            scoped_lock* pred = m.q_tail.exchange(this);
+            if (pred) {
+                call_itt_notify(prepare, &m);
+                __TBB_ASSERT(pred->m_next.load(std::memory_order_relaxed) == nullptr, "the predecessor has another successor!");
+
+                pred->m_next.store(this, std::memory_order_release);
+                spin_wait_while_eq(m_going, 0U);
+            }
+            call_itt_notify(acquired, &m);
+
+        }
 
         //! Acquire lock on given mutex if free (i.e. non-blocking)
-        bool __TBB_EXPORTED_METHOD try_acquire( queuing_mutex& m );
+        bool try_acquire( queuing_mutex& m ) {
+            __TBB_ASSERT(!m_mutex, "scoped_lock is already holding a mutex");
+
+            // Must set all fields before the compare_exchange_strong, because once the
+            // compare_exchange_strong executes, *this becomes accessible to other threads.
+            m_next.store(nullptr, std::memory_order_relaxed);
+            m_going.store(0U, std::memory_order_relaxed);
+
+            scoped_lock* expected = nullptr;
+            // The compare_exchange_strong must have release semantics, because we are
+            // "sending" the fields initialized above to other processors.
+            // x86 compare exchange operation always has a strong fence
+            if (!m.q_tail.compare_exchange_strong(expected, this, std::memory_order_acq_rel))
+                return false;
+
+            m_mutex = &m;
+
+            call_itt_notify(acquired, &m);
+            return true;
+        }
 
         //! Release lock.
-        void __TBB_EXPORTED_METHOD release();
+        void release()
+        {
+            __TBB_ASSERT(this->m_mutex, "no lock acquired");
+
+            call_itt_notify(releasing, this->m_mutex);
+
+            if (m_next.load(std::memory_order_relaxed) == nullptr) {
+                scoped_lock* expected = this;
+                if (m_mutex->q_tail.compare_exchange_strong(expected, nullptr)) {
+                    // this was the only item in the queue, and the queue is now empty.
+                    reset();
+                    return;
+                }
+                // Someone in the queue
+                spin_wait_while_eq(m_next, nullptr);
+            }
+            m_next.load(std::memory_order_acquire)->m_going.store(1U, std::memory_order_release);
+
+            reset();
+        }
 
     private:
-        //! The pointer to the mutex owned, or NULL if not holding a mutex.
-        queuing_mutex* mutex;
+        //! The pointer to the mutex owned, or nullptr if not holding a mutex.
+        queuing_mutex* m_mutex{nullptr};
 
         //! The pointer to the next competitor for a mutex
-        scoped_lock *next;
+        std::atomic<scoped_lock*> m_next{nullptr};
 
         //! The local spin-wait variable
         /** Inverted (0 - blocked, 1 - acquired the mutex) for the sake of
             zero-initialization.  Defining it as an entire word instead of
             a byte seems to help performance slightly. */
-        uintptr_t going;
+        std::atomic<uintptr_t> m_going{0U};
     };
 
-    void __TBB_EXPORTED_METHOD internal_construct();
-
     // Mutex traits
-    static const bool is_rw_mutex = false;
-    static const bool is_recursive_mutex = false;
-    static const bool is_fair_mutex = true;
+    static constexpr bool is_rw_mutex = false;
+    static constexpr bool is_recursive_mutex = false;
+    static constexpr bool is_fair_mutex = true;
 
 private:
     //! The last competitor requesting the lock
-    atomic<scoped_lock*> q_tail;
+    std::atomic<scoped_lock*> q_tail{nullptr};
 
 };
 
-__TBB_DEFINE_PROFILING_SET_NAME(queuing_mutex)
+#if TBB_USE_PROFILING_TOOLS
+inline void set_name(queuing_mutex& obj, const char* name) {
+    itt_set_sync_name(&obj, name);
+}
+#if (_WIN32||_WIN64)
+inline void set_name(queuing_mutex& obj, const wchar_t* name) {
+    itt_set_sync_name(&obj, name);
+}
+#endif //WIN
+#else
+inline void set_name(queuing_mutex&, const char*) {}
+#if (_WIN32||_WIN64)
+inline void set_name(queuing_mutex&, const wchar_t*) {}
+#endif //WIN
+#endif
+} // namespace d1
+} // namespace detail
 
+inline namespace v1 {
+using detail::d1::queuing_mutex;
+} // namespace v1
+namespace profiling {
+    using detail::d1::set_name;
+}
 } // namespace tbb
 
 #endif /* __TBB_queuing_mutex_H */

@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2005-2017 Intel Corporation
+    Copyright (c) 2005-2021 Intel Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -12,18 +12,21 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
-
-
-
 */
 
 #ifndef __TBB_blocked_range_H
 #define __TBB_blocked_range_H
 
-#include "tbb_stddef.h"
+#include <cstddef>
+
+#include "detail/_range_common.h"
+#include "detail/_namespace_injection.h"
+
+#include "version.h"
 
 namespace tbb {
+namespace detail {
+namespace d1 {
 
 /** \page range_req Requirements on range concept
     Class \c R implementing the concept of range must define:
@@ -37,19 +40,16 @@ namespace tbb {
 //! A range over which to iterate.
 /** @ingroup algorithms */
 template<typename Value>
+    __TBB_requires(blocked_range_value<Value>)
 class blocked_range {
 public:
     //! Type of a value
     /** Called a const_iterator for sake of algorithms that need to treat a blocked_range
         as an STL container. */
-    typedef Value const_iterator;
+    using const_iterator = Value;
 
     //! Type for size of a range
-    typedef std::size_t size_type;
-
-    //! Construct range with default-constructed values for begin, end, and grainsize.
-    /** Requires that Value have a default constructor. */
-    blocked_range() : my_end(), my_begin(), my_grainsize() {}
+    using size_type = std::size_t;
 
     //! Construct range over half-open interval [begin,end), with the given grainsize.
     blocked_range( Value begin_, Value end_, size_type grainsize_=1 ) :
@@ -59,10 +59,10 @@ public:
     }
 
     //! Beginning of range.
-    const_iterator begin() const {return my_begin;}
+    const_iterator begin() const { return my_begin; }
 
     //! One past last value in range.
-    const_iterator end() const {return my_end;}
+    const_iterator end() const { return my_end; }
 
     //! Size of the range
     /** Unspecified if end()<begin(). */
@@ -72,18 +72,18 @@ public:
     }
 
     //! The grain size for this range.
-    size_type grainsize() const {return my_grainsize;}
+    size_type grainsize() const { return my_grainsize; }
 
     //------------------------------------------------------------------------
     // Methods that implement Range concept
     //------------------------------------------------------------------------
 
     //! True if range is empty.
-    bool empty() const {return !(my_begin<my_end);}
+    bool empty() const { return !(my_begin<my_end); }
 
     //! True if range is divisible.
     /** Unspecified if end()<begin(). */
-    bool is_divisible() const {return my_grainsize<size();}
+    bool is_divisible() const { return my_grainsize<size(); }
 
     //! Split range.
     /** The new Range *this has the second part, the old range r has the first part.
@@ -97,10 +97,6 @@ public:
         __TBB_ASSERT( !(my_begin < r.my_end) && !(r.my_end < my_begin), "blocked_range has been split incorrectly" );
     }
 
-#if __TBB_USE_PROPORTIONAL_SPLIT_IN_BLOCKED_RANGES
-    //! Static field to support proportional split
-    static const bool is_splittable_in_proportion = true;
-
     //! Split range.
     /** The new Range *this has the second part split according to specified proportion, the old range r has the first part.
         Unspecified if end()<begin() or !is_divisible(). */
@@ -112,7 +108,6 @@ public:
         // only comparison 'less than' is required from values of blocked_range objects
         __TBB_ASSERT( !(my_begin < r.my_end) && !(r.my_end < my_begin), "blocked_range has been split incorrectly" );
     }
-#endif /* __TBB_USE_PROPORTIONAL_SPLIT_IN_BLOCKED_RANGES */
 
 private:
     /** NOTE: my_end MUST be declared before my_begin, otherwise the splitting constructor will break. */
@@ -129,7 +124,6 @@ private:
         return middle;
     }
 
-#if __TBB_USE_PROPORTIONAL_SPLIT_IN_BLOCKED_RANGES
     static Value do_split( blocked_range& r, proportional_split& proportion )
     {
         __TBB_ASSERT( r.is_divisible(), "cannot split blocked_range that is not divisible" );
@@ -144,14 +138,32 @@ private:
                                          / float(proportion.left() + proportion.right()) + 0.5f);
         return r.my_end = Value(r.my_end - right_part);
     }
-#endif /* __TBB_USE_PROPORTIONAL_SPLIT_IN_BLOCKED_RANGES */
 
     template<typename RowValue, typename ColValue>
+        __TBB_requires(blocked_range_value<RowValue> &&
+                       blocked_range_value<ColValue>)
     friend class blocked_range2d;
 
     template<typename RowValue, typename ColValue, typename PageValue>
+        __TBB_requires(blocked_range_value<RowValue> &&
+                       blocked_range_value<ColValue> &&
+                       blocked_range_value<PageValue>)
     friend class blocked_range3d;
+
+    template<typename DimValue, unsigned int N, typename>
+        __TBB_requires(blocked_range_value<DimValue>)
+    friend class blocked_rangeNd_impl;
 };
+
+} // namespace d1
+} // namespace detail
+
+inline namespace v1 {
+using detail::d1::blocked_range;
+// Split types
+using detail::split;
+using detail::proportional_split;
+} // namespace v1
 
 } // namespace tbb
 

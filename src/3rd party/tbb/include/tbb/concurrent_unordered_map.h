@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2005-2017 Intel Corporation
+    Copyright (c) 2005-2022 Intel Corporation
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -12,288 +12,403 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
-
-
-
 */
-
-/* Container implementations in this header are based on PPL implementations
-   provided by Microsoft. */
 
 #ifndef __TBB_concurrent_unordered_map_H
 #define __TBB_concurrent_unordered_map_H
 
-#include "internal/_concurrent_unordered_impl.h"
+#include "detail/_namespace_injection.h"
+#include "detail/_concurrent_unordered_base.h"
+#include "tbb_allocator.h"
+#include <functional>
 
-namespace tbb
-{
+namespace tbb {
+namespace detail {
+namespace d1 {
 
-namespace interface5 {
+template <typename Key, typename T, typename Hash, typename KeyEqual, typename Allocator, bool AllowMultimapping>
+struct concurrent_unordered_map_traits {
+    using value_type = std::pair<const Key, T>;
+    using key_type = Key;
+    using allocator_type = Allocator;
+    using hash_compare_type = hash_compare<Key, Hash, KeyEqual>;
+    static constexpr bool allow_multimapping = AllowMultimapping;
 
-// Template class for hash map traits
-template<typename Key, typename T, typename Hash_compare, typename Allocator, bool Allow_multimapping>
-class concurrent_unordered_map_traits
-{
-protected:
-    typedef std::pair<const Key, T> value_type;
-    typedef Key key_type;
-    typedef Hash_compare hash_compare;
-    typedef typename Allocator::template rebind<value_type>::other allocator_type;
-    enum { allow_multimapping = Allow_multimapping };
-
-    concurrent_unordered_map_traits() : my_hash_compare() {}
-    concurrent_unordered_map_traits(const hash_compare& hc) : my_hash_compare(hc) {}
-
-    template<class Type1, class Type2>
-    static const Key& get_key(const std::pair<Type1, Type2>& value) {
-        return (value.first);
+    static constexpr const key_type& get_key( const value_type& value ) {
+        return value.first;
     }
+}; // struct concurrent_unordered_map_traits
 
-    hash_compare my_hash_compare; // the comparator predicate for keys
-};
+template <typename Key, typename T, typename Hash, typename KeyEqual, typename Allocator>
+class concurrent_unordered_multimap;
 
-template <typename Key, typename T, typename Hasher = tbb::tbb_hash<Key>, typename Key_equality = std::equal_to<Key>,
-         typename Allocator = tbb::tbb_allocator<std::pair<const Key, T> > >
-class concurrent_unordered_map :
-    public internal::concurrent_unordered_base< concurrent_unordered_map_traits<Key, T,
-    internal::hash_compare<Key, Hasher, Key_equality>, Allocator, false> >
+template <typename Key, typename T, typename Hash = std::hash<Key>, typename KeyEqual = std::equal_to<Key>,
+          typename Allocator = tbb::tbb_allocator<std::pair<const Key, T>> >
+class concurrent_unordered_map
+    : public concurrent_unordered_base<concurrent_unordered_map_traits<Key, T, Hash, KeyEqual, Allocator, false>>
 {
-    // Base type definitions
-    typedef internal::hash_compare<Key, Hasher, Key_equality> hash_compare;
-    typedef concurrent_unordered_map_traits<Key, T, hash_compare, Allocator, false> traits_type;
-    typedef internal::concurrent_unordered_base< traits_type > base_type;
-#if __TBB_EXTRA_DEBUG
+    using traits_type = concurrent_unordered_map_traits<Key, T, Hash, KeyEqual, Allocator, false>;
+    using base_type = concurrent_unordered_base<traits_type>;
 public:
-#endif
-    using traits_type::allow_multimapping;
-public:
-    using base_type::end;
-    using base_type::find;
-    using base_type::insert;
+    using key_type = typename base_type::key_type;
+    using mapped_type = T;
+    using value_type = typename base_type::value_type;
+    using size_type = typename base_type::size_type;
+    using difference_type = typename base_type::difference_type;
+    using hasher = typename base_type::hasher;
+    using key_equal = typename base_type::key_equal;
+    using allocator_type = typename base_type::allocator_type;
+    using reference = typename base_type::reference;
+    using const_reference = typename base_type::const_reference;
+    using pointer = typename base_type::pointer;
+    using const_pointer = typename base_type::const_pointer;
+    using iterator = typename base_type::iterator;
+    using const_iterator = typename base_type::const_iterator;
+    using local_iterator = typename base_type::local_iterator;
+    using const_local_iterator = typename base_type::const_local_iterator;
+    using node_type = typename base_type::node_type;
 
-    // Type definitions
-    typedef Key key_type;
-    typedef typename base_type::value_type value_type;
-    typedef T mapped_type;
-    typedef Hasher hasher;
-    typedef Key_equality key_equal;
-    typedef hash_compare key_compare;
+    // Include constructors of base type
+    using base_type::base_type;
 
-    typedef typename base_type::allocator_type allocator_type;
-    typedef typename base_type::pointer pointer;
-    typedef typename base_type::const_pointer const_pointer;
-    typedef typename base_type::reference reference;
-    typedef typename base_type::const_reference const_reference;
+    // Required for implicit deduction guides
+    concurrent_unordered_map() = default;
+    concurrent_unordered_map( const concurrent_unordered_map& ) = default;
+    concurrent_unordered_map( const concurrent_unordered_map& other, const allocator_type& alloc ) : base_type(other, alloc) {}
+    concurrent_unordered_map( concurrent_unordered_map&& ) = default;
+    concurrent_unordered_map( concurrent_unordered_map&& other, const allocator_type& alloc ) : base_type(std::move(other), alloc) {}
+    // Required to respect the rule of 5
+    concurrent_unordered_map& operator=( const concurrent_unordered_map& ) = default;
+    concurrent_unordered_map& operator=( concurrent_unordered_map&& ) = default;
 
-    typedef typename base_type::size_type size_type;
-    typedef typename base_type::difference_type difference_type;
-
-    typedef typename base_type::iterator iterator;
-    typedef typename base_type::const_iterator const_iterator;
-    typedef typename base_type::iterator local_iterator;
-    typedef typename base_type::const_iterator const_local_iterator;
-
-    // Construction/destruction/copying
-    explicit concurrent_unordered_map(size_type n_of_buckets = base_type::initial_bucket_number,
-        const hasher& _Hasher = hasher(), const key_equal& _Key_equality = key_equal(),
-        const allocator_type& a = allocator_type())
-        : base_type(n_of_buckets, key_compare(_Hasher, _Key_equality), a)
-    {}
-
-    explicit concurrent_unordered_map(const Allocator& a) : base_type(base_type::initial_bucket_number, key_compare(), a)
-    {}
-
-    template <typename Iterator>
-    concurrent_unordered_map(Iterator first, Iterator last, size_type n_of_buckets = base_type::initial_bucket_number,
-        const hasher& _Hasher = hasher(), const key_equal& _Key_equality = key_equal(),
-        const allocator_type& a = allocator_type())
-        : base_type(n_of_buckets, key_compare(_Hasher, _Key_equality), a)
-    {
-        insert(first, last);
+    concurrent_unordered_map& operator=( std::initializer_list<value_type> il ) {
+        base_type::operator= (il);
+        return *this;
     }
-
-#if __TBB_INITIALIZER_LISTS_PRESENT
-    //! Constructor from initializer_list
-    concurrent_unordered_map(std::initializer_list<value_type> il, size_type n_of_buckets = base_type::initial_bucket_number,
-        const hasher& _Hasher = hasher(), const key_equal& _Key_equality = key_equal(),
-        const allocator_type& a = allocator_type())
-        : base_type(n_of_buckets, key_compare(_Hasher, _Key_equality), a)
-    {
-        this->insert(il.begin(),il.end());
-    }
-#endif //# __TBB_INITIALIZER_LISTS_PRESENT
-
-#if __TBB_CPP11_RVALUE_REF_PRESENT
-#if !__TBB_IMPLICIT_MOVE_PRESENT
-    concurrent_unordered_map(const concurrent_unordered_map& table)
-        : base_type(table)
-    {}
-
-    concurrent_unordered_map& operator=(const concurrent_unordered_map& table)
-    {
-        return static_cast<concurrent_unordered_map&>(base_type::operator=(table));
-    }
-
-    concurrent_unordered_map(concurrent_unordered_map&& table)
-        : base_type(std::move(table))
-    {}
-
-    concurrent_unordered_map& operator=(concurrent_unordered_map&& table)
-    {
-        return static_cast<concurrent_unordered_map&>(base_type::operator=(std::move(table)));
-    }
-#endif //!__TBB_IMPLICIT_MOVE_PRESENT
-
-    concurrent_unordered_map(concurrent_unordered_map&& table, const Allocator& a) : base_type(std::move(table), a)
-    {}
-#endif //__TBB_CPP11_RVALUE_REF_PRESENT
-
-    concurrent_unordered_map(const concurrent_unordered_map& table, const Allocator& a)
-        : base_type(table, a)
-    {}
 
     // Observers
-    mapped_type& operator[](const key_type& key)
-    {
-        iterator where = find(key);
+    mapped_type& operator[]( const key_type& key ) {
+        iterator where = this->find(key);
 
-        if (where == end())
-        {
-            where = insert(std::pair<key_type, mapped_type>(key, mapped_type())).first;
+        if (where == this->end()) {
+            where = this->emplace(std::piecewise_construct, std::forward_as_tuple(key), std::tuple<>()).first;
         }
-
-        return ((*where).second);
+        return where->second;
     }
 
-    mapped_type& at(const key_type& key)
-    {
-        iterator where = find(key);
+    mapped_type& operator[]( key_type&& key ) {
+        iterator where = this->find(key);
 
-        if (where == end())
-        {
-            tbb::internal::throw_exception(tbb::internal::eid_invalid_key);
+        if (where == this->end()) {
+            where = this->emplace(std::piecewise_construct, std::forward_as_tuple(std::move(key)), std::tuple<>()).first;
         }
-
-        return ((*where).second);
+        return where->second;
     }
 
-    const mapped_type& at(const key_type& key) const
-    {
-        const_iterator where = find(key);
+    mapped_type& at( const key_type& key ) {
+        iterator where = this->find(key);
 
-        if (where == end())
-        {
-            tbb::internal::throw_exception(tbb::internal::eid_invalid_key);
+        if (where == this->end()) {
+            throw_exception(exception_id::invalid_key);
         }
-
-        return ((*where).second);
+        return where->second;
     }
-};
 
-template < typename Key, typename T, typename Hasher = tbb::tbb_hash<Key>, typename Key_equality = std::equal_to<Key>,
-        typename Allocator = tbb::tbb_allocator<std::pair<const Key, T> > >
-class concurrent_unordered_multimap :
-    public internal::concurrent_unordered_base< concurrent_unordered_map_traits< Key, T,
-    internal::hash_compare<Key, Hasher, Key_equality>, Allocator, true> >
-{
-    // Base type definitions
-    typedef internal::hash_compare<Key, Hasher, Key_equality> hash_compare;
-    typedef concurrent_unordered_map_traits<Key, T, hash_compare, Allocator, true> traits_type;
-    typedef internal::concurrent_unordered_base<traits_type> base_type;
-#if __TBB_EXTRA_DEBUG
-public:
-#endif
-    using traits_type::allow_multimapping;
-public:
+    const mapped_type& at( const key_type& key ) const {
+        const_iterator where = this->find(key);
+
+        if (where == this->end()) {
+            throw_exception(exception_id::out_of_range);
+        }
+        return where->second;
+    }
+
     using base_type::insert;
 
-    // Type definitions
-    typedef Key key_type;
-    typedef typename base_type::value_type value_type;
-    typedef T mapped_type;
-    typedef Hasher hasher;
-    typedef Key_equality key_equal;
-    typedef hash_compare key_compare;
-
-    typedef typename base_type::allocator_type allocator_type;
-    typedef typename base_type::pointer pointer;
-    typedef typename base_type::const_pointer const_pointer;
-    typedef typename base_type::reference reference;
-    typedef typename base_type::const_reference const_reference;
-
-    typedef typename base_type::size_type size_type;
-    typedef typename base_type::difference_type difference_type;
-
-    typedef typename base_type::iterator iterator;
-    typedef typename base_type::const_iterator const_iterator;
-    typedef typename base_type::iterator local_iterator;
-    typedef typename base_type::const_iterator const_local_iterator;
-
-    // Construction/destruction/copying
-    explicit concurrent_unordered_multimap(size_type n_of_buckets = base_type::initial_bucket_number,
-        const hasher& _Hasher = hasher(), const key_equal& _Key_equality = key_equal(),
-        const allocator_type& a = allocator_type())
-        : base_type(n_of_buckets, key_compare(_Hasher, _Key_equality), a)
-    {}
-
-    explicit concurrent_unordered_multimap(const Allocator& a) : base_type(base_type::initial_bucket_number, key_compare(), a)
-    {}
-
-    template <typename Iterator>
-    concurrent_unordered_multimap(Iterator first, Iterator last, size_type n_of_buckets = base_type::initial_bucket_number,
-        const hasher& _Hasher = hasher(), const key_equal& _Key_equality = key_equal(),
-        const allocator_type& a = allocator_type())
-        : base_type(n_of_buckets,key_compare(_Hasher,_Key_equality), a)
-    {
-        insert(first, last);
+    template<typename P>
+    typename std::enable_if<std::is_constructible<value_type, P&&>::value,
+                            std::pair<iterator, bool>>::type insert( P&& value ) {
+        return this->emplace(std::forward<P>(value));
     }
 
-#if __TBB_INITIALIZER_LISTS_PRESENT
-    //! Constructor from initializer_list
-    concurrent_unordered_multimap(std::initializer_list<value_type> il, size_type n_of_buckets = base_type::initial_bucket_number,
-        const hasher& _Hasher = hasher(), const key_equal& _Key_equality = key_equal(),
-        const allocator_type& a = allocator_type())
-        : base_type(n_of_buckets, key_compare(_Hasher, _Key_equality), a)
-    {
-        this->insert(il.begin(),il.end());
-    }
-#endif //# __TBB_INITIALIZER_LISTS_PRESENT
-
-#if __TBB_CPP11_RVALUE_REF_PRESENT
-#if !__TBB_IMPLICIT_MOVE_PRESENT
-    concurrent_unordered_multimap(const concurrent_unordered_multimap& table)
-        : base_type(table)
-    {}
-
-    concurrent_unordered_multimap& operator=(const concurrent_unordered_multimap& table)
-    {
-        return static_cast<concurrent_unordered_multimap&>(base_type::operator=(table));
+    template<typename P>
+    typename std::enable_if<std::is_constructible<value_type, P&&>::value,
+                            iterator>::type insert( const_iterator hint, P&& value ) {
+        return this->emplace_hint(hint, std::forward<P>(value));
     }
 
-    concurrent_unordered_multimap(concurrent_unordered_multimap&& table)
-        : base_type(std::move(table))
-    {}
-
-    concurrent_unordered_multimap& operator=(concurrent_unordered_multimap&& table)
-    {
-        return static_cast<concurrent_unordered_multimap&>(base_type::operator=(std::move(table)));
+    template <typename OtherHash, typename OtherKeyEqual>
+    void merge( concurrent_unordered_map<key_type, mapped_type, OtherHash, OtherKeyEqual, allocator_type>& source ) {
+        this->internal_merge(source);
     }
-#endif //!__TBB_IMPLICIT_MOVE_PRESENT
 
-    concurrent_unordered_multimap(concurrent_unordered_multimap&& table, const Allocator& a) : base_type(std::move(table), a)
-    {}
-#endif //__TBB_CPP11_RVALUE_REF_PRESENT
+    template <typename OtherHash, typename OtherKeyEqual>
+    void merge( concurrent_unordered_map<key_type, mapped_type, OtherHash, OtherKeyEqual, allocator_type>&& source ) {
+        this->internal_merge(std::move(source));
+    }
 
-    concurrent_unordered_multimap(const concurrent_unordered_multimap& table, const Allocator& a)
-        : base_type(table, a)
-    {}
-};
-} // namespace interface5
+    template <typename OtherHash, typename OtherKeyEqual>
+    void merge( concurrent_unordered_multimap<key_type, mapped_type, OtherHash, OtherKeyEqual, allocator_type>& source ) {
+        this->internal_merge(source);
+    }
 
-using interface5::concurrent_unordered_map;
-using interface5::concurrent_unordered_multimap;
+    template <typename OtherHash, typename OtherKeyEqual>
+    void merge( concurrent_unordered_multimap<key_type, mapped_type, OtherHash, OtherKeyEqual, allocator_type>&& source ) {
+        this->internal_merge(std::move(source));
+    }
+}; // class concurrent_unordered_map
 
+#if __TBB_CPP17_DEDUCTION_GUIDES_PRESENT
+template <typename It,
+          typename Hash = std::hash<iterator_key_t<It>>,
+          typename KeyEq = std::equal_to<iterator_key_t<It>>,
+          typename Alloc = tbb::tbb_allocator<iterator_alloc_pair_t<It>>,
+          typename = std::enable_if_t<is_input_iterator_v<It>>,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>,
+          typename = std::enable_if_t<!is_allocator_v<Hash>>,
+          typename = std::enable_if_t<!is_allocator_v<KeyEq>>,
+          typename = std::enable_if_t<!std::is_integral_v<Hash>>>
+concurrent_unordered_map( It, It, std::size_t =  {},
+                          Hash = Hash(), KeyEq = KeyEq(), Alloc = Alloc() )
+-> concurrent_unordered_map<iterator_key_t<It>, iterator_mapped_t<It>, Hash, KeyEq, Alloc>;
+
+template <typename Key, typename T,
+          typename Hash = std::hash<std::remove_const_t<Key>>,
+          typename KeyEq = std::equal_to<std::remove_const_t<Key>>,
+          typename Alloc = tbb::tbb_allocator<std::pair<const Key, T>>,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>,
+          typename = std::enable_if_t<!is_allocator_v<Hash>>,
+          typename = std::enable_if_t<!is_allocator_v<KeyEq>>,
+          typename = std::enable_if_t<!std::is_integral_v<Hash>>>
+concurrent_unordered_map( std::initializer_list<std::pair<Key, T>>, std::size_t = {},
+                          Hash = Hash(), KeyEq = KeyEq(), Alloc = Alloc() )
+-> concurrent_unordered_map<std::remove_const_t<Key>, T, Hash, KeyEq, Alloc>;
+
+template <typename It, typename Alloc,
+          typename = std::enable_if_t<is_input_iterator_v<It>>,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>>
+concurrent_unordered_map( It, It, std::size_t, Alloc )
+-> concurrent_unordered_map<iterator_key_t<It>, iterator_mapped_t<It>,
+                            std::hash<iterator_key_t<It>>,
+                            std::equal_to<iterator_key_t<It>>, Alloc>;
+
+// TODO: investigate if a deduction guide for concurrent_unordered_map(It, It, Alloc) is needed
+
+template <typename It, typename Hash, typename Alloc,
+          typename = std::enable_if_t<is_input_iterator_v<It>>,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>,
+          typename = std::enable_if_t<!is_allocator_v<Hash>>,
+          typename = std::enable_if_t<!std::is_integral_v<Hash>>>
+concurrent_unordered_map( It, It, std::size_t, Hash, Alloc )
+-> concurrent_unordered_map<iterator_key_t<It>, iterator_mapped_t<It>,
+                            Hash, std::equal_to<iterator_key_t<It>>, Alloc>;
+
+template <typename Key, typename T, typename Alloc,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>>
+concurrent_unordered_map( std::initializer_list<std::pair<Key, T>>, std::size_t, Alloc )
+-> concurrent_unordered_map<std::remove_const_t<Key>, T, std::hash<std::remove_const_t<Key>>,
+                            std::equal_to<std::remove_const_t<Key>>, Alloc>;
+
+template <typename Key, typename T, typename Alloc,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>>
+concurrent_unordered_map( std::initializer_list<std::pair<Key, T>>, Alloc )
+-> concurrent_unordered_map<std::remove_const_t<Key>, T, std::hash<std::remove_const_t<Key>>,
+                            std::equal_to<std::remove_const_t<Key>>, Alloc>;
+
+template <typename Key, typename T, typename Hash, typename Alloc,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>,
+          typename = std::enable_if_t<!is_allocator_v<Hash>>,
+          typename = std::enable_if_t<!std::is_integral_v<Hash>>>
+concurrent_unordered_map( std::initializer_list<std::pair<Key, T>>, std::size_t, Hash, Alloc )
+-> concurrent_unordered_map<std::remove_const_t<Key>, T, Hash,
+                            std::equal_to<std::remove_const_t<Key>>, Alloc>;
+
+#if __APPLE__ && __TBB_CLANG_VERSION == 100000
+// An explicit deduction guide is required for copy/move constructor with allocator for APPLE LLVM 10.0.0
+// due to an issue with generating an implicit deduction guide for these constructors under several strange surcumstances.
+// Currently the issue takes place because the last template parameter for Traits is boolean, it should not affect the deduction guides
+// The issue reproduces only on this version of the compiler
+template <typename Key, typename T, typename Hash, typename KeyEq, typename Alloc>
+concurrent_unordered_map( concurrent_unordered_map<Key, T, Hash, KeyEq, Alloc>, Alloc )
+-> concurrent_unordered_map<Key, T, Hash, KeyEq, Alloc>;
+#endif
+
+#endif // __TBB_CPP17_DEDUCTION_GUIDES_PRESENT
+
+template <typename Key, typename T, typename Hash, typename KeyEqual, typename Allocator>
+void swap( concurrent_unordered_map<Key, T, Hash, KeyEqual, Allocator>& lhs,
+           concurrent_unordered_map<Key, T, Hash, KeyEqual, Allocator>& rhs ) {
+    lhs.swap(rhs);
+}
+
+template <typename Key, typename T, typename Hash = std::hash<Key>, typename KeyEqual = std::equal_to<Key>,
+          typename Allocator = tbb::tbb_allocator<std::pair<const Key, T>> >
+class concurrent_unordered_multimap
+    : public concurrent_unordered_base<concurrent_unordered_map_traits<Key, T, Hash, KeyEqual, Allocator, true>>
+{
+    using traits_type = concurrent_unordered_map_traits<Key, T, Hash, KeyEqual, Allocator, true>;
+    using base_type = concurrent_unordered_base<traits_type>;
+public:
+    using key_type = typename base_type::key_type;
+    using mapped_type = T;
+    using value_type = typename base_type::value_type;
+    using size_type = typename base_type::size_type;
+    using difference_type = typename base_type::difference_type;
+    using hasher = typename base_type::hasher;
+    using key_equal = typename base_type::key_equal;
+    using allocator_type = typename base_type::allocator_type;
+    using reference = typename base_type::reference;
+    using const_reference = typename base_type::const_reference;
+    using pointer = typename base_type::pointer;
+    using const_pointer = typename base_type::const_pointer;
+    using iterator = typename base_type::iterator;
+    using const_iterator = typename base_type::const_iterator;
+    using local_iterator = typename base_type::local_iterator;
+    using const_local_iterator = typename base_type::const_local_iterator;
+    using node_type = typename base_type::node_type;
+
+    // Include constructors of base type
+    using base_type::base_type;
+    using base_type::insert;
+
+    // Required for implicit deduction guides
+    concurrent_unordered_multimap() = default;
+    concurrent_unordered_multimap( const concurrent_unordered_multimap& ) = default;
+    concurrent_unordered_multimap( const concurrent_unordered_multimap& other, const allocator_type& alloc ) : base_type(other, alloc) {}
+    concurrent_unordered_multimap( concurrent_unordered_multimap&& ) = default;
+    concurrent_unordered_multimap( concurrent_unordered_multimap&& other, const allocator_type& alloc ) : base_type(std::move(other), alloc) {}
+    // Required to respect the rule of 5
+    concurrent_unordered_multimap& operator=( const concurrent_unordered_multimap& ) = default;
+    concurrent_unordered_multimap& operator=( concurrent_unordered_multimap&& ) = default;
+
+    concurrent_unordered_multimap& operator=( std::initializer_list<value_type> il ) {
+        base_type::operator= (il);
+        return *this;
+    }
+
+    template <typename P>
+    typename std::enable_if<std::is_constructible<value_type, P&&>::value,
+                            std::pair<iterator, bool>>::type insert( P&& value ) {
+        return this->emplace(std::forward<P>(value));
+    }
+
+    template<typename P>
+    typename std::enable_if<std::is_constructible<value_type, P&&>::value,
+                            iterator>::type insert( const_iterator hint, P&& value ) {
+        return this->emplace_hint(hint, std::forward<P&&>(value));
+    }
+
+    template <typename OtherHash, typename OtherKeyEqual>
+    void merge( concurrent_unordered_map<key_type, mapped_type, OtherHash, OtherKeyEqual, allocator_type>& source ) {
+        this->internal_merge(source);
+    }
+
+    template <typename OtherHash, typename OtherKeyEqual>
+    void merge( concurrent_unordered_map<key_type, mapped_type, OtherHash, OtherKeyEqual, allocator_type>&& source ) {
+        this->internal_merge(std::move(source));
+    }
+
+    template <typename OtherHash, typename OtherKeyEqual>
+    void merge( concurrent_unordered_multimap<key_type, mapped_type, OtherHash, OtherKeyEqual, allocator_type>& source ) {
+        this->internal_merge(source);
+    }
+
+    template <typename OtherHash, typename OtherKeyEqual>
+    void merge( concurrent_unordered_multimap<key_type, mapped_type, OtherHash, OtherKeyEqual, allocator_type>&& source ) {
+        this->internal_merge(std::move(source));
+    }
+}; // class concurrent_unordered_multimap
+
+#if __TBB_CPP17_DEDUCTION_GUIDES_PRESENT
+
+template <typename It,
+          typename Hash = std::hash<iterator_key_t<It>>,
+          typename KeyEq = std::equal_to<iterator_key_t<It>>,
+          typename Alloc = tbb::tbb_allocator<iterator_alloc_pair_t<It>>,
+          typename = std::enable_if_t<is_input_iterator_v<It>>,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>,
+          typename = std::enable_if_t<!is_allocator_v<Hash>>,
+          typename = std::enable_if_t<!is_allocator_v<KeyEq>>,
+          typename = std::enable_if_t<!std::is_integral_v<Hash>>>
+concurrent_unordered_multimap( It, It, std::size_t = {}, Hash = Hash(), KeyEq = KeyEq(), Alloc = Alloc() )
+-> concurrent_unordered_multimap<iterator_key_t<It>, iterator_mapped_t<It>, Hash, KeyEq, Alloc>;
+
+template <typename Key, typename T,
+          typename Hash = std::hash<std::remove_const_t<Key>>,
+          typename KeyEq = std::equal_to<std::remove_const_t<Key>>,
+          typename Alloc = tbb::tbb_allocator<std::pair<const Key, T>>,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>,
+          typename = std::enable_if_t<!is_allocator_v<Hash>>,
+          typename = std::enable_if_t<!is_allocator_v<KeyEq>>,
+          typename = std::enable_if_t<!std::is_integral_v<Hash>>>
+concurrent_unordered_multimap( std::initializer_list<std::pair<Key, T>>, std::size_t = {},
+                               Hash = Hash(), KeyEq = KeyEq(), Alloc = Alloc() )
+-> concurrent_unordered_multimap<std::remove_const_t<Key>, T, Hash, KeyEq, Alloc>;
+
+template <typename It, typename Alloc,
+          typename = std::enable_if_t<is_input_iterator_v<It>>,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>>
+concurrent_unordered_multimap( It, It, std::size_t, Alloc )
+-> concurrent_unordered_multimap<iterator_key_t<It>, iterator_mapped_t<It>,
+                                 std::hash<iterator_key_t<It>>,
+                                 std::equal_to<iterator_key_t<It>>, Alloc>;
+
+template <typename It, typename Hash, typename Alloc,
+          typename = std::enable_if_t<is_input_iterator_v<It>>,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>,
+          typename = std::enable_if_t<!is_allocator_v<Hash>>,
+          typename = std::enable_if_t<!std::is_integral_v<Hash>>>
+concurrent_unordered_multimap( It, It, std::size_t, Hash, Alloc )
+-> concurrent_unordered_multimap<iterator_key_t<It>, iterator_mapped_t<It>, Hash,
+                                 std::equal_to<iterator_key_t<It>>, Alloc>;
+
+template <typename Key, typename T, typename Alloc,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>>
+concurrent_unordered_multimap( std::initializer_list<std::pair<Key, T>>, std::size_t, Alloc )
+-> concurrent_unordered_multimap<std::remove_const_t<Key>, T, std::hash<std::remove_const_t<Key>>,
+                                 std::equal_to<std::remove_const_t<Key>>, Alloc>;
+
+template <typename Key, typename T, typename Alloc,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>>
+concurrent_unordered_multimap( std::initializer_list<std::pair<Key, T>>, Alloc )
+-> concurrent_unordered_multimap<std::remove_const_t<Key>, T, std::hash<std::remove_const_t<Key>>,
+                                 std::equal_to<std::remove_const_t<Key>>, Alloc>;
+
+template <typename Key, typename T, typename Hash, typename Alloc,
+          typename = std::enable_if_t<is_allocator_v<Alloc>>,
+          typename = std::enable_if_t<!is_allocator_v<Hash>>,
+          typename = std::enable_if_t<!std::is_integral_v<Hash>>>
+concurrent_unordered_multimap( std::initializer_list<std::pair<Key, T>>, std::size_t, Hash, Alloc )
+-> concurrent_unordered_multimap<std::remove_const_t<Key>, T, Hash,
+                                 std::equal_to<std::remove_const_t<Key>>, Alloc>;
+
+#if __APPLE__ && __TBB_CLANG_VERSION == 100000
+// An explicit deduction guide is required for copy/move constructor with allocator for APPLE LLVM 10.0.0
+// due to an issue with generating an implicit deduction guide for these constructors under several strange surcumstances.
+// Currently the issue takes place because the last template parameter for Traits is boolean, it should not affect the deduction guides
+// The issue reproduces only on this version of the compiler
+template <typename Key, typename T, typename Hash, typename KeyEq, typename Alloc>
+concurrent_unordered_multimap( concurrent_unordered_multimap<Key, T, Hash, KeyEq, Alloc>, Alloc )
+-> concurrent_unordered_multimap<Key, T, Hash, KeyEq, Alloc>;
+#endif
+#endif // __TBB_CPP17_DEDUCTION_GUIDES_PRESENT
+
+template <typename Key, typename T, typename Hash, typename KeyEqual, typename Allocator>
+void swap( concurrent_unordered_multimap<Key, T, Hash, KeyEqual, Allocator>& lhs,
+           concurrent_unordered_multimap<Key, T, Hash, KeyEqual, Allocator>& rhs ) {
+    lhs.swap(rhs);
+}
+
+} // namespace d1
+} // namespace detail
+
+inline namespace v1 {
+
+using detail::d1::concurrent_unordered_map;
+using detail::d1::concurrent_unordered_multimap;
+using detail::split;
+
+} // inline namespace v1
 } // namespace tbb
 
-#endif// __TBB_concurrent_unordered_map_H
+#endif // __TBB_concurrent_unordered_map_H
