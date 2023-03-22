@@ -296,6 +296,7 @@ void game_sv_freemp::Update()
 						CInifile* file = xr_new<CInifile>(file_name, false, false);
 						SavePlayer(player.second, file);
 						file->save_as(file_name);
+						xr_delete(file);
 					}
 				}
 			}
