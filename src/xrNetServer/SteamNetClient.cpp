@@ -4,6 +4,7 @@
 #include "ip_address.h"
 #include "NET_Messages.h"
 #include "WinsocksHelper.h"
+#include "GameNetworkingSockets/steam/isteamnetworkingutils.h"
 
 SteamNetClient* s_pCallbackInstance = nullptr;
 
@@ -351,8 +352,8 @@ bool SteamNetClient::SendPingMessage(MSYS_PING & clPing)
 
 void SteamNetClient::UpdateStatistic()
 {
-	SteamNetworkingQuickConnectionStatus status;
-	if (!m_pInterface->GetQuickConnectionStatus(m_hConnection, &status))
+	SteamNetConnectionRealTimeStatus_t status;
+	if (!m_pInterface->GetConnectionRealTimeStatus(m_hConnection, &status, 0, nullptr))
 	{
 		return;
 	}
@@ -370,8 +371,8 @@ bool SteamNetClient::GetPendingMessagesCount(DWORD& dwPending)
 	R_ASSERT(m_pInterface);
 	R_ASSERT(m_hConnection != k_HSteamNetConnection_Invalid);
 
-	SteamNetworkingQuickConnectionStatus pStatus;
-	if (m_pInterface->GetQuickConnectionStatus(m_hConnection, &pStatus))
+	SteamNetConnectionRealTimeStatus_t pStatus;
+	if (m_pInterface->GetConnectionRealTimeStatus(m_hConnection, &pStatus, 0, nullptr))
 	{
 		dwPending = pStatus.m_cbPendingReliable + pStatus.m_cbPendingUnreliable;
 		return true;

@@ -25,16 +25,13 @@
 // End SteamNetworkingSockets config.
 //-----------------------------------------------------------------------------
 
-#if !defined( STEAMNETWORKINGSOCKETS_OPENSOURCE ) && !defined( STEAMNETWORKINGSOCKETS_STREAMINGCLIENT )
-	#define STEAMNETWORKINGSOCKETS_STEAM
-#endif
 #ifdef NN_NINTENDO_SDK // We always static link on Nintendo
 	#define STEAMNETWORKINGSOCKETS_STATIC_LINK
 #endif
 #if defined( STEAMNETWORKINGSOCKETS_STATIC_LINK )
 	#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C"
 #elif defined( STEAMNETWORKINGSOCKETS_FOREXPORT )
-	#ifdef _WIN32
+	#if defined( _WIN32 ) || defined( __ORBIS__ ) || defined( __PROSPERO__ )
 		#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C" __declspec( dllexport )
 	#else
 		#define STEAMNETWORKINGSOCKETS_INTERFACE extern "C" __attribute__((visibility("default")))
@@ -656,6 +653,9 @@ const int k_cchSteamNetworkingMaxConnectionCloseReason = 128;
 /// of a connection.
 const int k_cchSteamNetworkingMaxConnectionDescription = 128;
 
+/// Max length of the app's part of the description
+const int k_cchSteamNetworkingMaxConnectionAppName = 32;
+
 const int k_nSteamNetworkConnectionInfoFlags_Unauthenticated = 1; // We don't have a certificate for the remote host.
 const int k_nSteamNetworkConnectionInfoFlags_Unencrypted = 2; // Information is being sent out over a wire unencrypted (by this library)
 const int k_nSteamNetworkConnectionInfoFlags_LoopbackBuffers = 4; // Internal loopback buffers.  Won't be true for localhost.  (You can check the address to determine that.)  This implies k_nSteamNetworkConnectionInfoFlags_FastLAN
@@ -716,7 +716,7 @@ struct SteamNetConnectionInfo_t
 
 /// Quick connection state, pared down to something you could call
 /// more frequently without it being too big of a perf hit.
-struct SteamNetworkingQuickConnectionStatus
+struct SteamNetConnectionRealTimeStatus_t
 {
 
 	/// High level state of the connection
@@ -759,17 +759,16 @@ struct SteamNetworkingQuickConnectionStatus
 	/// have to re-transmit.
 	int m_cbSentUnackedReliable;
 
-	/// If you asked us to send a message right now, how long would that message
-	/// sit in the queue before we actually started putting packets on the wire?
-	/// (And assuming Nagle does not cause any packets to be delayed.)
+	/// If you queued a message right now, approximately how long would that message
+	/// wait in the queue before we actually started putting its data on the wire in
+	/// a packet?
 	///
-	/// In general, data that is sent by the application is limited by the
-	/// bandwidth of the channel.  If you send data faster than this, it must
-	/// be queued and put on the wire at a metered rate.  Even sending a small amount
-	/// of data (e.g. a few MTU, say ~3k) will require some of the data to be delayed
-	/// a bit.
-	///
-	/// In general, the estimated delay will be approximately equal to
+	/// In general, data that is sent by the application is limited by the bandwidth
+	/// of the channel.  If you send data faster than this, it must be queued and
+	/// put on the wire at a metered rate.  Even sending a small amount of data (e.g.
+	/// a few MTU, say ~3k) will require some of the data to be delayed a bit.
+	/// 
+	/// Ignoring multiple lanes, the estimated delay will be approximately equal to
 	///
 	///		( m_cbPendingUnreliable+m_cbPendingReliable ) / m_nSendRateBytesPerSecond
 	///
@@ -778,13 +777,38 @@ struct SteamNetworkingQuickConnectionStatus
 	/// and the last packet placed on the wire, and we are exactly up against the send
 	/// rate limit.  In that case we might need to wait for one packet's worth of time to
 	/// elapse before we can send again.  On the other extreme, the queue might have data
-	/// in it waiting for Nagle.  (This will always be less than one packet, because as soon
-	/// as we have a complete packet we would send it.)  In that case, we might be ready
-	/// to send data now, and this value will be 0.
+	/// in it waiting for Nagle.  (This will always be less than one packet, because as
+	/// soon as we have a complete packet we would send it.)  In that case, we might be
+	/// ready to send data now, and this value will be 0.
+	///
+	/// This value is only valid if multiple lanes are not used.  If multiple lanes are
+	/// in use, then the queue time will be different for each lane, and you must use
+	/// the value in SteamNetConnectionRealTimeLaneStatus_t.
+	/// 
+	/// Nagle delay is ignored for the purposes of this calculation.
 	SteamNetworkingMicroseconds m_usecQueueTime;
 
-	/// Internal stuff, room to change API easily
+	// Internal stuff, room to change API easily
 	uint32 reserved[16];
+};
+
+/// Quick status of a particular lane
+struct SteamNetConnectionRealTimeLaneStatus_t
+{
+	// Counters for this particular lane.  See the corresponding variables
+	// in SteamNetConnectionRealTimeStatus_t
+	int m_cbPendingUnreliable;
+	int m_cbPendingReliable;
+	int m_cbSentUnackedReliable;
+	int _reservePad1; // Reserved for future use
+
+	/// Lane-specific queue time.  This value takes into consideration lane priorities
+	/// and weights, and how much data is queued in each lane, and attempts to predict
+	/// how any data currently queued will be sent out.
+	SteamNetworkingMicroseconds m_usecQueueTime;
+
+	// Internal stuff, room to change API easily
+	uint32 reserved[10];
 };
 
 #pragma pack( pop )
@@ -833,15 +857,17 @@ struct SteamNetworkingMessage_t
 	/// - You might have closed the connection, so fetching the user data
 	///   would not be possible.
 	///
-	/// Not used when sending messages, 
+	/// Not used when sending messages.
 	int64 m_nConnUserData;
 
 	/// Local timestamp when the message was received
 	/// Not used for outbound messages.
 	SteamNetworkingMicroseconds m_usecTimeReceived;
 
-	/// Message number assigned by the sender.
-	/// This is not used for outbound messages
+	/// Message number assigned by the sender.  This is not used for outbound
+	/// messages.  Note that if multiple lanes are used, each lane has its own
+	/// message numbers, which are assigned sequentially, so messages from
+	/// different lanes will share the same numbers.
 	int64 m_nMessageNumber;
 
 	/// Function used to free up m_pData.  This mechanism exists so that
@@ -872,6 +898,11 @@ struct SteamNetworkingMessage_t
 	///
 	/// Not used for received messages.
 	int64 m_nUserData;
+
+	/// For outbound messages, which lane to use?  See ISteamNetworkingSockets::ConfigureConnectionLanes.
+	/// For inbound messages, what lane was the message received on?
+	uint16 m_idxLane;
+	uint16 _pad1__;
 
 	/// You MUST call this when you're done with the object,
 	/// to free up memory, etc.
@@ -1444,7 +1475,11 @@ enum ESteamNetworkingConfigValue
 	/// route ping time and is then adjusted.)
 	k_ESteamNetworkingConfig_P2P_Transport_ICE_Penalty = 105,
 	k_ESteamNetworkingConfig_P2P_Transport_SDR_Penalty = 106,
+	k_ESteamNetworkingConfig_P2P_TURN_ServerList = 107,
+	k_ESteamNetworkingConfig_P2P_TURN_UserList = 108,
+	k_ESteamNetworkingConfig_P2P_TURN_PassList = 109,
 	//k_ESteamNetworkingConfig_P2P_Transport_LANBeacon_Penalty = 107,
+	k_ESteamNetworkingConfig_P2P_Transport_ICE_Implementation = 110,
 
 //
 // Settings for SDR relayed connections
@@ -1671,6 +1706,8 @@ inline void GetSteamNetworkingLocationPOPStringFromID( SteamNetworkingPOPID id, 
 /// The POPID "dev" is used in non-production environments for testing.
 const SteamNetworkingPOPID k_SteamDatagramPOPID_dev = ( (uint32)'d' << 16U ) | ( (uint32)'e' << 8U ) | (uint32)'v';
 
+#ifndef API_GEN
+
 /// Utility class for printing a SteamNetworkingPOPID.
 struct SteamNetworkingPOPIDRender
 {
@@ -1680,6 +1717,7 @@ private:
 	char buf[ 8 ];
 };
 
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //

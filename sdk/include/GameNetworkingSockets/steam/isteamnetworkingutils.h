@@ -419,6 +419,8 @@ struct SteamRelayNetworkStatus_t
 	char m_debugMsg[ 256 ];
 };
 
+#ifndef API_GEN
+
 /// Utility class for printing a SteamNetworkingIdentity.
 /// E.g. printf( "Identity is '%s'\n", SteamNetworkingIdentityRender( identity ).c_str() );
 struct SteamNetworkingIdentityRender
@@ -437,6 +439,8 @@ struct SteamNetworkingIPAddrRender
 private:
 	char buf[ SteamNetworkingIPAddr::k_cchMaxString ];
 };
+
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -468,7 +472,7 @@ inline bool ISteamNetworkingUtils::SetConfigValueStruct( const SteamNetworkingCo
 }
 
 // How to get helper functions.
-#if defined( STEAMNETWORKINGSOCKETS_STATIC_LINK ) || defined( STEAMNETWORKINGSOCKETS_STANDALONELIB )
+#if defined( STEAMNETWORKINGSOCKETS_STATIC_LINK ) || defined(STEAMNETWORKINGSOCKETS_FOREXPORT) || defined( STEAMNETWORKINGSOCKETS_STANDALONELIB )
 
 	// Call direct to static functions
 	STEAMNETWORKINGSOCKETS_INTERFACE void SteamNetworkingIPAddr_ToString( const SteamNetworkingIPAddr *pAddr, char *buf, size_t cbBuf, bool bWithPort );

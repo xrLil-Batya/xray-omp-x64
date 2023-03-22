@@ -225,7 +225,10 @@
     <PostBuildEvent>
       <Command>copy /Y "$(xrSdkDir)binaries\x64\lua51.dll" "$(OutputPath)lua51.dll"
 copy /Y "$(xrSdkDir)binaries\x64\tbb.dll" "$(OutputPath)tbb.dll"
-copy /Y "$(xrSdkDir)binaries\x64\soft_oal.dll" "$(OutputPath)soft_oal.dll"</Command>
+copy /Y "$(xrSdkDir)binaries\x64\soft_oal.dll" "$(OutputPath)soft_oal.dll"
+copy /Y "$(xrSdkDir)binaries\x64\GameNetworkingSockets.dll" "$(OutputPath)GameNetworkingSockets.dll"
+copy /Y "$(xrSdkDir)binaries\x64\libcrypto-3-x64.dll" "$(OutputPath)libcrypto-3-x64.dll"
+copy /Y "$(xrSdkDir)binaries\x64\libprotobuf.dll" "$(OutputPath)libprotobuf.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Dedicated|x64'">
