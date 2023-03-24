@@ -881,7 +881,7 @@ HRESULT	CRender::shader_compile			(
 	string_path temp_file_name, file_name;
 	if ( !match_shader_id(name, sh_name, m_file_set, temp_file_name) ) {
 		string_path file;
-		xr_strcpy		( file, "shaders_cache\\r1\\" );
+		xr_strcpy		( file, "shaders_cache_x64\\r1\\" );
 		xr_strcat		( file, name );
 		xr_strcat		( file, "." );
 		xr_strcat		( file, extension );
