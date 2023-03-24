@@ -53,9 +53,6 @@ void NET_Packet::r(void* p, u32 count)
 {
     R_ASSERT(inistream == NULL);
     VERIFY(p && count);
-	if(B.count - r_pos < count)
-		return;
-
     CopyMemory(p, &B.data[r_pos], count);
     r_pos += count;
     VERIFY(r_pos <= B.count);
@@ -72,7 +69,10 @@ void NET_Packet::r_advance(u32 size)
 void NET_Packet::r_vec3(Fvector& A)
 {
     if (!inistream)
-        r(&A, sizeof(Fvector));
+    {
+        A = *(Fvector*)(&B.data[r_pos]);
+        r_pos += sizeof(Fvector);
+    }
     else
         inistream->r_vec3(A);
 } // vec3
@@ -80,7 +80,10 @@ void NET_Packet::r_vec3(Fvector& A)
 void NET_Packet::r_vec4(Fvector4& A)
 {
     if (!inistream)
-        r(&A, sizeof(Fvector4));
+    {
+        A = *(Fvector4*)(&B.data[r_pos]);
+        r_pos += sizeof(Fvector4);
+    }
     else
         inistream->r_vec4(A);
 } // vec4
@@ -88,7 +91,10 @@ void NET_Packet::r_vec4(Fvector4& A)
 void NET_Packet::r_float(float& A)
 {
     if (!inistream)
-        r(&A, sizeof(float));
+    {
+        A = *(float*)(&B.data[r_pos]);
+        r_pos += sizeof(float);
+    }
     else
         inistream->r_float(A);
 } // float
@@ -96,7 +102,10 @@ void NET_Packet::r_float(float& A)
 void NET_Packet::r_u64(u64& A)
 {
     if (!inistream)
-        r(&A, sizeof(u64));
+    {
+        A = *(u64*)(&B.data[r_pos]);
+        r_pos += sizeof(u64);
+    }
     else
         inistream->r_u64(A);
 } // qword (8b)
@@ -104,7 +113,10 @@ void NET_Packet::r_u64(u64& A)
 void NET_Packet::r_s64(s64& A)
 {
     if (!inistream)
-        r(&A, sizeof(s64));
+    {
+        A = *(s64*)(&B.data[r_pos]);
+        r_pos += sizeof(s64);
+    }
     else
         inistream->r_s64(A);
 } // qword (8b)
@@ -112,7 +124,10 @@ void NET_Packet::r_s64(s64& A)
 void NET_Packet::r_u32(u32& A)
 {
     if (!inistream)
-        r(&A, sizeof(u32));
+    {
+        A = *(u32*)(&B.data[r_pos]);
+        r_pos += sizeof(u32);
+    }
     else
         inistream->r_u32(A);
 } // dword (4b)
@@ -120,7 +135,10 @@ void NET_Packet::r_u32(u32& A)
 void NET_Packet::r_s32(s32& A)
 {
     if (!inistream)
-        r(&A, sizeof(s32));
+    {
+        A = *(s32*)(&B.data[r_pos]);
+        r_pos += sizeof(s32);
+    }
     else
         inistream->r_s32(A);
 } // dword (4b)
@@ -128,7 +146,10 @@ void NET_Packet::r_s32(s32& A)
 void NET_Packet::r_u16(u16& A)
 {
     if (!inistream)
-        r(&A, sizeof(u16));
+    {
+        A = *(u16*)(&B.data[r_pos]);
+        r_pos += sizeof(u16);
+    }
     else
         inistream->r_u16(A);
 } // word (2b)
@@ -136,7 +157,10 @@ void NET_Packet::r_u16(u16& A)
 void NET_Packet::r_s16(s16& A)
 {
     if (!inistream)
-        r(&A, sizeof(s16));
+    {
+        A = *(s16*)(&B.data[r_pos]);
+        r_pos += sizeof(s16);
+    }
     else
         inistream->r_s16(A);
 } // word (2b)
@@ -144,7 +168,10 @@ void NET_Packet::r_s16(s16& A)
 void NET_Packet::r_u8(u8& A)
 {
     if (!inistream)
-        r(&A, sizeof(u8));
+    {
+        A = *(u8*)(&B.data[r_pos]);
+        r_pos += sizeof(u8);
+    }
     else
         inistream->r_u8(A);
 } // byte (1b)
@@ -152,7 +179,10 @@ void NET_Packet::r_u8(u8& A)
 void NET_Packet::r_s8(s8& A)
 {
     if (!inistream)
-        r(&A, sizeof(s8));
+    {
+        A = *(s8*)(&B.data[r_pos]);
+        r_pos += sizeof(s8);
+    }
     else
         inistream->r_s8(A);
 } // byte (1b)
