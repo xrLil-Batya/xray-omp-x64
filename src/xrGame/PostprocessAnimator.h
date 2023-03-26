@@ -1,5 +1,3 @@
-#ifndef __ppanimator_included__
-#define __ppanimator_included__
 #pragma once
 
 #ifndef _PP_EDITOR_
@@ -42,14 +40,13 @@ typedef enum _pp_params
 
 class CPostProcessParam
 {
-protected:
 public:
     virtual void    update                          (float dt) = 0;
     virtual void    load                            (IReader &pReader) = 0;
     virtual void    save                            (IWriter &pWriter) = 0;
     virtual float   get_length                      () = 0;
     virtual size_t  get_keys_count                  () = 0;
-	virtual ~CPostProcessParam() {}
+	virtual ~CPostProcessParam() = default;
 #ifdef _PP_EDITOR_
     virtual void    add_value                       (float time, float value,  int index = 0) = 0;
     virtual void    delete_value                    (float time) = 0;
@@ -208,5 +205,3 @@ public:
 };
 
 #endif
-
-#endif /*__ppanimator_included__*/
