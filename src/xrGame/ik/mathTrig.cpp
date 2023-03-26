@@ -78,39 +78,8 @@ float angle_distance(float x, float y)
 // Either one or two solutions. Return the answer in radians
 //
 
-int solve_trig1(float a, float b, float c, float theta[2])
-{
-    float temp = (a * a + b * b - c * c);
+extern int solve_trig1(float a, float b, float c, float theta[2]);
 
-    if (temp < 0.0)
-    {
-        // temp is practically zero
-
-        if (_abs(temp / (_abs(a * a) + _abs(b * b) + _abs(c * c))) < 1e-6)
-        {
-            // printf("Special case\n");
-            theta[0] = (float)(2 * atan(-b / (-a - c)));
-            return 1;
-        }
-        else
-            return 0;
-    }
-
-    temp = (float)atan2((float)_sqrt(temp), (float)c);//.(float) c
-    int num = (!iszero(temp)) ? 2 : 1;
-
-    // Calculate answer in radians
-    theta[0] = (float)atan2(b, a);
-    if (num == 2)
-    {
-        theta[1] = theta[0] - temp;
-        theta[0] += temp;
-
-        //theta[0] = angle_normalize_signed(theta[0]);
-        //theta[1] = angle_normalize_signed(theta[1]);
-    }
-    return num;
-}
 
 //
 // Solve the system

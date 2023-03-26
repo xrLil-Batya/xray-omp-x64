@@ -426,17 +426,7 @@ static void ErrorDisconnect(SBServerList *slist)
 }
 
 #define MULTIPLIER -1664117991
-static int StringHash(const char* s, int numbuckets)
-{
-	goa_uint32 hashcode = 0;
-	while (*s != 0)
-	{
-		hashcode = (goa_uint32)((int)hashcode * MULTIPLIER + tolower(*s));
-		s++;
-	}
-	return (int)(hashcode % numbuckets);
-
-}
+extern int StringHash(const char* s, int numbuckets);
 
 static SBError ServerListConnect(SBServerList *slist)
 {

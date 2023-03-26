@@ -32,7 +32,7 @@
  */
 #include "StdAfx.h"
 #include "dof7control.h"
-#include "mathTrig.h"
+#include "mathTrig.h" 
 
  
 // #define SRSDEBUG
@@ -80,7 +80,6 @@ void SRS::init(const Matrix  T1, const Matrix  T2, const float a[3], const float
 //
 // Only return positive solution
 //
-
 static int solve_R_angle(const float g[3], 
 			 const float s[3], 
 			 const float t[3], 

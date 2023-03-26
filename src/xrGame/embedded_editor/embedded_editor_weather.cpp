@@ -141,8 +141,8 @@ void nextTexture(char* tex, int texSize, int offset)
 	FS.file_list_close(files);
 }
 
-extern bool ImGui_ListBox(const char* label, int* current_item, bool(*items_getter)(void*, int, const char**), void* data,
-	int items_count, const ImVec2& size_arg = ImVec2(0, 0));
+//extern bool ImGui_ListBox(const char* label, int* current_item, bool(*items_getter)(void*, int, const char**), void* data,
+	//int items_count, const ImVec2& size_arg = ImVec2(0, 0));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // from https://www.strchr.com/natural_sorting
