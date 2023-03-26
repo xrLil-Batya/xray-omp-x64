@@ -225,7 +225,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <UseFullPaths>true</UseFullPaths>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>

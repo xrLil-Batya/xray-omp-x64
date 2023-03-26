@@ -108,7 +108,10 @@ void CSE_ALifeInventoryItem::STATE_Read		(NET_Packet &tNetPacket, u16 size)
 	tNetPacket.r_u16(slot);
 }
 
-extern bool check(const u8& mask, const u8& test);
+static inline bool check (const u8 &mask, const u8 &test)
+{
+	return mask & test;
+}
 
 const	u32		CSE_ALifeInventoryItem::m_freeze_delta_time		= 1000;
 const	u32		CSE_ALifeInventoryItem::random_limit			= 120;		
