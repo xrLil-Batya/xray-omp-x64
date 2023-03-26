@@ -120,44 +120,9 @@ static void SendPacket(SOCKET sock, unsigned int toaddr, unsigned short toport, 
 	sendto(sock, (char *)data, len, 0, (struct sockaddr *)&saddr, sizeof(saddr));
 }
 
+extern unsigned int GetLocalIP();
 
-static unsigned int GetLocalIP()
-{
-	int num_local_ips;
-	struct hostent *phost;
-	struct in_addr *addr;
-	unsigned int localip = 0;
-	phost = getlocalhost();
-	if (phost == NULL)
-		return 0;
-	for (num_local_ips = 0 ; ; num_local_ips++)
-	{
-		if (phost->h_addr_list[num_local_ips] == 0)
-			break;
-		addr = (struct in_addr *)phost->h_addr_list[num_local_ips];
-		if (addr->s_addr == htonl(0x7F000001))
-			continue;
-		localip = addr->s_addr;
-
-		if(IsPrivateIP(addr))
-			return localip;
-	}
-	return localip; //else a specific private address wasn't found - return what we've got
-}
-
-static unsigned short GetLocalPort(SOCKET sock)
-{
-	int ret;
-	struct sockaddr_in saddr;
-	int saddrlen = sizeof(saddr);
-
-	ret = getsockname(sock,(struct sockaddr *)&saddr, &saddrlen);
-
-	if (gsiSocketIsError(ret))
-		return 0;
-	return saddr.sin_port;
-}
-
+extern unsigned short GetLocalPort(SOCKET sock);
 static void SendReportPacket(NATNegotiator neg)
 {
 	NatNegPacket p;
