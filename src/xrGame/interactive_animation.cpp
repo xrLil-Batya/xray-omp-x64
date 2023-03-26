@@ -21,7 +21,7 @@ interactive_animation::~interactive_animation( )
 {
 	
 }
-extern float depth;
+static float depth = 0;
 bool interactive_animation::collide( )
 {
 	

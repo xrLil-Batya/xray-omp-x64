@@ -60,7 +60,7 @@
 /* #define ENGINE_DSA_DEBUG */
 
 static ENGINE_TABLE *dsa_table = NULL;
-extern const int dummy_nid;
+static const int dummy_nid = 1;
 
 void ENGINE_unregister_DSA(ENGINE *e)
 	{
