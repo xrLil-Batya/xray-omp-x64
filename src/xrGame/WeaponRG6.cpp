@@ -65,10 +65,12 @@ void CWeaponRG6::FireStart ()
 			CInventoryOwner* io		= smart_cast<CInventoryOwner*>(H_Parent());
 			if(NULL == io->inventory().ActiveItem())
 			{
+#ifdef DEBUG
 			Log("current_state", GetState() );
 			Log("next_state", GetNextState());
 			Log("item_sect", cNameSect().c_str());
 			Log("H_Parent", H_Parent()->cNameSect().c_str());
+#endif
 			}
 			E->g_fireParams (this, p1,d);
 		}
