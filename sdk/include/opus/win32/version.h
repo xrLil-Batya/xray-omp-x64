@@ -1,1 +1,1 @@
-#define PACKAGE_VERSION "4-5-ge65ae16-dirty"
+#define PACKAGE_VERSION "unknown"

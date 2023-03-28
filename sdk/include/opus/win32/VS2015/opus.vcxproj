@@ -180,8 +180,6 @@
       <OutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)$(ProjectName).lib</OutputFile>
     </Lib>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)..\..\win32\genversion.bat" "$(ProjectDir)..\..\win32\version.h" PACKAGE_VERSION</Command>
-      <Message>Generating version.h</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
