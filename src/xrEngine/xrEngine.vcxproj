@@ -397,6 +397,7 @@ copy /Y "$(xrSdkDir)binaries\x64\BugTrap-x64.dll" "$(OutputPath)BugTrap-x64.dll"
     <ClInclude Include="IGame_ObjectPool.h" />
     <ClInclude Include="IGame_Persistent.h" />
     <ClInclude Include="IInputReceiver.h" />
+    <ClInclude Include="ILoadingScreen.h" />
     <ClInclude Include="IObjectPhysicsCollision.h" />
     <ClInclude Include="IPHdebug.h" />
     <ClInclude Include="IPhysicsGeometry.h" />
