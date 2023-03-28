@@ -166,7 +166,7 @@ void CParticlesObject::shedule_Update	(u32 _dt)
 		if (0){//.psDeviceFlags.test(mtParticles))	{    //. AlexMX comment this line// NO UNCOMMENT - DON'T WORK PROPERLY
 			mt_dt					= dt;
 			fastdelegate::FastDelegate<void()>		delegate(this, &CParticlesObject::PerformAllTheWork_mt);
-			Device.seqParallel.push_back		(delegate);
+			Device.seqParallel.emplace_back(delegate);
 		} else {
 			mt_dt					= 0;
 			IParticleCustom* V		= smart_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
