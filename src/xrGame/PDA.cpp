@@ -109,7 +109,7 @@ void CPda::OnStateSwitch(u32 S)
 		{
 			pda->Enable(false);
 			pda->ResetJoystick(false);
-			CurrentGameUI()->SetMainInputReceiver(nullptr, false);
+			//CurrentGameUI()->SetMainInputReceiver(nullptr, false);
 		}
 		g_player_hud->reset_thumb(false);
 		if (joystick != BI_NONE && HudItemData())
@@ -122,6 +122,8 @@ void CPda::OnStateSwitch(u32 S)
 		m_bZoomed = false;
 		m_fZoomfactor = 0.f;
 		CUIPdaWnd* pda = CurrentGameUI() ? &CurrentGameUI()->GetPdaMenu() : nullptr;
+		if(CurrentGameUI() && CurrentGameUI()->TopInputReceiver() == pda)
+			CurrentGameUI()->SetMainInputReceiver(nullptr, false);
 
 		g_player_hud->reset_thumb(true);
 		if(pda && pda->IsShown())
