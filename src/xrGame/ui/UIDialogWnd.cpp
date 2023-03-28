@@ -44,7 +44,7 @@ bool CUIDialogWnd::IR_process()
 	return true;
 }
 
-CDialogHolder* CurrentDialogHolder();
+extern CDialogHolder* CurrentDialogHolder();
 
 void CUIDialogWnd::ShowDialog(bool bDoHideIndicators)
 {
@@ -54,6 +54,7 @@ void CUIDialogWnd::ShowDialog(bool bDoHideIndicators)
 
 void CUIDialogWnd::HideDialog()
 {
-	R_ASSERT2(IsShown(), "dialog already hidden");
-	GetHolder()->StopDialog	(this);
+	//R_ASSERT2(IsShown(), "dialog already hidden");
+	if (IsShown() && GetHolder())
+		GetHolder()->StopDialog(this);
 }
