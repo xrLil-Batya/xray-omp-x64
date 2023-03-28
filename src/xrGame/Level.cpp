@@ -480,7 +480,7 @@ void CLevel::OnFrame()
     if (!g_dedicated_server)
     {
         if (g_mt_config.test(mtMap))
-            Device.seqParallel.push_back(fastdelegate::MakeDelegate(m_map_manager, &CMapManager::Update));
+            Device.seqParallel.emplace_back(fastdelegate::MakeDelegate(m_map_manager, &CMapManager::Update));
         else
             MapManager().Update();
         if (IsGameTypeSingle() && Device.dwPrecacheFrame == 0)
@@ -488,7 +488,7 @@ void CLevel::OnFrame()
             // XXX nitrocaster: was enabled in x-ray 1.5; to be restored or removed
             if (g_mt_config.test(mtMap)) 
             {
-                Device.seqParallel.push_back(fastdelegate::MakeDelegate(m_game_task_manager,&CGameTaskManager::UpdateTasks));
+                Device.seqParallel.emplace_back(fastdelegate::MakeDelegate(m_game_task_manager,&CGameTaskManager::UpdateTasks));
             }
             else								
 				GameTaskManager().UpdateTasks();
@@ -593,13 +593,13 @@ void CLevel::OnFrame()
     // update static sounds
     if (g_mt_config.test(mtLevelSounds))
     {
-        Device.seqParallel.push_back(fastdelegate::MakeDelegate(m_level_sound_manager, &CLevelSoundManager::Update));
+        Device.seqParallel.emplace_back(fastdelegate::MakeDelegate(m_level_sound_manager, &CLevelSoundManager::Update));
     }
     else
         m_level_sound_manager->Update();
     // defer LUA-GC-STEP
     if (g_mt_config.test(mtLUA_GC))
-        Device.seqParallel.push_back(fastdelegate::MakeDelegate(this, &CLevel::script_gc));
+        Device.seqParallel.emplace_back(fastdelegate::MakeDelegate(this, &CLevel::script_gc));
     else
         script_gc();
     if (pStatGraphR)

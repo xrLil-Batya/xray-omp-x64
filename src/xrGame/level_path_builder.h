@@ -71,7 +71,7 @@ public:
 			return;
 
 		m_object->m_wait_for_distributed_computation = true;
-		Device.seqParallel.push_back	(fastdelegate::MakeDelegate(this,&CLevelPathBuilder::process));
+		Device.seqParallel.emplace_back(fastdelegate::MakeDelegate(this,&CLevelPathBuilder::process));
 	}
 
 			void			process_impl		()
