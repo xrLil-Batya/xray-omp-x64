@@ -2500,6 +2500,9 @@
     <Filter Include="OMP Adaptation">
       <UniqueIdentifier>{5ab4605d-f776-40db-932c-59cf710ca3b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\Common\Loading Screen">
+      <UniqueIdentifier>{deed12fc-8689-49e8-b55d-17a1e7952589}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7404,6 +7407,9 @@
     <ClInclude Include="..\xrServerEntities\smart_cast_impl2.h">
       <Filter>Core\Common\SmartCast</Filter>
     </ClInclude>
+    <ClInclude Include="ui\UILoadingScreen.h">
+      <Filter>UI\Common\Loading Screen</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11095,6 +11101,9 @@
     </ClCompile>
     <ClCompile Include="..\xrServerEntities\smart_cast_stats.cpp">
       <Filter>Core\Common\SmartCast</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UILoadingScreen.cpp">
+      <Filter>UI\Common\Loading Screen</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

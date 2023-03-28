@@ -1940,6 +1940,7 @@
     <ClInclude Include="ui\UIListBoxItem.h" />
     <ClInclude Include="ui\UIListBoxItemMsgChain.h" />
     <ClInclude Include="ui\UIListItemServer.h" />
+    <ClInclude Include="ui\UILoadingScreen.h" />
     <ClInclude Include="ui\UILogsWnd.h" />
     <ClInclude Include="ui\UIMainIngameWnd.h" />
     <ClInclude Include="ui\UIMap.h" />
@@ -3170,6 +3171,7 @@
     <ClCompile Include="ui\UIListBoxItemMsgChain.cpp" />
     <ClCompile Include="ui\UIListBox_script.cpp" />
     <ClCompile Include="ui\UIListItemServer.cpp" />
+    <ClCompile Include="ui\UILoadingScreen.cpp" />
     <ClCompile Include="ui\UILogsWnd.cpp" />
     <ClCompile Include="ui\UIMainIngameWnd.cpp" />
     <ClCompile Include="ui\UIMap.cpp" />
