@@ -4,12 +4,13 @@
 
 smapvis::smapvis	()
 {
+	pending = false;
 	invalidate				();
 	frame_sleep				= 0;
 }
 smapvis::~smapvis	()
 {
-	flushoccq				();
+	//flushoccq				();
 	invalidate				();
 }
 void	smapvis::invalidate	()
@@ -18,6 +19,7 @@ void	smapvis::invalidate	()
 	testQ_V		=	0;
 	frame_sleep	=	Device.dwFrame + ps_r__LightSleepFrames;
 	invisible.clear	();
+	resetoccq();
 }
 void	smapvis::begin		()
 {
@@ -30,6 +32,7 @@ void	smapvis::begin		()
 	case state_working:
 		// mark already known to be invisible visuals, set breakpoint
 		testQ_V							= 0;
+		resetoccq();
 		testQ_id						= 0;
 		mark							();
 		RImplementation.set_Feedback	(this,test_current);
@@ -68,6 +71,7 @@ void	smapvis::end		()
 			RImplementation.r_dsgraph_render_graph	(0);
 			RImplementation.occq_end				(testQ_id);
 			testQ_frame								= Device.dwFrame + 1;	// get result on next frame
+			pending = true;
 		}
 		break;
 	case state_usingTC:
@@ -79,10 +83,16 @@ void	smapvis::end		()
 void	smapvis::flushoccq	()
 {
 	// the tough part
-	if (testQ_frame != Device.dwFrame)			return;
-	if ( (state != state_working) || (!testQ_V) ) return;
-	u64	fragments	=	RImplementation.occq_get(testQ_id);
-	if	(0==fragments)			{
+	if ( !pending || testQ_frame < Device.dwFrame )
+		return;
+
+	u64 fragments = RImplementation.occq_get( testQ_id );
+	pending = false;
+
+	if ( state != state_working || !testQ_V )
+		return;
+
+	if ( fragments == 0 ) {
 		// this is invisible shadow-caster, register it
 		// next time we will not get this caster, so 'test_current' remains the same
 		invisible.push_back	(testQ_V);
@@ -101,8 +111,11 @@ void	smapvis::flushoccq	()
 }
 void	smapvis::resetoccq	()
 {
-	if (testQ_frame==(Device.dwFrame+1))		testQ_frame--;
-	flushoccq		();
+	testQ_frame = Device.dwFrame;
+	if ( pending ) {
+		RImplementation.occq_free( testQ_id );
+		pending = false;
+	}
 }
 
 void	smapvis::mark				()
