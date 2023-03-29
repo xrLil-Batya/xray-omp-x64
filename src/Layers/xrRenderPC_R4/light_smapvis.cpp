@@ -116,7 +116,10 @@ void smapvis::flushoccq() {
 void	smapvis::resetoccq	()
 {
 	testQ_frame = Device.dwFrame;
-	flushoccq		();
+	if ( pending ) {
+		RImplementation.occq_free( testQ_id );
+		pending = false;
+	}
 }
 
 void	smapvis::mark				()
