@@ -142,6 +142,7 @@ bool game_sv_freemp::LoadPlayer(game_PlayerState* ps, CInifile* file)
 					wpn->a_elapsed = ammo_count;
 					wpn->ammo_type = ammo_type;
 					wpn->m_addon_flags.flags = addon_state;
+					wpn->cur_scope = cur_scope;
 				}
 
 				if (ammo)
@@ -276,6 +277,7 @@ void game_sv_freemp::LoadInvBox(CSE_ALifeInventoryBox* box, CInifile* file)
 				wpn->a_elapsed = ammo_count;
 				wpn->ammo_type = ammo_type;
 				wpn->m_addon_flags.flags = addon_state;
+				wpn->cur_scope = cur_scope;
 			}
 
 			if (ammo)
