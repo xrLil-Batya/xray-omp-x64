@@ -475,7 +475,7 @@ void ParticleRenderStream(PRS_PARAMS* pParams)
 	float sina = 0.0f, cosa = 0.0f;
 	// Xottab_DUTY: changed angle to be float instead of DWORD
 	// But it must be 0xFFFFFFFF or otherwise some particles won't play
-	float angle = 0xFFFFFFFF;
+	float angle = static_cast<float>(0xFFFFFFFF);
 
 	FVF::LIT* pv = pParams->pv;
 	u32 p_from = pParams->p_from;
