@@ -319,6 +319,12 @@ CRenderTarget::CRenderTarget		()
 		b_bloom_msaa			= xr_new<CBlender_bloom_build_msaa>		();
 		b_postprocess_msaa	= xr_new<CBlender_postprocess_msaa>	();
 	}
+	else
+	{
+		b_bloom_msaa = nullptr;
+		b_postprocess_msaa = nullptr;
+	}
+
 	b_luminance				= xr_new<CBlender_luminance>		();
 	b_combine				= xr_new<CBlender_combine>			();
 	b_ssao					= xr_new<CBlender_SSAO_noMSAA>		();
